@@ -1,6 +1,8 @@
 DTCoreText
 ==========
 
+是原DTCoreText的fork，目的是为了优化将html转换为NSAttributedString的逻辑。
+
 This project aims to duplicate the methods present on Mac OSX which allow creation of `NSAttributedString` from HTML code on iOS. 
 
 The project covers two broad areas:
