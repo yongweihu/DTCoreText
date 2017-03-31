@@ -561,6 +561,20 @@ NSDictionary *_classesForNames = nil;
 			// if this is latest
 			if ([self _isNotChildOfList])
 			{
+#pragma mark - Start My Change
+                // 调整第一个sub-paragraph的段前空白。这里暂时没有考虑后面设置last sub-paragraph时的各种情况
+                NSRange firstParagraphRange = [[tmpString string] rangeOfParagraphAtIndex:0];
+                NSParagraphStyle *firstparaStyle = [tmpString attribute:NSParagraphStyleAttributeName atIndex:firstParagraphRange.location effectiveRange:NULL];
+                DTCoreTextParagraphStyle *firstParagraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:firstparaStyle];
+                if (firstParagraphStyle.paragraphSpacingBefore < self.paragraphStyle.paragraphSpacingBefore) {
+                    firstParagraphStyle.paragraphSpacingBefore = self.paragraphStyle.paragraphSpacingBefore;
+                    
+                    // make new paragraph style
+                    NSParagraphStyle *newParaStyle = [firstParagraphStyle NSParagraphStyle];
+                    [tmpString addAttribute:NSParagraphStyleAttributeName value:newParaStyle range:firstParagraphRange];
+                }
+#pragma mark - End My Change
+                
 				NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:[tmpString length]-1];
 				
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
@@ -1331,7 +1345,8 @@ NSDictionary *_classesForNames = nil;
 	NSString *textIndentStr = [styles objectForKey:@"text-indent"];
 	if (textIndentStr && [textIndentStr isCSSLengthValue])
 	{
-		_pTextIndent = [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
+        // 将_currentTextSize改为self.fontDescriptor.pointSize，保证计算的大小和后续的margin的计算方式相同
+		_pTextIndent = [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 	}
 	
 	BOOL needsTextBlock = (_backgroundColor!=nil || _backgroundStrokeColor!=nil || _backgroundCornerRadius > 0 || _backgroundStrokeWidth > 0);
