@@ -600,6 +600,7 @@
 	};
 	
 	[_tagStartHandlers setObject:[pBlock copy] forKey:@"p"];
+    [_tagStartHandlers setObject:[pBlock copy] forKey:@"div"]; // div也可能会被设置textIndent属性，所以我们需要考虑这种情况
 }
 
 - (void)_registerTagEndHandlers

@@ -1347,6 +1347,7 @@ NSDictionary *_classesForNames = nil;
 	{
         // 将_currentTextSize改为self.fontDescriptor.pointSize，保证计算的大小和后续的margin的计算方式相同
 		_pTextIndent = [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+        NSAssert1([self.name isEqualToString:@"p"] || [self.name isEqualToString:@"div"], @"Only p or div support text-indent property. To support %@, you need to update class DTHTMLAttributedStringBuilder to add pBlock to _tagStartHandlers", self.name);
 	}
 	
 	BOOL needsTextBlock = (_backgroundColor!=nil || _backgroundStrokeColor!=nil || _backgroundCornerRadius > 0 || _backgroundStrokeWidth > 0);
