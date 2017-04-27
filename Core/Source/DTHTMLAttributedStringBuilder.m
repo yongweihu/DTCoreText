@@ -599,8 +599,10 @@
 		}
 	};
 	
+    // 以下tag都可能会被设置textIndent属性
 	[_tagStartHandlers setObject:[pBlock copy] forKey:@"p"];
-    [_tagStartHandlers setObject:[pBlock copy] forKey:@"div"]; // div也可能会被设置textIndent属性，所以我们需要考虑这种情况
+    [_tagStartHandlers setObject:[pBlock copy] forKey:@"div"];
+    [_tagStartHandlers setObject:[pBlock copy] forKey:@"span"];
 }
 
 - (void)_registerTagEndHandlers
