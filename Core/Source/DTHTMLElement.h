@@ -36,6 +36,8 @@
 	DTColor *_backgroundStrokeColor;
 	CGFloat _backgroundStrokeWidth;
 	CGFloat _backgroundCornerRadius;
+    
+    NSString *_textTransform;
 	
 	CTUnderlineStyle _underlineStyle;
 	

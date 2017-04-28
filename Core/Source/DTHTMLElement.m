@@ -331,6 +331,31 @@ NSDictionary *_classesForNames = nil;
 	return tmpDict;
 }
 
+- (NSAttributedString *)applyTextTransformToAttributedString:(NSAttributedString *)attributedString
+{
+    if (_textTransform == nil) {
+        return attributedString;
+    }
+    
+    NSString *transformedString = attributedString.string;
+    if ([_textTransform isEqualToString:@"uppercase"]) {
+        transformedString = [transformedString uppercaseString];
+    } else if ([_textTransform isEqualToString:@"lowercase"]) {
+        transformedString = [transformedString lowercaseString];
+    } else if ([_textTransform isEqualToString:@"capitalize"]) {
+        transformedString = [transformedString capitalizedString];
+    }
+    
+    if ([transformedString isEqualToString:attributedString.string]) {
+        return attributedString;
+    }
+    
+    NSMutableAttributedString *mutableString = [attributedString mutableCopy];
+    [mutableString replaceCharactersInRange:NSMakeRange(0, attributedString.length) withString:transformedString];
+    
+    return mutableString;
+}
+
 - (BOOL)needsOutput
 {
 	@synchronized(self)
@@ -477,6 +502,7 @@ NSDictionary *_classesForNames = nil;
 				}
 				
 				NSAttributedString *nodeString = [oneChild attributedString];
+                nodeString = [self applyTextTransformToAttributedString:nodeString];
 				
 				if (nodeString)
 				{
@@ -1451,6 +1477,8 @@ NSDictionary *_classesForNames = nil;
     {
         _fontDescriptor.fontName = [styles objectForKey:@"-coretext-fontname"];
     }
+    
+    _textTransform = [styles objectForKey:@"text-transform"];
 }
 
 - (DTCSSListStyle *)listStyle
