@@ -603,6 +603,9 @@
 	[_tagStartHandlers setObject:[pBlock copy] forKey:@"p"];
     [_tagStartHandlers setObject:[pBlock copy] forKey:@"div"];
     [_tagStartHandlers setObject:[pBlock copy] forKey:@"span"];
+    [_tagStartHandlers setObject:[pBlock copy] forKey:@"blockquote"];
+    [_tagStartHandlers setObject:[pBlock copy] forKey:@"ul"];
+    [_tagStartHandlers setObject:[pBlock copy] forKey:@"li"];
 }
 
 - (void)_registerTagEndHandlers
