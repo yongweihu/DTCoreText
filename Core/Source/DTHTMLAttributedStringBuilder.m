@@ -584,28 +584,6 @@
 	};
 	
 	[_tagStartHandlers setObject:[fontBlock copy] forKey:@"font"];
-	
-	
-	void (^pBlock)(void) = ^
-	{
-		// if have the custom headIndent
-		if (_defaultParagraphStyle.firstLineHeadIndent > 0)
-		{
-			_currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent + _defaultParagraphStyle.firstLineHeadIndent;
-		}
-		else
-		{
-			_currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent + _currentTag.pTextIndent;
-		}
-	};
-	
-    // 以下tag都可能会被设置textIndent属性
-	[_tagStartHandlers setObject:[pBlock copy] forKey:@"p"];
-    [_tagStartHandlers setObject:[pBlock copy] forKey:@"div"];
-    [_tagStartHandlers setObject:[pBlock copy] forKey:@"span"];
-    [_tagStartHandlers setObject:[pBlock copy] forKey:@"blockquote"];
-    [_tagStartHandlers setObject:[pBlock copy] forKey:@"ul"];
-    [_tagStartHandlers setObject:[pBlock copy] forKey:@"li"];
 }
 
 - (void)_registerTagEndHandlers
@@ -802,6 +780,16 @@
 		}
 		
 		_currentTag = newNode;
+        
+        // if have the custom headIndent
+        if (_defaultParagraphStyle.firstLineHeadIndent > 0)
+        {
+            _currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent + _defaultParagraphStyle.firstLineHeadIndent;
+        }
+        else
+        {
+            _currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent + _currentTag.pTextIndent;
+        }
 		
 		// find block to execute for this tag if any
 		void (^tagBlock)(void) = [_tagStartHandlers objectForKey:elementName];
