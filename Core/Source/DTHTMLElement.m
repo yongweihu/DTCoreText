@@ -564,7 +564,8 @@ NSDictionary *_classesForNames = nil;
 			
 			if (![self.name isEqualToString:@"html"] && ![self.name isEqualToString:@"body"])
 			{
-				if (![[tmpString string] hasSuffix:@"\n"])
+                // UNICODE_LINE_FEED 也是换行符。如果内容最后有 UNICODE_LINE_FEED，也不需要再加上 \n 了。
+				if (![[tmpString string] hasSuffix:@"\n"] && ![[tmpString string] hasSuffix:UNICODE_LINE_FEED])
 				{
 					if ([tmpString length])
 					{
@@ -575,7 +576,9 @@ NSDictionary *_classesForNames = nil;
 					{
 						// string is empty, need a new attributed string so that we have the attributes
 						attributes = [self attributesForAttributedStringRepresentation];
-						NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\n" attributes:attributes];
+                        
+                        // 按照 iBook 的处理，如果此元素没有内容，就不显示出来。
+						NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"" attributes:attributes];
 						[tmpString appendAttributedString:attributedString];
 					}
 				}

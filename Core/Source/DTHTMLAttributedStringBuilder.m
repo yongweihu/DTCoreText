@@ -700,9 +700,20 @@
 			// inherit stuff
 			[newNode inheritAttributesFromElement:_currentTag];
 			[newNode interpretAttributes];
+            
+            // <br /> 对应内容的段前距应为 0
+            if ([newNode isKindOfClass:[DTBreakHTMLElement class]]) {
+                newNode.paragraphStyle.paragraphSpacingBefore = 0.;
+                newNode.paragraphStyle.paragraphSpacing =  0.;
+            }
 			
 			previousLastChild = [_currentTag.childNodes lastObject];
 			
+            // 如果此内容之前是 <br/>，将段前距设为 0
+            if ([previousLastChild isKindOfClass:[DTHTMLElement class]]) {
+                newNode.paragraphStyle.paragraphSpacingBefore = 0.;
+            }
+            
 			// add as new child of current node
 			[_currentTag addChildNode:newNode];
 			
@@ -843,7 +854,7 @@
 							if (nodeString)
 							{
 								// if this is a block element then we need a paragraph break before it
-								if (theTag.displayStyle != DTHTMLElementDisplayStyleInline)
+								if (theTag.displayStyle != DTHTMLElementDisplayStyleInline && nodeString.length)
 								{
 									if ([_tmpString length] && ![[_tmpString string] hasSuffix:@"\n"])
 									{
@@ -931,6 +942,12 @@
 		
 		[textNode inheritAttributesFromElement:_currentTag];
 		[textNode interpretAttributes];
+        
+        // 如果此内容之前是 <br/>，将段前距设为 0
+        DTHTMLElement *previousLastChild = [_currentTag.childNodes lastObject];
+        if ([previousLastChild isKindOfClass:[DTHTMLElement class]]) {
+            textNode.paragraphStyle.paragraphSpacingBefore = 0.;
+        }
 		
 		// save it for later output
 		[_currentTag addChildNode:textNode];
