@@ -16,7 +16,8 @@
 	{
 		NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
 
-		return [[NSAttributedString alloc] initWithString:UNICODE_LINE_FEED attributes:attributes];
+        // 换行符按 \n 来处理
+		return [[NSAttributedString alloc] initWithString:@"\n" attributes:attributes];
 	}
 }
 

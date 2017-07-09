@@ -700,18 +700,27 @@
 			// inherit stuff
 			[newNode inheritAttributesFromElement:_currentTag];
 			[newNode interpretAttributes];
+			
+			previousLastChild = [_currentTag.childNodes lastObject];
+            
+#pragma mark - 调整 <br/> 前后节点的段落间距
+			
+            // 如果此内容之前是 <br/>，将段前距设为 0
+            if ([previousLastChild isKindOfClass:[DTBreakHTMLElement class]]) {
+                newNode.paragraphStyle.paragraphSpacingBefore = 0.;
+            }
             
             // <br /> 对应内容的段前距应为 0
             if ([newNode isKindOfClass:[DTBreakHTMLElement class]]) {
                 newNode.paragraphStyle.paragraphSpacingBefore = 0.;
                 newNode.paragraphStyle.paragraphSpacing =  0.;
-            }
-			
-			previousLastChild = [_currentTag.childNodes lastObject];
-			
-            // 如果此内容之前是 <br/>，将段前距设为 0
-            if ([previousLastChild isKindOfClass:[DTHTMLElement class]]) {
-                newNode.paragraphStyle.paragraphSpacingBefore = 0.;
+                
+                DTHTMLElement *lastChildBeforeBreak = previousLastChild;
+                while (lastChildBeforeBreak.childNodes.count) {
+                    lastChildBeforeBreak = [lastChildBeforeBreak.childNodes lastObject];
+                }
+                
+                lastChildBeforeBreak.paragraphStyle.paragraphSpacing = 0;
             }
             
 			// add as new child of current node
@@ -945,7 +954,7 @@
         
         // 如果此内容之前是 <br/>，将段前距设为 0
         DTHTMLElement *previousLastChild = [_currentTag.childNodes lastObject];
-        if ([previousLastChild isKindOfClass:[DTHTMLElement class]]) {
+        if ([previousLastChild isKindOfClass:[DTBreakHTMLElement class]]) {
             textNode.paragraphStyle.paragraphSpacingBefore = 0.;
         }
 		
