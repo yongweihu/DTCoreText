@@ -483,10 +483,10 @@ NSDictionary *_classesForNames = nil;
 			
 			for (DTHTMLElement *oneChild in self.childNodes)
 			{
-				if (oneChild.displayStyle == DTHTMLElementDisplayStyleNone)
-				{
-					continue;
-				}
+//				if (oneChild.displayStyle == DTHTMLElementDisplayStyleNone)
+//				{
+//					continue;
+//				}
 				
 				// if previous node was inline and this child is block then we need a newline
 				if (previousChild && previousChild.displayStyle == DTHTMLElementDisplayStyleInline)
@@ -592,31 +592,7 @@ NSDictionary *_classesForNames = nil;
 			
 			// if this is latest
 			if ([self _isNotChildOfList])
-			{
-#pragma mark - Start My Change
-                // 调整第一个sub-paragraph的段前空白。这里暂时没有考虑后面设置last sub-paragraph时的各种情况
-                NSRange firstParagraphRange = [[tmpString string] rangeOfParagraphAtIndex:0];
-                NSParagraphStyle *currentFirstParaStyle = [tmpString attribute:NSParagraphStyleAttributeName atIndex:firstParagraphRange.location effectiveRange:NULL];
-                
-                BOOL hasChangedProperties = NO;
-                DTCoreTextParagraphStyle *firstParagraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:currentFirstParaStyle];
-                if (firstParagraphStyle.paragraphSpacingBefore < self.paragraphStyle.paragraphSpacingBefore) {
-                    firstParagraphStyle.paragraphSpacingBefore = self.paragraphStyle.paragraphSpacingBefore;
-                    hasChangedProperties = YES;
-                }
-                
-                if (firstParagraphStyle.firstLineHeadIndent < self.paragraphStyle.firstLineHeadIndent) {
-                    firstParagraphStyle.firstLineHeadIndent = self.paragraphStyle.firstLineHeadIndent;
-                    hasChangedProperties = YES;
-                }
-                
-                if (hasChangedProperties) {
-                    // make new paragraph style
-                    NSParagraphStyle *newParaStyle = [firstParagraphStyle NSParagraphStyle];
-                    [tmpString addAttribute:NSParagraphStyleAttributeName value:newParaStyle range:firstParagraphRange];
-                }
-#pragma mark - End My Change
-                
+			{   
 				NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:[tmpString length]-1];
 				
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
@@ -761,29 +737,29 @@ NSDictionary *_classesForNames = nil;
 		{
 			if ([oneKey hasSuffix:leftKey])
 			{
-				edgeInsets.left = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.left = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320.];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:bottomKey])
 			{
-				edgeInsets.bottom = [attributeValue	pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.bottom = [attributeValue	pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320.];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:rightKey])
 			{
-				edgeInsets.right = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.right = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320.];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:topKey])
 			{
-				edgeInsets.top = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.top = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320.];
 				didModify = YES;
 			}
 		}
 		else
 		{
 			// shortcut with multiple values
-			edgeInsets = [attributeValue DTEdgeInsetsRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+			edgeInsets = [attributeValue DTEdgeInsetsRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320.];
 			didModify = YES;
 		}
 	}
@@ -1384,13 +1360,6 @@ NSDictionary *_classesForNames = nil;
 		_backgroundCornerRadius = 0.0f;
 	}
 	
-	NSString *textIndentStr = [styles objectForKey:@"text-indent"];
-	if (textIndentStr && [textIndentStr isCSSLengthValue])
-	{
-        // 将_currentTextSize改为self.fontDescriptor.pointSize，保证计算的大小和后续的margin的计算方式相同
-		_pTextIndent = [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
-	}
-	
 	BOOL needsTextBlock = (_backgroundColor!=nil || _backgroundStrokeColor!=nil || _backgroundCornerRadius > 0 || _backgroundStrokeWidth > 0);
 	
 	BOOL hasMargins = NO;
@@ -1494,6 +1463,13 @@ NSDictionary *_classesForNames = nil;
     }
     
     _textTransform = [styles objectForKey:@"text-transform"];
+    
+    NSString *textIndentStr = [styles objectForKey:@"text-indent"];
+    if (textIndentStr)
+    {
+        // 将_currentTextSize改为self.fontDescriptor.pointSize，保证计算的大小和后续的margin的计算方式相同
+        self.paragraphStyle.firstLineHeadIndent += [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320.];
+    }
 }
 
 - (DTCSSListStyle *)listStyle
@@ -1792,7 +1768,6 @@ NSDictionary *_classesForNames = nil;
 @synthesize backgroundStrokeWidth = _backgroundStrokeWidth;
 @synthesize backgroundCornerRadius = _backgroundCornerRadius;
 @synthesize letterSpacing = _letterSpacing;
-@synthesize pTextIndent = _pTextIndent;
 
 @end
 

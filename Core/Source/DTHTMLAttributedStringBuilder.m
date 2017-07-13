@@ -801,16 +801,6 @@
 		}
 		
 		_currentTag = newNode;
-        
-        // if have the custom headIndent
-        if (_defaultParagraphStyle.firstLineHeadIndent > 0)
-        {
-            _currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent + _defaultParagraphStyle.firstLineHeadIndent;
-        }
-        else
-        {
-            _currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent + _currentTag.pTextIndent;
-        }
 		
 		// find block to execute for this tag if any
 		void (^tagBlock)(void) = [_tagStartHandlers objectForKey:elementName];
