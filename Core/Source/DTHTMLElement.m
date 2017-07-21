@@ -1366,30 +1366,30 @@ NSDictionary *_classesForNames = nil;
 	
 	NSString *allKeys = [[styles allKeys] componentsJoinedByString:@";"];
 	
-	// there can only be padding if the word "margin" occurs in the styles keys
-	if ([allKeys rangeOfString:@"-webkit-margin"].length)
-	{
-		hasMargins = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins] || hasMargins);
-	}
-	
-	if ([allKeys rangeOfString:@"margin"].length)
-	{
-		hasMargins = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins] || hasMargins);
-	}
+    // 优先使用 margin，只有当没有设置 margin 时，才使用 webkit-margin
+    if ([allKeys rangeOfString:@"margin"].length)
+    {
+        hasMargins = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins] || hasMargins);
+    }
+    // there can only be padding if the word "margin" occurs in the styles keys
+    else if ([allKeys rangeOfString:@"-webkit-margin"].length)
+    {
+        hasMargins = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins] || hasMargins);
+    }
 	
 	BOOL hasPadding = NO;
 	
-	// there can only be padding if the word "padding" occurs in the styles keys
-	if ([allKeys rangeOfString:@"-webkit-padding"].length)
-	{
-		hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
-	}
-	
+    // 优先使用 padding，只有当没有设置 margin 时，才使用 webkit-padding
 	if ([allKeys rangeOfString:@"padding"].length)
 	{
 		
 		hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
 	}
+    // there can only be padding if the word "padding" occurs in the styles keys
+    else if ([allKeys rangeOfString:@"-webkit-padding"].length)
+    {
+        hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
+    }
 	
 	if (hasPadding)
 	{

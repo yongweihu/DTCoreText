@@ -393,7 +393,11 @@
 	{
 		_currentTag.paragraphStyle.headIndent += (CGFloat)25.0 * _textScale;
 		_currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent;
-		_currentTag.paragraphStyle.paragraphSpacing = _defaultFontDescriptor.pointSize;
+        
+        NSString *allKeys = [[_currentTag.styles allKeys] componentsJoinedByString:@";"];
+        if (![allKeys rangeOfString:@"margin"].length) {
+            _currentTag.paragraphStyle.paragraphSpacing = _defaultFontDescriptor.pointSize;
+        }
 	};
 	
 	[_tagStartHandlers setObject:[blockquoteBlock copy] forKey:@"blockquote"];

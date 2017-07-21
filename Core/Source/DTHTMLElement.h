@@ -266,6 +266,8 @@
  */
 @property (nonatomic, assign) BOOL shouldProcessCustomHTMLAttributes;
 
+@property (nonatomic, strong, readonly) NSDictionary *styles;
+
 /**
  @name Working with HTML Attributes
  */
