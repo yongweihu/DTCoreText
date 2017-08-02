@@ -509,7 +509,7 @@ NSDictionary *_classesForNames = nil;
 				
 				if (nodeString)
 				{
-					if (!oneChild.containsAppleConvertedSpace)
+					if (!oneChild.containsAppleConvertedSpace && ![oneChild isKindOfClass:[DTBreakHTMLElement class]])
 					{
 						// we already have a white space in the string so far
 						if ([[tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet ignorableWhitespaceCharacterSet]])
