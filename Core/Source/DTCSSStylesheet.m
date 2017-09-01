@@ -588,7 +588,8 @@ extern unsigned int default_css_len;
 					
 					for (; i < length; i++)
 					{
-						if ([css characterAtIndex:i] == '/')
+						if ([css characterAtIndex:i] == '/'
+                            && [css characterAtIndex:i-1] == '*')
 						{
 							break;
 						}
