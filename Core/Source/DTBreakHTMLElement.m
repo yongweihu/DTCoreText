@@ -21,4 +21,10 @@
 	}
 }
 
+- (void)applyStyleDictionary:(NSDictionary *)styles
+{
+    // <br>不需要任何样式
+    return;
+}
+
 @end

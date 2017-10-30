@@ -584,6 +584,70 @@ NSDictionary *_classesForNames = nil;
 				}
 			}
 		}
+        
+        // 保证第一个字段落的短前距不小于当前元素的短前距
+        if (self.displayStyle == DTHTMLElementDisplayStyleBlock && [tmpString length]>0)
+        {
+            
+            // if this is latest
+            if ([self _isNotChildOfList])
+            {
+                NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:0];
+                
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+                if (___useiOS6Attributes)
+                {
+                    NSParagraphStyle *paraStyle = [tmpString attribute:NSParagraphStyleAttributeName atIndex:paragraphRange.location effectiveRange:NULL];
+                    
+                    DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:paraStyle];
+                    
+                    if (paragraphStyle.paragraphSpacingBefore < self.paragraphStyle.paragraphSpacingBefore)
+                    {
+                        paragraphStyle.paragraphSpacingBefore = self.paragraphStyle.paragraphSpacingBefore;
+                        
+                        // make new paragraph style
+                        NSParagraphStyle *newParaStyle = [paragraphStyle NSParagraphStyle];
+                        
+#if DTCORETEXT_NEEDS_ATTRIBUTE_REPLACEMENT_LEAK_FIX
+                        if (NSFoundationVersionNumber <=  NSFoundationVersionNumber10_6_8)  // less than OS X 10.7 and less than iOS 5
+                        {
+                            // remove old (works around iOS 4.3 leak)
+                            [tmpString removeAttribute:NSParagraphStyleAttributeName range:paragraphRange];
+                        }
+#endif
+                        
+                        // set new
+                        [tmpString addAttribute:NSParagraphStyleAttributeName value:newParaStyle range:paragraphRange];
+                    }
+                }
+                else
+#endif
+                {
+                    CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[tmpString attribute:(id)kCTParagraphStyleAttributeName atIndex:paragraphRange.location effectiveRange:NULL];
+                    
+                    DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
+                    
+                    if (paragraphStyle.paragraphSpacingBefore < self.paragraphStyle.paragraphSpacingBefore)
+                    {
+                        paragraphStyle.paragraphSpacingBefore = self.paragraphStyle.paragraphSpacingBefore;
+                        
+                        // make new paragraph style
+                        CTParagraphStyleRef newParaStyle = [paragraphStyle createCTParagraphStyle];
+                        
+#if DTCORETEXT_NEEDS_ATTRIBUTE_REPLACEMENT_LEAK_FIX
+                        if (NSFoundationVersionNumber <=  NSFoundationVersionNumber10_6_8)  // less than OS X 10.7 and less than iOS 5
+                        {
+                            // remove old (works around iOS 4.3 leak)
+                            [tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
+                        }
+#endif
+                        
+                        // set new
+                        [tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:(__bridge_transfer id)newParaStyle range:paragraphRange];
+                    }
+                }
+            }
+        }
 		
 		// make sure the last sub-paragraph of this has no less than the specified paragraph spacing of this element
 		// e.g. last LI needs to inherit the margin-after of the UL

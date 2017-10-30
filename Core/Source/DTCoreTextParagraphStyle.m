@@ -51,6 +51,7 @@
 	
 	retStyle.firstLineHeadIndent = paragraphStyle.firstLineHeadIndent;
 	retStyle.headIndent = paragraphStyle.headIndent;
+    retStyle.tailIndent = paragraphStyle.tailIndent;
 	
 	retStyle.paragraphSpacing = paragraphStyle.paragraphSpacing;
 	retStyle.paragraphSpacingBefore = paragraphStyle.paragraphSpacingBefore;
