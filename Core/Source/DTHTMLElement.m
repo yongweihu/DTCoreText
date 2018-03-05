@@ -1443,7 +1443,7 @@ NSDictionary *_classesForNames = nil;
 	
 	BOOL hasPadding = NO;
 	
-    // 优先使用 padding，只有当没有设置 margin 时，才使用 webkit-padding
+    // 优先使用 padding，只有当没有设置 padding 时，才使用 webkit-padding
 	if ([allKeys rangeOfString:@"padding"].length)
 	{
 		
@@ -1473,16 +1473,16 @@ NSDictionary *_classesForNames = nil;
 	if (_displayStyle == DTHTMLElementDisplayStyleBlock || [self.name isEqualToString:@"img"])
 	{
 		// we only care for margins of block level elements
-		if (hasMargins)
+        if (hasMargins || hasPadding)
 		{
-			self.paragraphStyle.paragraphSpacing = _margins.bottom;
-			self.paragraphStyle.paragraphSpacingBefore = _margins.top;
+            self.paragraphStyle.paragraphSpacing = _margins.bottom + _padding.bottom;
+            self.paragraphStyle.paragraphSpacingBefore = _margins.top + _padding.top;
 			// we increase the inherited values for the time being
-			self.paragraphStyle.headIndent += _margins.left;
+            self.paragraphStyle.headIndent += _margins.left + _padding.left;
 			self.paragraphStyle.firstLineHeadIndent = self.paragraphStyle.headIndent;
 			
 			// tailIndent from right side is negative
-			self.paragraphStyle.tailIndent -= _margins.right;
+            self.paragraphStyle.tailIndent -= _margins.right + _padding.right;
 		}
 		
 		if (needsTextBlock)
