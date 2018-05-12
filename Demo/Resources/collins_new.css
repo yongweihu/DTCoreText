@@ -1,0 +1,68 @@
+/*
+	Helvetica Neue
+
+	Demo css to show basic, more technical styling
+
+	Visit http://www.ulyssesapp.com/styles for full reference
+
+*/
+.article {
+  margin-bottom: 2em;
+}
+
+.num {
+    color:#666666;
+    font-weight:bold;
+    font-size:95%;
+}
+
+.pos {
+    color:#666666;
+    font-weight:bold;
+    font-size:95%;
+	margin-left:3pt;
+}
+
+.mean {
+    display:block;
+    background-color:#f5f7fc;
+}
+
+.link {
+    color:#0077cf;
+    text-decoration:underline;
+}
+
+.example_cn {
+    color:gray;
+    margin-left:12pt;
+}
+
+.example_en {
+    color:#008080;
+}
+
+.examples {
+    margin:0 0 0.5em 1em;
+    padding-left:0;
+    list-style-type:none
+}
+
+.meaning_cn {
+    color:#0077cf
+}
+
+.highlight {
+    color:#0077cf;
+}
+
+.dot {
+    color:teal;
+    margin-right:2pt;
+}
+
+.mean_note {
+    display:block;
+    background-color:#f9f9dc;
+    border:1px solid #cbd7e0;
+}

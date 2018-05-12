@@ -12,6 +12,14 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>测试柯林斯词典</string>
+		<key>File</key>
+		<string>collins_new.html</string>
+		<key>Title</key>
+		<string>柯林斯高阶词典</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>This demonstrates the features supported by the iOS 6 attributes.</string>
 		<key>File</key>
 		<string>iOS6.html</string>
@@ -172,15 +180,15 @@
 		<key>Title</key>
 		<string>Never mind this file ...</string>
 	</dict>
-    <dict>
-        <key>Description</key>
-        <string>AutoLayout test</string>
-        <key>Title</key>
-        <string>AutoLayout test</string>
-        <key>File</key>
-        <string>FontSizes.html</string>
-        <key>AutoLayoutTest</key>
-        <true/>
-    </dict>
+	<dict>
+		<key>Description</key>
+		<string>AutoLayout test</string>
+		<key>Title</key>
+		<string>AutoLayout test</string>
+		<key>File</key>
+		<string>FontSizes.html</string>
+		<key>AutoLayoutTest</key>
+		<true/>
+	</dict>
 </array>
 </plist>

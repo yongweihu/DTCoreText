@@ -1241,4 +1241,16 @@
 	XCTAssertEqualObjects(hexColor, @"0000ff", @"Color should be blue because inline style should be processed through lack of ignore option");
 }
 
+#pragma mark - 我的改动测试
+- (void)testSolveSpanDivStyleError
+{
+	NSAttributedString *output = [self attributedStringFromHTMLString:@"<html><body><div>TEXT<span><div><div>TEXT</div><div>TEXT</div></div></span>TEXT</div></body></html>" options:NULL];
+	
+	XCTAssertTrue([output length]==20, @"Generated String should be 20 characters");
+	
+	NSString *expectedOutput = @"TEXT\nTEXT\nTEXT\nTEXT\n";
+	
+	XCTAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
+}
+
 @end

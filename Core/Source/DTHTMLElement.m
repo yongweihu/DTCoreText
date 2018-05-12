@@ -464,9 +464,27 @@ NSDictionary *_classesForNames = nil;
 				}
 				
 				// if previous node was inline and this child is block then we need a newline
+				/* 这里原有的添加newline的逻辑不能很好处理下面这种case：
+				 <span>
+				 	<div id="word_gram_1_62782">
+				 		<div>
+				 			<div>
+				 				【语法信息】：V n
+				 			</div>
+							<div>
+				 				【语法信息】：V
+				 			</div>
+				 		</div>
+				 	</div>
+				 </span>
+				 这里应该在第一个div之前添加\n，但是原处理逻辑是没有的。所以我们这里添加了以下判断：
+					((DTHTMLElement *)oneChild.childNodes.firstObject).displayStyle == DTHTMLElementDisplayStyleBlock
+				 也即是：如果当前节点（这里的span）为inline style，但其第一个字节点（这里的div）为block，我们需要给当前节点添加\n。
+				 */
 				if (previousChild && previousChild.displayStyle == DTHTMLElementDisplayStyleInline)
 				{
-					if (oneChild.displayStyle == DTHTMLElementDisplayStyleBlock)
+					if (oneChild.displayStyle == DTHTMLElementDisplayStyleBlock
+						|| ((DTHTMLElement *)oneChild.childNodes.firstObject).displayStyle == DTHTMLElementDisplayStyleBlock)
 					{
 						// trim off whitespace suffix
 						while ([[tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet ignorableWhitespaceCharacterSet]])

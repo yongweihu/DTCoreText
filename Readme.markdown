@@ -3,6 +3,10 @@ DTCoreText
 
 是原DTCoreText的fork，目的是为了优化将html转换为NSAttributedString的逻辑。
 
+待解决的问题：
+1. <span><div id="word_gram_1_62782"><div><div>  【语法信息】：V n</div><div>  【语法信息】：V</div></div></div></span>
+	这里的第一个div不会隔行显示
+
 This project aims to duplicate the methods present on Mac OSX which allow creation of `NSAttributedString` from HTML code on iOS. 
 
 The project covers two broad areas:

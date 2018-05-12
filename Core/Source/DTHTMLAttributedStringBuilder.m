@@ -362,7 +362,7 @@
 	CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
 	
 	// output metrics
-	DTLogInfo((@"DTCoreText created string from %@ HTML in %.2f sec", [NSString stringByFormattingBytes:[_data length]], endTime-startTime);
+	DTLogInfo(@"DTCoreText created string from %@ HTML in %.2f sec", [NSString stringByFormattingBytes:[_data length]], endTime-startTime);
 #endif
 	
 	return result;
