@@ -564,6 +564,21 @@ extern unsigned int default_css_len;
 	{
 		unichar c = [css characterAtIndex:i];
 		
+		// 过滤掉 @namespace 的内容
+		if (c == '@') {
+			NSString *namespace = @"@namespace";
+			if ([[css substringWithRange:NSMakeRange(i, namespace.length)] isEqualToString:namespace]) {
+				for (; i < length; i++) {
+					if ([css characterAtIndex:i] == '\n') {
+						break;
+					}
+				}
+				
+				braceMarker = i+1;
+				continue;
+			}
+		}
+
 		if (c == '/')
 		{
 			i++;
