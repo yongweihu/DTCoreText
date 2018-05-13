@@ -677,7 +677,8 @@
 		
 		if ([type isEqualToString:@"text/css"])
 		{
-			NSURL *stylesheetURL = [NSURL URLWithString:href relativeToURL:_baseURL];
+			// href中可能包含有空格，所以我们需要处理一下
+			NSURL *stylesheetURL = [NSURL URLWithString:[href stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] relativeToURL:_baseURL];
 			if ([stylesheetURL isFileURL])
 			{
 				NSString *stylesheetContent = [NSString stringWithContentsOfURL:stylesheetURL encoding:NSUTF8StringEncoding error:nil];
