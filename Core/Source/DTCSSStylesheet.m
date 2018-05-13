@@ -509,18 +509,23 @@ extern unsigned int default_css_len;
 		
 		if (colonRange.length==1)
 		{
-			pseudoSelector = [cleanSelector substringFromIndex:colonRange.location+1];
-			cleanSelector = [cleanSelector substringToIndex:colonRange.location];
-			
-			// prefix all rules with the pseudo-selector
-			for (NSString *oneRuleKey in [ruleDictionary allKeys])
-			{
-				id value = [ruleDictionary objectForKey:oneRuleKey];
+			// css中可能包含有转义字符，需要特殊处理一下
+			if (colonRange.location != 0 && [cleanSelector characterAtIndex:colonRange.location-1] == '\\') {
+				cleanSelector = [cleanSelector stringByReplacingOccurrencesOfString:@"\\" withString:@""];
+			} else {
+				pseudoSelector = [cleanSelector substringFromIndex:colonRange.location+1];
+				cleanSelector = [cleanSelector substringToIndex:colonRange.location];
 				
-				// prefix key with the pseudo selector
-				NSString *prefixedKey = [NSString stringWithFormat:@"%@:%@", pseudoSelector, oneRuleKey];
-				[ruleDictionary setObject:value forKey:prefixedKey];
-				[ruleDictionary removeObjectForKey:oneRuleKey];
+				// prefix all rules with the pseudo-selector
+				for (NSString *oneRuleKey in [ruleDictionary allKeys])
+				{
+					id value = [ruleDictionary objectForKey:oneRuleKey];
+					
+					// prefix key with the pseudo selector
+					NSString *prefixedKey = [NSString stringWithFormat:@"%@:%@", pseudoSelector, oneRuleKey];
+					[ruleDictionary setObject:value forKey:prefixedKey];
+					[ruleDictionary removeObjectForKey:oneRuleKey];
+				}
 			}
 		}
 		
