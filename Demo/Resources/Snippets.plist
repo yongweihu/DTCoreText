@@ -20,6 +20,14 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>测试现代英汉词典</string>
+		<key>File</key>
+		<string>mecd.html</string>
+		<key>Title</key>
+		<string>现代英汉词典</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>This demonstrates the features supported by the iOS 6 attributes.</string>
 		<key>File</key>
 		<string>iOS6.html</string>
