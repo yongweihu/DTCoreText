@@ -464,26 +464,22 @@ NSDictionary *_classesForNames = nil;
 				}
 				
 				// if previous node was inline and this child is block then we need a newline
-				/* 这里原有的添加newline的逻辑不能很好处理下面这种case：
-				 <span>
-				 	<div id="word_gram_1_62782">
-				 		<div>
-				 			<div>
-				 				【语法信息】：V n
-				 			</div>
-							<div>
-				 				【语法信息】：V
-				 			</div>
-				 		</div>
-				 	</div>
-				 </span>
-				 这里应该在第一个div之前添加\n，但是原处理逻辑是没有的。所以我们这里添加了以下判断：
+				/*
+				 这里原有添加newline的逻辑有两个问题：
+				 1. 不能很好处理下面这种case：
+				 <div>TEXT<span><div><div>TEXT</div><div>TEXT</div></div></span></div>
+				 这里前两个TEXT之间应该有换行，但是原处理逻辑是没有的。所以我们这里添加了以下判断：
 					((DTHTMLElement *)oneChild.childNodes.firstObject).displayStyle == DTHTMLElementDisplayStyleBlock
 				 也即是：如果当前节点（这里的span）为inline style，但其第一个字节点（这里的div）为block，我们需要给当前节点添加\n。
+				 2. 会在<br/>元素后面多添加\n，比如以下情况：
+				 <div>TEXT<span>TEXT</span>TEXT<br/>TEXT</div>
+				 在这个例子中，最后两个TEXT之间应该只有一个\n（也就是br)，但原逻辑会在<br/>之后再添加一个\n，导致最后两个TEXT之间有两个换行，所以需添加判断：
+				 	![oneChild isKindOfClass:[DTBreakHTMLElement class]]
+				 将<br>元素特殊处理一下
 				 */
 				if (previousChild && previousChild.displayStyle == DTHTMLElementDisplayStyleInline)
 				{
-					if (oneChild.displayStyle == DTHTMLElementDisplayStyleBlock
+					if ((oneChild.displayStyle == DTHTMLElementDisplayStyleBlock && ![oneChild isKindOfClass:[DTBreakHTMLElement class]])
 						|| ((DTHTMLElement *)oneChild.childNodes.firstObject).displayStyle == DTHTMLElementDisplayStyleBlock)
 					{
 						// trim off whitespace suffix

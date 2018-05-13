@@ -1242,6 +1242,7 @@
 }
 
 #pragma mark - 我的改动测试
+
 - (void)testSolveSpanDivStyleError
 {
 	NSAttributedString *output = [self attributedStringFromHTMLString:@"<html><body><div>TEXT<span><div><div>TEXT</div><div>TEXT</div></div></span>TEXT</div></body></html>" options:NULL];
@@ -1249,6 +1250,17 @@
 	XCTAssertTrue([output length]==20, @"Generated String should be 20 characters");
 	
 	NSString *expectedOutput = @"TEXT\nTEXT\nTEXT\nTEXT\n";
+	
+	XCTAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
+}
+
+- (void)testSolveRedundantNewLineError
+{
+	NSAttributedString *output = [self attributedStringFromHTMLString:@"<html><body><div>TEXT<span>TEXT</span>TEXT<br/>TEXT</div></body></html>" options:NULL];
+	
+	XCTAssertTrue([output length]==18, @"Generated String should be 20 characters");
+	
+	NSString *expectedOutput = @"TEXTTEXTTEXT\U00002028TEXT\n";
 	
 	XCTAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
 }
