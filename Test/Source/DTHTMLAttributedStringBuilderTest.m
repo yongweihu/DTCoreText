@@ -1265,4 +1265,14 @@
 	XCTAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
 }
 
+- (void)testLiWithBlockStyleError
+{
+	NSAttributedString *output = [self attributedStringFromHTMLString:@"<html><body><ul style=\"margin-bottom:1em\"><li style=\"display:block;margin-bottom:0.5em;margin-top:1em;\">TEXT1<div>TEXT2</div></li></ul></body></html>" options:NULL];
+	
+	CTParagraphStyleRef paragraphStyleRTL = (__bridge CTParagraphStyleRef)([output attribute:(id)kCTParagraphStyleAttributeName atIndex:3 effectiveRange:NULL]);
+	DTCoreTextParagraphStyle *styleRTL = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paragraphStyleRTL];
+	
+	XCTAssertTrue((styleRTL.paragraphSpacing == 6. && styleRTL.paragraphSpacingBefore == 12.), @"Expected paragraph style not matching");
+}
+
 @end

@@ -1442,9 +1442,16 @@ NSDictionary *_classesForNames = nil;
 			}
 		}
 	}
-	else if (_displayStyle == DTHTMLElementDisplayStyleListItem)
+	
+	/*
+	 对于<li>，其display style也可能是block，而不是DTHTMLElementDisplayStyleListItem，所以我们不用判断当前元素是否是listitem，只要其为li元素，我们都需要处理它的paragraphSpacing，比如：
+	 <ol style="margin-bottom:1em"><li style="display:block">TEXT<div style="margin:0">TEXT</div></li></ol>
+	 这里的li为block样式，而不是list item，但我们仍然需要重置paragraphSpacing，否则会导致整个ol块底部有2em边距。
+	 */
+	if (_displayStyle == DTHTMLElementDisplayStyleListItem || [self.name isEqualToString:@"li"])
 	{
 		self.paragraphStyle.paragraphSpacing = _margins.bottom;
+		self.paragraphStyle.paragraphSpacingBefore = _margins.top;
 	}
     
     NSString *coretextFontString = [styles objectForKey:@"-coretext-fontname"];
