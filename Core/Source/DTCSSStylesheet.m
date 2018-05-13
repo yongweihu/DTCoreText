@@ -578,7 +578,9 @@ extern unsigned int default_css_len;
 					
 					for (; i < length; i++)
 					{
-						if ([css characterAtIndex:i] == '/')
+						// 原处理逻辑中未判断/的前一个字符为*，这样会导致注释中含有单独的/字符时就会被当作注释结束。
+						if ([css characterAtIndex:i] == '/'
+							&& [css characterAtIndex:i-1] == '*')
 						{
 							break;
 						}
