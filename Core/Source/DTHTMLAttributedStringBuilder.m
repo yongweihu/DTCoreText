@@ -845,35 +845,36 @@
 								_willFlushCallback(theTag);
 							}
 							
-							NSAttributedString *nodeString = [theTag attributedString];
-							
-							if (nodeString)
-							{
-								// if this is a block element then we need a paragraph break before it
-								if (theTag.displayStyle != DTHTMLElementDisplayStyleInline)
+							@autoreleasepool {
+								NSAttributedString *nodeString = [theTag attributedString];
+								
+								if (nodeString)
 								{
-									if ([_tmpString length] && ![[_tmpString string] hasSuffix:@"\n"])
+									// if this is a block element then we need a paragraph break before it
+									if (theTag.displayStyle != DTHTMLElementDisplayStyleInline)
 									{
-										// trim off whitespace
-										while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet ignorableWhitespaceCharacterSet]])
+										if ([_tmpString length] && ![[_tmpString string] hasSuffix:@"\n"])
 										{
-											[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
+											// trim off whitespace
+											while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet ignorableWhitespaceCharacterSet]])
+											{
+												[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
+											}
+											
+											[_tmpString appendString:@"\n"];
 										}
-										
-										[_tmpString appendString:@"\n"];
+									}
+									
+									[_tmpString appendAttributedString:nodeString];
+									theTag.didOutput = YES;
+									
+									if (!_shouldKeepDocumentNodeTree)
+									{
+										// we don't need the children any more
+										[theTag removeAllChildNodes];
 									}
 								}
-								
-								[_tmpString appendAttributedString:nodeString];
-								theTag.didOutput = YES;
-								
-								if (!_shouldKeepDocumentNodeTree)
-								{
-									// we don't need the children any more
-									[theTag removeAllChildNodes];
-								}
 							}
-							
 						}
 					});
 				}
