@@ -267,3 +267,21 @@ table {
    border-spacing: 2px;
    border-color: gray;
 }
+
+/* 我新添加的内容 */
+dl {
+	display: block;
+	-webkit-margin-before: 1em;
+	-webkit-margin-after: 1em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+}
+
+dt {
+	display: block;
+}
+
+dd {
+	display: block;
+	-webkit-margin-start: 40px;
+}
