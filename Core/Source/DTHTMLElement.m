@@ -1382,14 +1382,14 @@ NSDictionary *_classesForNames = nil;
 		hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
 	}
 	
+	if ([self.name isEqualToString:@"ul"] || [self.name isEqualToString:@"ol"])
+	{
+		_listIndent = _padding.left + _margins.left;
+		_padding.left = 0;
+	}
+	
 	if (hasPadding)
 	{
-		if ([self.name isEqualToString:@"ul"] || [self.name isEqualToString:@"ol"])
-		{
-			_listIndent = _padding.left;
-			_padding.left = 0;
-		}
-		
 		// if we still have padding we need a block
 		if (_padding.left>0 || _padding.right>0 || _padding.top>0 || _padding.bottom>0)
 		{
