@@ -191,6 +191,32 @@ typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameLinePositioningOptions)
 	DTCoreTextLayoutFrameLinePositioningOptionAlgorithmLegacy = 2
 };
 
+/**
+ DTHTMLElement font variants
+ */
+typedef NS_ENUM(NSUInteger, DTHTMLElementTextTransformStyle)
+{
+	/**
+	 此元素文本无变化
+	 */
+	DTHTMLElementTextTransformStyleNone = 0,
+	
+	/**
+	 此元素文本中的每个单词以大写字母开头
+	 */
+	DTHTMLElementTextTransformStyleCapitalize,
+	
+	/**
+	 此元素文本中的每个单词全大写
+	 */
+	DTHTMLElementTextTransformStyleUppercase,
+	
+	/**
+	 此元素文本中的每个单词全小写
+	 */
+	DTHTMLElementTextTransformStyleLowercase,
+};
+
 // layouting
 
 // the value to use if the width is unknown

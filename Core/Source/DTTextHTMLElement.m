@@ -67,6 +67,10 @@
 			text = [_text stringByNormalizingWhitespace];
 		}
 		
+		if (_textTransform != DTHTMLElementTextTransformStyleNone) {
+			text = [self applyTextTransform];
+		}
+		
 		NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
 		
 		if (self.fontVariant == DTHTMLElementFontVariantNormal)
@@ -109,6 +113,23 @@
 				return [NSAttributedString synthesizedSmallCapsAttributedStringWithText:_text attributes:attributes];
 			}
 		}
+	}
+}
+
+- (NSString *)applyTextTransform
+{
+	switch (self.textTransform) {
+		case DTHTMLElementTextTransformStyleCapitalize:
+			return [_text capitalizedString];
+			
+		case DTHTMLElementTextTransformStyleUppercase:
+			return [_text uppercaseString];
+			
+		case DTHTMLElementTextTransformStyleLowercase:
+			return [_text lowercaseString];
+			
+		default:
+			return _text;
 	}
 }
 

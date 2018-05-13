@@ -1275,4 +1275,19 @@
 	XCTAssertTrue((styleRTL.paragraphSpacing == 6. && styleRTL.paragraphSpacingBefore == 12.), @"Expected paragraph style not matching");
 }
 
+- (void)testTextTransformCSS
+{
+	NSAttributedString *output = [self attributedStringFromHTMLString:@"<html><body><p style=\"text-transform:capitalize\">text</p></body></html>" options:NULL];
+	NSString *expectedOutput = @"Text\n";
+	XCTAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
+	
+	output = [self attributedStringFromHTMLString:@"<html><body><p style=\"text-transform:uppercase\">text</p></body></html>" options:NULL];
+	expectedOutput = @"TEXT\n";
+	XCTAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
+	
+	output = [self attributedStringFromHTMLString:@"<html><body><p style=\"text-transform:lowercase\">Text</p></body></html>" options:NULL];
+	expectedOutput = @"text\n";
+	XCTAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
+}
+
 @end

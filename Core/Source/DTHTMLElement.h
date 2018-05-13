@@ -80,6 +80,8 @@
 	CGFloat _pTextIndent;
 	
 	BOOL _shouldProcessCustomHTMLAttributes;
+	
+	DTHTMLElementTextTransformStyle _textTransform;
 }
 
 /**
@@ -221,6 +223,11 @@
  Whether the receiver is marked as float. While floating is not currently supported this can be used to add additional paragraph breaks.
  */
 @property (nonatomic, readonly) DTHTMLElementFloatStyle floatStyle;
+
+/**
+ 控制文本的大小写
+ */
+@property (nonatomic, assign) DTHTMLElementTextTransformStyle textTransform;
 
 /**
  Specifies that the textColor was inherited. Assigning textColor sets this flag to `NO`

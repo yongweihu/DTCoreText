@@ -1459,6 +1459,17 @@ NSDictionary *_classesForNames = nil;
     {
         _fontDescriptor.fontName = [styles objectForKey:@"-coretext-fontname"];
     }
+	
+	NSString *transformString = [styles objectForKey:@"text-transform"];
+	if (transformString) {
+		if ([transformString isEqualToString:@"capitalize"]) {
+			_textTransform = DTHTMLElementTextTransformStyleCapitalize;
+		} else if ([transformString isEqualToString:@"uppercase"]) {
+			_textTransform = DTHTMLElementTextTransformStyleUppercase;
+		} else if ([transformString isEqualToString:@"lowercase"]) {
+			_textTransform = DTHTMLElementTextTransformStyleLowercase;
+		}
+	}
 }
 
 - (DTCSSListStyle *)listStyle
@@ -1568,6 +1579,8 @@ NSDictionary *_classesForNames = nil;
 	
 	// we copy the link because we might need for it making the custom view
 	_textAttachment.hyperLinkURL = element.link;
+	
+	_textTransform = element.textTransform;
 }
 
 - (void)interpretAttributes
@@ -1758,6 +1771,7 @@ NSDictionary *_classesForNames = nil;
 @synthesize backgroundCornerRadius = _backgroundCornerRadius;
 @synthesize letterSpacing = _letterSpacing;
 @synthesize pTextIndent = _pTextIndent;
+@synthesize textTransform = _textTransform;
 
 @end
 
