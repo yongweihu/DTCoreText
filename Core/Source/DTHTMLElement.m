@@ -1541,6 +1541,7 @@ NSDictionary *_classesForNames = nil;
 {
 	_fontDescriptor = [element.fontDescriptor copy];
 	_paragraphStyle = [element.paragraphStyle copy];
+	_paragraphStyle.paragraphSpacing = 0.;
 
 	_headerLevel = element.headerLevel;
 
