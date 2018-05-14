@@ -7,13 +7,22 @@
 
 */
 .article {
-  margin-bottom: 2em;
+  margin-bottom: 1.5em;
+}
+
+.word {
+	font-weight:bold;
+	font-size:120%;
 }
 
 .num {
     color:#666666;
     font-weight:bold;
     font-size:95%;
+}
+
+.level {
+	font-family:"Times New Roman"
 }
 
 .pos {
