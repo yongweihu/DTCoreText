@@ -479,8 +479,9 @@ NSDictionary *_classesForNames = nil;
 				 */
 				if (previousChild && previousChild.displayStyle == DTHTMLElementDisplayStyleInline)
 				{
+					DTHTMLElement *firstChild = (DTHTMLElement *)oneChild.childNodes.firstObject;
 					if ((oneChild.displayStyle == DTHTMLElementDisplayStyleBlock && ![oneChild isKindOfClass:[DTBreakHTMLElement class]])
-						|| ((DTHTMLElement *)oneChild.childNodes.firstObject).displayStyle == DTHTMLElementDisplayStyleBlock)
+						|| (firstChild.displayStyle == DTHTMLElementDisplayStyleBlock && ![firstChild isKindOfClass:[DTBreakHTMLElement class]]))
 					{
 						// trim off whitespace suffix
 						while ([[tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet ignorableWhitespaceCharacterSet]])
