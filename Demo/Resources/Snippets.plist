@@ -12,6 +12,14 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>测试柯林斯简化版</string>
+		<key>File</key>
+		<string>collins3.html</string>
+		<key>Title</key>
+		<string>柯林斯词典简化版</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>测试柯林斯词典</string>
 		<key>File</key>
 		<string>collins_new.html</string>
