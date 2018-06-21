@@ -68,7 +68,7 @@
 		}
 		
 		if (_textTransform != DTHTMLElementTextTransformStyleNone) {
-			text = [self applyTextTransform];
+            text = [self applyTextTransform:text];
 		}
 		
 		NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
@@ -116,20 +116,20 @@
 	}
 }
 
-- (NSString *)applyTextTransform
+- (NSString *)applyTextTransform:(NSString *)text
 {
 	switch (self.textTransform) {
 		case DTHTMLElementTextTransformStyleCapitalize:
-			return [_text capitalizedString];
+			return [text capitalizedString];
 			
 		case DTHTMLElementTextTransformStyleUppercase:
-			return [_text uppercaseString];
+			return [text uppercaseString];
 			
 		case DTHTMLElementTextTransformStyleLowercase:
-			return [_text lowercaseString];
+			return [text lowercaseString];
 			
 		default:
-			return _text;
+			return text;
 	}
 }
 
