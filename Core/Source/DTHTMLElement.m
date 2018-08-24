@@ -476,8 +476,14 @@ NSDictionary *_classesForNames = nil;
 				 在这个例子中，最后两个TEXT之间应该只有一个\n（也就是br)，但原逻辑会在<br/>之后再添加一个\n，导致最后两个TEXT之间有两个换行，所以需添加判断：
 				 	![oneChild isKindOfClass:[DTBreakHTMLElement class]]
 				 将<br>元素特殊处理一下
+                 3. 无法处理以下情况：
+                 <span>TEXT</span><span><span display="block">TEXT</span></span>
+                 这里的两个TEXT之间应该有换行符，因为第二个TEXT的display方式是block。所以我们做如下判断：
+                    (!previousChild && self.displayStyle == DTHTMLElementDisplayStyleInline)
+                 也就是如果当前是第一个节点（也就是previousChild为nil），并且当前节点的style为inline，我们就给当前节点添加\n。
 				 */
-				if (previousChild && previousChild.displayStyle == DTHTMLElementDisplayStyleInline)
+				if ((previousChild && previousChild.displayStyle == DTHTMLElementDisplayStyleInline)
+                    || (!previousChild && self.displayStyle == DTHTMLElementDisplayStyleInline))
 				{
 					DTHTMLElement *firstChild = (DTHTMLElement *)oneChild.childNodes.firstObject;
 					if ((oneChild.displayStyle == DTHTMLElementDisplayStyleBlock && ![oneChild isKindOfClass:[DTBreakHTMLElement class]])
@@ -523,6 +529,13 @@ NSDictionary *_classesForNames = nil;
 								{
 									break;
 								}
+                                
+                                // 如果当前节点为inline样式，而子节点为block样式，原有的逻辑会把子节点的\n删掉，所以我们做个判断。
+                                // 如果tmpString不含\n，而子节点含，我们就不清除whitespace
+                                if ([[nodeString string] hasPrefix:@"\n"] && ![[tmpString string] hasSuffix:@"\n"])
+                                {
+                                    break;
+                                }
 								
 								nodeString = [nodeString attributedSubstringFromRange:NSMakeRange(1, [nodeString length]-1)];
 							}
