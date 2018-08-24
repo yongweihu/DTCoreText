@@ -1295,7 +1295,12 @@ NSDictionary *_classesForNames = nil;
 		_preserveNewlines = NO;
 	}
 	
-	NSString *displayString = [styles objectForKey:@"display"];
+    // 优先使用tag中的display属性
+    NSString *displayString = [self.attributes objectForKey:@"display"];
+    if (!displayString) {
+        displayString = [styles objectForKey:@"display"];
+    }
+    
 	if (displayString)
 	{
 		if ([displayString isEqualToString:@"none"])
