@@ -560,6 +560,7 @@ extern unsigned int default_css_len;
 	
 	NSUInteger length = [css length];
 	
+    NSMutableArray *comments; // 记录selector中包含的注释
 	for (NSUInteger i = 0; i < length; i++)
 	{
 		unichar c = [css characterAtIndex:i];
@@ -581,6 +582,8 @@ extern unsigned int default_css_len;
 
 		if (c == '/')
 		{
+            int commentStart = i; // 记录注释的开始
+            
 			i++;
 			
 			if (i < length)
@@ -603,7 +606,12 @@ extern unsigned int default_css_len;
 					
 					if (i < length)
 					{
-						braceMarker = i+1;
+                        if (comments) {
+                            [comments addObject:[css substringWithRange:NSMakeRange(commentStart, i-commentStart+1)]];
+                        } else {
+                            braceMarker = i+1;
+                        }
+                        
 						continue;
 					}
 					else
@@ -642,6 +650,8 @@ extern unsigned int default_css_len;
 				
 				// And mark our position so we can grab the rule's CSS when it is closed
 				braceMarker = i + 1;
+                
+                comments = [NSMutableArray new]; // 从这个位置开始记录所有的注释
 			}
 			
 			// Increase the brace level.
@@ -655,6 +665,13 @@ extern unsigned int default_css_len;
 			if (braceLevel == 1)
 			{
 				NSString *rule = [css substringWithRange:NSMakeRange(braceMarker, i-braceMarker)];
+                
+                // 删除 rule 中包含的注释
+                for (NSString *comment in comments) {
+                    rule = [rule stringByReplacingOccurrencesOfString:comment withString:@""];
+                }
+                
+                comments = nil; // 重制comments
 				
 				[self _addStyleRule:rule withSelector: selector];
 				
