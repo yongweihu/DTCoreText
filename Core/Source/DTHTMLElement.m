@@ -1296,38 +1296,10 @@ NSDictionary *_classesForNames = nil;
 	}
 	
     // 优先使用tag中的display属性
-    NSString *displayString = [self.attributes objectForKey:@"display"];
-    if (!displayString) {
-        displayString = [styles objectForKey:@"display"];
+    if ([self.attributes objectForKey:@"display"] == nil) {
+        NSString *displayString = [styles objectForKey:@"display"];
+        [self parseDisplayString:displayString];
     }
-    
-	if (displayString)
-	{
-		if ([displayString isEqualToString:@"none"])
-		{
-			_displayStyle = DTHTMLElementDisplayStyleNone;
-		}
-		else if ([displayString isEqualToString:@"block"])
-		{
-			_displayStyle = DTHTMLElementDisplayStyleBlock;
-		}
-		else if ([displayString isEqualToString:@"inline"])
-		{
-			_displayStyle = DTHTMLElementDisplayStyleInline;
-		}
-		else if ([displayString isEqualToString:@"list-item"])
-		{
-			_displayStyle = DTHTMLElementDisplayStyleListItem;
-		}
-		else if ([displayString isEqualToString:@"table"])
-		{
-			_displayStyle = DTHTMLElementDisplayStyleTable;
-		}
-		else if ([verticalAlignment isEqualToString:@"inherit"])
-		{
-			// nothing to do
-		}
-	}
 	
 	NSString *borderColor = [styles objectForKey:@"border-color"];
 	if (borderColor)
@@ -1475,6 +1447,38 @@ NSDictionary *_classesForNames = nil;
     if (textIndentStr)
     {
         self.paragraphStyle.firstLineHeadIndent += [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];;
+    }
+}
+
+// 解析 display 属性
+- (void)parseDisplayString:(NSString *)displayString
+{
+    if (displayString)
+    {
+        if ([displayString isEqualToString:@"none"])
+        {
+            _displayStyle = DTHTMLElementDisplayStyleNone;
+        }
+        else if ([displayString isEqualToString:@"block"])
+        {
+            _displayStyle = DTHTMLElementDisplayStyleBlock;
+        }
+        else if ([displayString isEqualToString:@"inline"])
+        {
+            _displayStyle = DTHTMLElementDisplayStyleInline;
+        }
+        else if ([displayString isEqualToString:@"list-item"])
+        {
+            _displayStyle = DTHTMLElementDisplayStyleListItem;
+        }
+        else if ([displayString isEqualToString:@"table"])
+        {
+            _displayStyle = DTHTMLElementDisplayStyleTable;
+        }
+//        else if ([verticalAlignment isEqualToString:@"inherit"])
+//        {
+//            // nothing to do
+//        }
     }
 }
 
@@ -1651,6 +1655,12 @@ NSDictionary *_classesForNames = nil;
 			_paragraphStyle.alignment = kCTTextAlignmentRight;
 		}
 	}
+    
+    // 解析 display 属性
+    NSString *displayString = [self.attributes objectForKey:@"display"];
+    if (displayString) {
+        [self parseDisplayString:displayString];
+    }
 }
 
 #pragma mark - Properties
