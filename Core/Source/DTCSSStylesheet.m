@@ -875,8 +875,8 @@ extern unsigned int default_css_len;
         	    continue;
 	        }
 	        
-		NSArray *selectorParts = [selector componentsSeparatedByString:@" "];
-		
+		NSArray *selectorParts = [[selector stringByReplacingOccurrencesOfString:@">" withString:@" "] componentsSeparatedByString:@" "];
+        
 		if (selectorParts.count < 2)
 		{
 			continue;
@@ -889,6 +889,10 @@ extern unsigned int default_css_len;
 		for (NSUInteger j = selectorParts.count; j-- > 0;)
 		{
 			NSString *selectorPart = [selectorParts objectAtIndex:j];
+            if (selectorPart.length == 0) {
+                continue;
+            }
+            
 			BOOL matched = NO;
 			
 			if (selectorPart.length)

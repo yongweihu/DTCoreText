@@ -12,10 +12,10 @@
 
 #import "DTHTMLAttributedStringBuilder.h"
 
+#import "DTCSSStylesheet.h"
 #import "DTTextHTMLElement.h"
 #import "DTBreakHTMLElement.h"
 #import "DTStylesheetHTMLElement.h"
-#import "DTCSSStylesheet.h"
 #import "DTCoreTextFontDescriptor.h"
 #import "DTHTMLParserTextNode.h"
 
@@ -474,6 +474,21 @@
 	
 	[_tagStartHandlers setObject:[listBlock copy] forKey:@"ul"];
 	[_tagStartHandlers setObject:[listBlock copy] forKey:@"ol"];
+    
+    void (^listItemBlock)(void) = ^
+    {
+        // create the appropriate list style from CSS
+        if ([_currentTag hasListStyleDefinition]) {
+            DTCSSListStyle *newListStyle = [_currentTag listStyle];
+            
+            NSMutableArray *textLists = [_currentTag.paragraphStyle.textLists mutableCopy];
+            [textLists replaceObjectAtIndex:textLists.count - 1 withObject:newListStyle];
+            
+            _currentTag.paragraphStyle.textLists = textLists;
+        }
+    };
+    
+    [_tagStartHandlers setObject:[listItemBlock copy] forKey:@"li"];
 	
 	void (^h1Block)(void) = ^
 	{

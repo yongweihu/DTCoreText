@@ -115,7 +115,7 @@
  Creates a <DTCSSListStyle> to match the CSS styles
  */
 - (DTCSSListStyle *)listStyle;
-
+- (BOOL)hasListStyleDefinition;
 
 /**
  @name Getting Element Information

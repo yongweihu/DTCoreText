@@ -1510,6 +1510,11 @@ NSDictionary *_classesForNames = nil;
 	return style;
 }
 
+- (BOOL)hasListStyleDefinition
+{
+    return [_styles objectForKey:@"list-style-type"];
+}
+
 #pragma mark - Calulcating Properties
 
 - (id)valueForKeyPathWithInheritance:(NSString *)keyPath
