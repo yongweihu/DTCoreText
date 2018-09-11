@@ -568,6 +568,11 @@ NSDictionary *_classesForNames = nil;
 			{
 				if (![[tmpString string] hasSuffix:@"\n"])
 				{
+                    while ([[tmpString string] hasSuffix:UNICODE_LINE_FEED])
+                    {
+                        [tmpString deleteCharactersInRange:NSMakeRange([tmpString length]-1, 1)];
+                    }
+                    
 					if ([tmpString length])
 					{
 						// extend font and paragraph style with the \n
@@ -1343,29 +1348,22 @@ NSDictionary *_classesForNames = nil;
 	NSString *allKeys = [[styles allKeys] componentsJoinedByString:@";"];
 	
 	// there can only be padding if the word "margin" occurs in the styles keys
-	if ([allKeys rangeOfString:@"-webkit-margin"].length)
-	{
-		hasMargins = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins] || hasMargins);
-	}
-	
 	if ([allKeys rangeOfString:@"margin"].length)
 	{
 		hasMargins = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins] || hasMargins);
-	}
+    } else if ([allKeys rangeOfString:@"-webkit-margin"].length) {
+        hasMargins = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins] || hasMargins);
+    }
 	
 	BOOL hasPadding = NO;
 	
 	// there can only be padding if the word "padding" occurs in the styles keys
-	if ([allKeys rangeOfString:@"-webkit-padding"].length)
-	{
-		hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
-	}
-	
 	if ([allKeys rangeOfString:@"padding"].length)
 	{
-		
 		hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
-	}
+    } else if ([allKeys rangeOfString:@"-webkit-padding"].length) {
+        hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
+    }
 	
 	if ([self.name isEqualToString:@"ul"] || [self.name isEqualToString:@"ol"])
 	{

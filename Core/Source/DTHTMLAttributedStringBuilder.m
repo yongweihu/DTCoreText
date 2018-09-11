@@ -394,7 +394,12 @@
 	{
 		_currentTag.paragraphStyle.headIndent += (CGFloat)25.0 * _textScale;
 		_currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent;
-		_currentTag.paragraphStyle.paragraphSpacing = _defaultFontDescriptor.pointSize;
+		
+        // 如果css文件中为blockquote设置了margin，我们就用css中的margin设置，而不是直接设置。
+        NSString *allKeys = [[[_currentTag styles] allKeys] componentsJoinedByString:@";"];
+        if (![allKeys rangeOfString:@"margin"].length) {
+            _currentTag.paragraphStyle.paragraphSpacing = _defaultFontDescriptor.pointSize;
+        }
 	};
 	
 	[_tagStartHandlers setObject:[blockquoteBlock copy] forKey:@"blockquote"];

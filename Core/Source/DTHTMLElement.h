@@ -272,6 +272,11 @@
 @property (nonatomic, assign) BOOL shouldProcessCustomHTMLAttributes;
 
 /**
+ 记录css文件中设置的此tag的样式属性。
+ */
+@property (nonatomic, strong, readonly) NSDictionary *styles;
+
+/**
  @name Working with HTML Attributes
  */
 
