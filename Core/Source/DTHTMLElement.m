@@ -1347,22 +1347,26 @@ NSDictionary *_classesForNames = nil;
 	
 	NSString *allKeys = [[styles allKeys] componentsJoinedByString:@";"];
 	
+    if ([allKeys rangeOfString:@"-webkit-margin"].length) {
+        hasMargins = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins] || hasMargins);
+    }
+    
 	// there can only be padding if the word "margin" occurs in the styles keys
 	if ([allKeys rangeOfString:@"margin"].length)
 	{
 		hasMargins = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins] || hasMargins);
-    } else if ([allKeys rangeOfString:@"-webkit-margin"].length) {
-        hasMargins = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins] || hasMargins);
     }
 	
 	BOOL hasPadding = NO;
 	
+    if ([allKeys rangeOfString:@"-webkit-padding"].length) {
+        hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
+    }
+    
 	// there can only be padding if the word "padding" occurs in the styles keys
 	if ([allKeys rangeOfString:@"padding"].length)
 	{
 		hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
-    } else if ([allKeys rangeOfString:@"-webkit-padding"].length) {
-        hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
     }
 	
 	if ([self.name isEqualToString:@"ul"] || [self.name isEqualToString:@"ol"])
