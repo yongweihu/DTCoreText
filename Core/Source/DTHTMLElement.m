@@ -736,29 +736,29 @@ NSDictionary *_classesForNames = nil;
 		{
 			if ([oneKey hasSuffix:leftKey])
 			{
-				edgeInsets.left = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.left = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:bottomKey])
 			{
-				edgeInsets.bottom = [attributeValue	pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.bottom = [attributeValue	pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:rightKey])
 			{
-				edgeInsets.right = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.right = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:topKey])
 			{
-				edgeInsets.top = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.top = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320];
 				didModify = YES;
 			}
 		}
 		else
 		{
 			// shortcut with multiple values
-			edgeInsets = [attributeValue DTEdgeInsetsRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+			edgeInsets = [attributeValue DTEdgeInsetsRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320];
 			didModify = YES;
 		}
 	}
@@ -1459,7 +1459,7 @@ NSDictionary *_classesForNames = nil;
     NSString *textIndentStr = [styles objectForKey:@"text-indent"];
     if (textIndentStr)
     {
-        self.paragraphStyle.firstLineHeadIndent += [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];;
+        self.paragraphStyle.firstLineHeadIndent += [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale pageWidth:320];;
     }
 }
 

@@ -66,6 +66,11 @@
 
 - (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale
 {
+    return [self pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:textScale pageWidth:textSize];
+}
+
+- (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale pageWidth:(CGFloat)pageWidth
+{
 	NSUInteger stringLength = [self length];
 	unichar *_characters = calloc(stringLength, sizeof(unichar));
 	[self getCharacters:_characters range:NSMakeRange(0, stringLength)];
@@ -126,7 +131,7 @@
 		if (ch == '%')
 		{
 			// percent value
-			value *= textSize / 100.0f;
+			value *= pageWidth / 100.0f;
 		}
 		else if (ch == 'e')
 		{
@@ -172,6 +177,11 @@
 #pragma mark - Margins / Padding
 
 - (DTEdgeInsets)DTEdgeInsetsRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale
+{
+    return [self DTEdgeInsetsRelativeToCurrentTextSize:textSize textScale:textScale pageWidth:textSize];
+}
+
+- (DTEdgeInsets)DTEdgeInsetsRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale pageWidth:(CGFloat)pageWidth
 {
 	DTEdgeInsets edgeInsets = {0,0,0,0};
 	

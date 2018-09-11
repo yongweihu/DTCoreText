@@ -32,6 +32,7 @@
  @returns A float that is the textSize
  */
 - (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale;
+- (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale pageWidth:(CGFloat)pageWidth;
 
 /**
  Decodes edge inset values from the CSS attribute string. This is used for margin and padding which might have varying number of elements.
@@ -40,6 +41,7 @@
  @returns The edge insets that this describes
  */
 - (DTEdgeInsets)DTEdgeInsetsRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale;
+- (DTEdgeInsets)DTEdgeInsetsRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale pageWidth:(CGFloat)pageWidth;
 
 /**
  Parse CSS shadow styles, consisting of color, blur, and offset, out of this string. The input string must be comma delimited in the format: <length> <length> <length>? <color>? where the third length and the color are not required per CSS shadows. To calculate the sizes of the blur and offset pixelSizeOfCSSMeasureRelativeToCurrentTextSize is used. Used in DTHTMLElement.
