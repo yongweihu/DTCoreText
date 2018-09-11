@@ -6,7 +6,7 @@
 #import <ApplicationServices/ApplicationServices.h>
 #endif
 
-#define DTCoreTextVersion   2
+#define DTCoreTextVersion   3
 
 // global constants
 #import "DTCoreTextMacros.h"
