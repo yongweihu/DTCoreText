@@ -32,6 +32,9 @@ body
 {
 	/* safari has a 8 px margin here */
 	display:block;
+
+    /* yongwei: default page marge is 0 */
+    margin:0;
 }
 
 article,aside,footer,header,hgroup,nav,section
@@ -42,7 +45,10 @@ article,aside,footer,header,hgroup,nav,section
 p
 {
 	display:block;
-	-webkit-margin-after:1em;
+
+    /* yongwei: default paragraph margin is set to 0 */
+	-webkit-margin-before:0;
+	-webkit-margin-after:0;
 	-webkit-margin-start:0;
 	-webkit-margin-end:0;
 }
@@ -268,7 +274,7 @@ table {
    border-color: gray;
 }
 
-/* 我新添加的内容 */
+/* yongwei: added this from Safari */
 dl {
 	display: block;
 	-webkit-margin-before: 1em;
