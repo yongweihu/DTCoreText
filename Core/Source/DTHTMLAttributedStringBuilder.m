@@ -428,7 +428,14 @@
 		
 		NSURL *link = [NSURL URLWithString:cleanString];
         if (link == nil) {
-            link = [NSURL URLWithString:[cleanString stringByURLEncoding]];
+            NSRange schemeRange = [cleanString rangeOfString:@"://"];
+            if (schemeRange.length == 0) {
+                link = [NSURL URLWithString:[cleanString stringByURLEncoding]];
+            } else {
+                NSString *schemeString = [cleanString substringToIndex:NSMaxRange(schemeRange)];
+                NSString *urlString = [cleanString substringFromIndex:NSMaxRange(schemeRange)];
+                link = [NSURL URLWithString:[schemeString stringByAppendingString:[urlString stringByURLEncoding]]];
+            }
         }
 		
 		// deal with relative URL
