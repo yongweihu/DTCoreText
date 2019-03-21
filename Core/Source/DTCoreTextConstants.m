@@ -3,9 +3,10 @@
 // standard options
 
 #if TARGET_OS_IPHONE
-NSString * const NSBaseURLDocumentOption = @"NSBaseURLDocumentOption";
-NSString * const NSTextEncodingNameDocumentOption = @"NSTextEncodingNameDocumentOption";
-NSString * const NSTextSizeMultiplierDocumentOption = @"NSTextSizeMultiplierDocumentOption";
+// 以下参数系统已定义，这里不需要重新定义，否则会冲突
+NSString * const NSBaseURLDocumentOption = @"BaseURL";
+NSString * const NSTextEncodingNameDocumentOption = @"TextEncodingName";
+NSString * const NSTextSizeMultiplierDocumentOption = @"TextSizeMultiplier";
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_7_0
 NSString * const NSAttachmentAttributeName = @"NSAttachmentAttributeName";
