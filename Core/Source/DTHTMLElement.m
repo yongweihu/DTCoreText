@@ -1514,7 +1514,7 @@ NSDictionary *_classesForNames = nil;
 
 - (BOOL)hasListStyleDefinition
 {
-    return [_styles objectForKey:@"list-style-type"];
+    return [_styles objectForKey:@"list-style-type"] != nil;
 }
 
 #pragma mark - Calulcating Properties

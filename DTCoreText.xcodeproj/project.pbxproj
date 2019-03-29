@@ -52,7 +52,6 @@
 		948723CC1D4B131A00274167 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 948723B21D4B130000274167 /* DTWebVideoView.m */; };
 		948723CD1D4B131B00274167 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 948723B21D4B130000274167 /* DTWebVideoView.m */; };
 		948723CE1D4B131C00274167 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 948723B21D4B130000274167 /* DTWebVideoView.m */; };
-		94D24B0C1D4AFE7800C7F33C /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		94D24B0D1D4AFE7800C7F33C /* CTLineUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4266937D1B56F60D00F9DBFC /* CTLineUtils.m */; };
 		94D24B0E1D4AFE7800C7F33C /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93F14863E8700E1AFD9 /* NSAttributedStringRunDelegates.m */; };
 		94D24B0F1D4AFE7800C7F33C /* DTLazyImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92D14863E8700E1AFD9 /* DTLazyImageView.m */; };
@@ -262,7 +261,6 @@
 		A74A7AAD1B617250004163BE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A74A7AAC1B617250004163BE /* QuartzCore.framework */; };
 		A74F6FD616DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */; };
 		A758EE6B1965A2A400773D22 /* libDTAnimatedGIF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F0C43A1965A0D600D7FAFB /* libDTAnimatedGIF.a */; };
-		A758FC9814DBCF20007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A75C6C72141798CE00AEE350 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */; };
 		A760F54014F56E8E00AD1B0E /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A762704017155420005F0CEC /* DTCoreTextFontCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91914863E8700E1AFD9 /* DTCoreTextFontCollection.m */; };
@@ -517,7 +515,6 @@
 		A79BA6BD1B46A2700086C2F6 /* DTTextBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7081EA11503645F002987F1 /* DTTextBlock.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A79BA6BE1B46A2700086C2F6 /* DTTextBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = A7081EA215036460002987F1 /* DTTextBlock.m */; };
 		A79BA6C51B46A3AA0086C2F6 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A79BA6C41B46A3AA0086C2F6 /* libxml2.dylib */; };
-		A79BA6CD1B46A4250086C2F6 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A79BA8261B46E1360086C2F6 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A79BA8251B46E1360086C2F6 /* Launch Screen.xib */; };
 		A79BA8431B46E55D0086C2F6 /* DTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79BA6571B46A1FB0086C2F6 /* DTFoundation.framework */; };
 		A79CA82417FC9648001EBA6E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79CA82317FC9648001EBA6E /* UIKit.framework */; };
@@ -664,7 +661,6 @@
 		A7F5671714D841EA00D1F167 /* NSString+CSS.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F5671314D841E900D1F167 /* NSString+CSS.m */; };
 		A7F5672814D8506C00D1F167 /* NSAttributedString+SmallCaps.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F5672514D8506B00D1F167 /* NSAttributedString+SmallCaps.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F5672A14D8506C00D1F167 /* NSAttributedString+SmallCaps.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F5672614D8506C00D1F167 /* NSAttributedString+SmallCaps.m */; };
-		A7F7EF781573603100F5A4D0 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A7F7EF7A1573603100F5A4D0 /* DTAttributedTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */; };
 		A7F7EF7B1573603100F5A4D0 /* DTAttributedTextContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91314863E8700E1AFD9 /* DTAttributedTextContentView.m */; };
 		A7F7EF7C1573603100F5A4D0 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91514863E8700E1AFD9 /* DTAttributedTextView.m */; };
@@ -733,6 +729,15 @@
 		A7F7EFC81573603100F5A4D0 /* DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A672B91532F2D100920A18 /* DTCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F842F416D38BC300BCD63F /* FontSizes.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB84FB168ED63A00D686B7 /* FontSizes.html */; };
 		A7FB12C9175F49A400D4B7F0 /* DTCoreTextFontOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2114863EF100E1AFD9 /* DTCoreTextFontOverrides.plist */; };
+		A901E0EC22491A1100FE8DBC /* default.css.c in Sources */ = {isa = PBXBuildFile; fileRef = A901E04A224919C500FE8DBC /* default.css.c */; };
+		A901E0ED22491A3700FE8DBC /* default.css.c in Sources */ = {isa = PBXBuildFile; fileRef = A901E04A224919C500FE8DBC /* default.css.c */; };
+		A901E0EE22491A3700FE8DBC /* default.css.c in Sources */ = {isa = PBXBuildFile; fileRef = A901E04A224919C500FE8DBC /* default.css.c */; };
+		A901E0EF22491A3800FE8DBC /* default.css.c in Sources */ = {isa = PBXBuildFile; fileRef = A901E04A224919C500FE8DBC /* default.css.c */; };
+		A901E0F022491A3800FE8DBC /* default.css.c in Sources */ = {isa = PBXBuildFile; fileRef = A901E04A224919C500FE8DBC /* default.css.c */; };
+		A901F5112249CD6F00FE8DBC /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A901F5102249CD6F00FE8DBC /* libiconv.tbd */; };
+		A901F5AB2249D08700FE8DBC /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A901F5102249CD6F00FE8DBC /* libiconv.tbd */; };
+		A901F5AC2249D0F700FE8DBC /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A901F5102249CD6F00FE8DBC /* libiconv.tbd */; };
+		A90B177A2249DE8E00786D36 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A901F5102249CD6F00FE8DBC /* libiconv.tbd */; };
 		A91A596B20A6C8BE00A81CBE /* collins_new.css in Resources */ = {isa = PBXBuildFile; fileRef = A91A595320A6C8BD00A81CBE /* collins_new.css */; };
 		A91A596C20A6C8BE00A81CBE /* collins_new.html in Resources */ = {isa = PBXBuildFile; fileRef = A91A596A20A6C8BD00A81CBE /* collins_new.html */; };
 		A91A596F20A7C32B00A81CBE /* mecd.html in Resources */ = {isa = PBXBuildFile; fileRef = A91A596D20A7C32A00A81CBE /* mecd.html */; };
@@ -781,7 +786,6 @@
 		E2262DFE163833AD00BFDAD7 /* DTTextBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7081EA11503645F002987F1 /* DTTextBlock.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E2262DFF163833AD00BFDAD7 /* DTTextBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = A7081EA215036460002987F1 /* DTTextBlock.m */; };
 		E2262E031638346200BFDAD7 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */; };
-		E2262E0B1638351C00BFDAD7 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		E2262EA41638485F00BFDAD7 /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FD3C5FEB1F510E9D000352CE /* DTCoreTextLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91F14863E8700E1AFD9 /* DTCoreTextLayouter.m */; };
 		FD3C5FEC1F510E9D000352CE /* DTCoreTextLayoutFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92114863E8700E1AFD9 /* DTCoreTextLayoutFrame.m */; };
@@ -1227,7 +1231,7 @@
 		A74A7AAC1B617250004163BE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		A74C953514DC0C69002B5A45 /* MalformedURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MalformedURL.html; sourceTree = "<group>"; };
 		A74C973D14DC5294002B5A45 /* Emoji.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Emoji.html; sourceTree = "<group>"; };
-		A74F6FCB16DB9AF500C12307 /* DTCoreText.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = DTCoreText.podspec; path = ../DTCoreText.podspec; sourceTree = "<group>"; };
+		A74F6FCB16DB9AF500C12307 /* DTCoreText.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = DTCoreText.podspec; path = ../DTCoreText.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		A74F6FD416DBA48E00C12307 /* DTCoreTextParagraphStyleTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextParagraphStyleTest.h; sourceTree = "<group>"; };
 		A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextParagraphStyleTest.m; sourceTree = "<group>"; };
 		A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -1235,7 +1239,6 @@
 		A7675E76172EA24700C548CB /* NSAttributedString+DTDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+DTDebug.m"; sourceTree = "<group>"; };
 		A768BE4617FC547E008834C6 /* NSDictionaryDTCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDictionaryDTCoreText.m; sourceTree = "<group>"; };
 		A76994F614DBB3DD0047CC8D /* NavTag.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = NavTag.html; sourceTree = "<group>"; };
-		A76994F914DBB5F70047CC8D /* default.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = default.css; sourceTree = "<group>"; };
 		A76C23B1183535A300F54F02 /* Oliver@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Oliver@2x.jpg"; sourceTree = "<group>"; };
 		A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+DTCoreText.h"; sourceTree = "<group>"; };
 		A76D45121732A512006A7CDA /* NSDictionary+DTCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+DTCoreText.m"; sourceTree = "<group>"; };
@@ -1437,6 +1440,8 @@
 		A7F5672514D8506B00D1F167 /* NSAttributedString+SmallCaps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+SmallCaps.h"; sourceTree = "<group>"; };
 		A7F5672614D8506C00D1F167 /* NSAttributedString+SmallCaps.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+SmallCaps.m"; sourceTree = "<group>"; };
 		A7F7EFCD1573603100F5A4D0 /* libDTCoreText_no_DTFoundation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDTCoreText_no_DTFoundation.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A901E04A224919C500FE8DBC /* default.css.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = default.css.c; sourceTree = "<group>"; };
+		A901F5102249CD6F00FE8DBC /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.1.sdk/usr/lib/libiconv.tbd; sourceTree = DEVELOPER_DIR; };
 		A91A595320A6C8BD00A81CBE /* collins_new.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = collins_new.css; sourceTree = "<group>"; };
 		A91A596A20A6C8BD00A81CBE /* collins_new.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = collins_new.html; sourceTree = "<group>"; };
 		A91A596D20A7C32A00A81CBE /* mecd.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = mecd.html; sourceTree = "<group>"; };
@@ -1453,6 +1458,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A901F5AC2249D0F700FE8DBC /* libiconv.tbd in Frameworks */,
 				A7949A0014C6256B00A8CCDE /* libxml2.dylib in Frameworks */,
 				A75C6C72141798CE00AEE350 /* MobileCoreServices.framework in Frameworks */,
 				A7D29D661CB68D470068F043 /* DTCoreText.framework in Frameworks */,
@@ -1486,6 +1492,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A901F5AB2249D08700FE8DBC /* libiconv.tbd in Frameworks */,
 				A758EE6B1965A2A400773D22 /* libDTAnimatedGIF.a in Frameworks */,
 				A71F5B7617FAB89500D5E42C /* libDTHTMLParser_iOS.a in Frameworks */,
 				A71F5B7517FAB88F00D5E42C /* libDTFoundation.a in Frameworks */,
@@ -1497,6 +1504,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A90B177A2249DE8E00786D36 /* libiconv.tbd in Frameworks */,
 				A79CA82617FC9651001EBA6E /* MobileCoreServices.framework in Frameworks */,
 				A79CA82417FC9648001EBA6E /* UIKit.framework in Frameworks */,
 				A70E630116C254F5009B47BF /* libDTCoreText.a in Frameworks */,
@@ -1521,6 +1529,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A901F5112249CD6F00FE8DBC /* libiconv.tbd in Frameworks */,
 				A74A7AAD1B617250004163BE /* QuartzCore.framework in Frameworks */,
 				A74A7AAB1B617227004163BE /* CoreGraphics.framework in Frameworks */,
 				A74A7AA91B617222004163BE /* UIKit.framework in Frameworks */,
@@ -1586,6 +1595,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A901F5102249CD6F00FE8DBC /* libiconv.tbd */,
 				A74A7AAC1B617250004163BE /* QuartzCore.framework */,
 				A74A7AAA1B617227004163BE /* CoreGraphics.framework */,
 				A74A7AA81B617222004163BE /* UIKit.framework */,
@@ -1907,6 +1917,7 @@
 		A7949A4414CAF56300A8CCDE /* HTML Parsing */ = {
 			isa = PBXGroup;
 			children = (
+				A901E04A224919C500FE8DBC /* default.css.c */,
 				A7C5D00614D7DA6500AF1D75 /* Dual Platform */,
 				A7AE58021725330400A9BF61 /* DTHTMLElement */,
 				A7AE58091725332D00A9BF61 /* DTTextAttachment */,
@@ -1923,7 +1934,6 @@
 				94DE4B4318B5968D00F0BA6D /* NSCoder+DTCompatibility.m */,
 				A788C92814863E8700E1AFD9 /* DTCSSStylesheet.h */,
 				A788C92914863E8700E1AFD9 /* DTCSSStylesheet.m */,
-				A76994F914DBB5F70047CC8D /* default.css */,
 				A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */,
 				A76D45121732A512006A7CDA /* NSDictionary+DTCoreText.m */,
 				A7F5671214D841E900D1F167 /* NSString+CSS.h */,
@@ -3014,7 +3024,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				94D24B0C1D4AFE7800C7F33C /* default.css in Sources */,
 				94D24B0D1D4AFE7800C7F33C /* CTLineUtils.m in Sources */,
 				94D24B0E1D4AFE7800C7F33C /* NSAttributedStringRunDelegates.m in Sources */,
 				94D24B0F1D4AFE7800C7F33C /* DTLazyImageView.m in Sources */,
@@ -3065,6 +3074,7 @@
 				94D24B3D1D4AFE7800C7F33C /* DTDictationPlaceholderTextAttachment.m in Sources */,
 				94D24B3E1D4AFE7800C7F33C /* DTColorFunctions.m in Sources */,
 				94D24B3F1D4AFE7800C7F33C /* DTHTMLWriter.m in Sources */,
+				A901E0F022491A3800FE8DBC /* default.css.c in Sources */,
 				94D24B401D4AFE7800C7F33C /* DTCoreTextParagraphStyle.m in Sources */,
 				94D24B411D4AFE7800C7F33C /* DTHTMLParserNode.m in Sources */,
 				94D24B421D4AFE7800C7F33C /* DTCoreTextFontCollection.m in Sources */,
@@ -3081,7 +3091,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A758FC9814DBCF20007DF8B2 /* default.css in Sources */,
 				426693AA1B56F91200F9DBFC /* CTLineUtils.m in Sources */,
 				A788C96114863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */,
 				A788C96614863E8700E1AFD9 /* DTAttributedTextContentView.m in Sources */,
@@ -3136,6 +3145,7 @@
 				A7AE58121725374C00A9BF61 /* DTImageTextAttachment.m in Sources */,
 				A7AE581C1725381E00A9BF61 /* DTVideoTextAttachment.m in Sources */,
 				A7AE5826172538CC00A9BF61 /* DTIframeTextAttachment.m in Sources */,
+				A901E0EC22491A1100FE8DBC /* default.css.c in Sources */,
 				A7AE58301725391900A9BF61 /* DTObjectTextAttachment.m in Sources */,
 				A7675E7C172EA24700C548CB /* NSAttributedString+DTDebug.m in Sources */,
 				A76D45181732A512006A7CDA /* NSDictionary+DTCoreText.m in Sources */,
@@ -3202,9 +3212,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A79BA6CD1B46A4250086C2F6 /* default.css in Sources */,
 				426693AD1B56F97200F9DBFC /* CTLineUtils.m in Sources */,
 				A79BA6B21B46A2700086C2F6 /* NSAttributedStringRunDelegates.m in Sources */,
+				A901E0EF22491A3800FE8DBC /* default.css.c in Sources */,
 				A7B130501B4B25BF0014E109 /* DTLazyImageView.m in Sources */,
 				A7B130541B4B25BF0014E109 /* DTLinkButton.m in Sources */,
 				A79BA67C1B46A24F0086C2F6 /* DTBreakHTMLElement.m in Sources */,
@@ -3271,9 +3281,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A7F7EF781573603100F5A4D0 /* default.css in Sources */,
 				426693AC1B56F94300F9DBFC /* CTLineUtils.m in Sources */,
 				A7F7EF7A1573603100F5A4D0 /* DTAttributedTextCell.m in Sources */,
+				A901E0ED22491A3700FE8DBC /* default.css.c in Sources */,
 				A7F7EF7B1573603100F5A4D0 /* DTAttributedTextContentView.m in Sources */,
 				A7F7EF7C1573603100F5A4D0 /* DTAttributedTextView.m in Sources */,
 				A7F7EF7D1573603100F5A4D0 /* DTCoreTextFontCollection.m in Sources */,
@@ -3346,7 +3356,6 @@
 				FD3C5FEC1F510E9D000352CE /* DTCoreTextLayoutFrame.m in Sources */,
 				FD3C5FED1F510E9D000352CE /* DTCoreTextLayoutFrame+Cursor.m in Sources */,
 				FD3C5FEE1F510E9D000352CE /* DTCoreTextLayoutLine.m in Sources */,
-				E2262E0B1638351C00BFDAD7 /* default.css in Sources */,
 				426693AE1B56F98500F9DBFC /* CTLineUtils.m in Sources */,
 				E2262DD51638336700BFDAD7 /* DTColor+Compatibility.m in Sources */,
 				E2262DD61638336700BFDAD7 /* DTImage+HTML.m in Sources */,
@@ -3382,6 +3391,7 @@
 				A70E62DD16C24905009B47BF /* DTDictationPlaceholderTextAttachment.m in Sources */,
 				A70E62FC16C2540C009B47BF /* DTStylesheetHTMLElement.m in Sources */,
 				A70028A016FB220B00AFEDA3 /* DTAnchorHTMLElement.m in Sources */,
+				A901E0EE22491A3700FE8DBC /* default.css.c in Sources */,
 				A762704017155420005F0CEC /* DTCoreTextFontCollection.m in Sources */,
 				A7AE58141725374C00A9BF61 /* DTImageTextAttachment.m in Sources */,
 				A7AE581E1725381E00A9BF61 /* DTVideoTextAttachment.m in Sources */,
@@ -3453,14 +3463,21 @@
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = "Demo/DemoApp-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = "Demo/DemoApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.drobnik.DTCoreText.demo;
 				PRODUCT_NAME = RTDemoApp;
@@ -3473,12 +3490,19 @@
 		1D6058950D05DD3E006BFB54 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
 				COPY_PHASE_STRIP = YES;
 				GCC_PREFIX_HEADER = "Demo/DemoApp-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = "Demo/DemoApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.drobnik.DTCoreText.demo;
 				PRODUCT_NAME = RTDemoApp;
@@ -3522,7 +3546,7 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -3531,6 +3555,11 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.drobnik.DTCoreText;
@@ -3570,7 +3599,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -3579,6 +3608,11 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.drobnik.DTCoreText;
@@ -3619,7 +3653,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -3628,6 +3662,11 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.drobnik.DTCoreText;
@@ -3644,8 +3683,15 @@
 		A70F11E7148632CD009202BF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = NO;
+				CLANG_WARN_CONSTANT_CONVERSION = NO;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_ENUM_CONVERSION = NO;
+				CLANG_WARN_FLOAT_CONVERSION = NO;
+				CLANG_WARN_INT_CONVERSION = NO;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = NO;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /tmp/DTCoreText.dst;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -3654,7 +3700,13 @@
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_THUMB_SUPPORT = NO;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				PRODUCT_NAME = DTCoreText;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -3665,14 +3717,27 @@
 		A70F11E8148632CD009202BF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = NO;
+				CLANG_WARN_CONSTANT_CONVERSION = NO;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_ENUM_CONVERSION = NO;
+				CLANG_WARN_FLOAT_CONVERSION = NO;
+				CLANG_WARN_INT_CONVERSION = NO;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = NO;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
 				COPY_PHASE_STRIP = YES;
 				DSTROOT = /tmp/DTCoreText.dst;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				PRODUCT_NAME = DTCoreText;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -3712,6 +3777,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = "Test/UnitTest-Info.plist";
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -3737,6 +3803,7 @@
 				GCC_PREFIX_HEADER = "Test/UnitTest-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = "Test/UnitTest-Info.plist";
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -3784,7 +3851,7 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -3827,7 +3894,7 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREFIX_HEADER = "Test/MacUnitTest-Prefix.pch";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -3870,7 +3937,7 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREFIX_HEADER = "Test/MacUnitTest-Prefix.pch";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -3918,7 +3985,7 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -3927,6 +3994,11 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.drobnik.${PRODUCT_NAME:rfc1034identifier}";
@@ -3934,6 +4006,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\"/** \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/libcss/include\"/** \"$(SRCROOT)/Core/netsurf/libwapcaplet/include\"";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -3966,7 +4039,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -3975,6 +4048,11 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.drobnik.${PRODUCT_NAME:rfc1034identifier}";
@@ -3982,6 +4060,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\"/** \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/libcss/include\"/** \"$(SRCROOT)/Core/netsurf/libwapcaplet/include\"";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -4015,7 +4094,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -4024,6 +4103,11 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.drobnik.${PRODUCT_NAME:rfc1034identifier}";
@@ -4031,6 +4115,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\"/** \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/libcss/include\"/** \"$(SRCROOT)/Core/netsurf/libwapcaplet/include\"";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -4058,7 +4143,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "COVERAGE=1";
 				GCC_THUMB_SUPPORT = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -4073,21 +4158,28 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/**";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/libcss/include\"/**";
 			};
 			name = Coverage;
 		};
 		A7DC5CFC17F833F1006ADDF5 /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = "Demo/DemoApp-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = "Demo/DemoApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.drobnik.DTCoreText.demo;
 				PRODUCT_NAME = RTDemoApp;
@@ -4100,8 +4192,15 @@
 		A7DC5CFE17F833F1006ADDF5 /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = NO;
+				CLANG_WARN_CONSTANT_CONVERSION = NO;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_ENUM_CONVERSION = NO;
+				CLANG_WARN_FLOAT_CONVERSION = NO;
+				CLANG_WARN_INT_CONVERSION = NO;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = NO;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /tmp/DTCoreText.dst;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -4112,7 +4211,13 @@
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_THUMB_SUPPORT = NO;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				PRODUCT_NAME = DTCoreText;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -4137,6 +4242,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = "Test/UnitTest-Info.plist";
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -4161,6 +4267,7 @@
 		A7DC5D0217F833F1006ADDF5 /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DSTROOT = /tmp/DTCoreText.dst;
@@ -4170,7 +4277,13 @@
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_THUMB_SUPPORT = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = DTCoreText_no_DTFoundation;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
@@ -4203,10 +4316,15 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				INSTALL_PATH = "@rpath";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.drobnik.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = DTCoreText;
@@ -4218,6 +4336,7 @@
 		A7F7EFCB1573603100F5A4D0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DSTROOT = /tmp/DTCoreText.dst;
@@ -4227,7 +4346,13 @@
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_THUMB_SUPPORT = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = DTCoreText_no_DTFoundation;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
@@ -4241,13 +4366,20 @@
 		A7F7EFCC1573603100F5A4D0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DSTROOT = /tmp/DTCoreText.dst;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = DTCoreText_no_DTFoundation;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
@@ -4285,7 +4417,7 @@
 					"$(inherited)",
 				);
 				GCC_THUMB_SUPPORT = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -4301,7 +4433,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/**";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/libcss/include\"/**";
 			};
 			name = Debug;
 		};
@@ -4326,7 +4458,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_THUMB_SUPPORT = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -4342,7 +4474,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/**";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/libcss/include\"/**";
 			};
 			name = Release;
 		};
@@ -4366,10 +4498,15 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				INSTALL_PATH = "@rpath";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.drobnik.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = DTCoreText;
@@ -4396,10 +4533,15 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				INSTALL_PATH = "@rpath";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.drobnik.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = DTCoreText;

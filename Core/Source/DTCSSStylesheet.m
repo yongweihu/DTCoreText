@@ -14,17 +14,161 @@
 #import "NSString+CSS.h"
 #import "NSString+HTML.h"
 
+#import <libcss/libcss.h>
+#import <libcss/dump_computed_objc.h>
 
 // external symbols generated via custom build rule and xxd
 extern unsigned char default_css[];
 extern unsigned int default_css_len;
 
+static css_error node_name(void *pw, void *node,
+						   css_qname *qname);
+static css_error node_classes(void *pw, void *n,
+							  lwc_string ***classes, uint32_t *n_classes);
+static css_error node_id(void *pw, void *node,
+						 lwc_string **id);
+static css_error named_ancestor_node(void *pw, void *node,
+									 const css_qname *qname,
+									 void **ancestor);
+static css_error named_parent_node(void *pw, void *node,
+								   const css_qname *qname,
+								   void **parent);
+static css_error named_sibling_node(void *pw, void *node,
+									const css_qname *qname,
+									void **sibling);
+static css_error named_generic_sibling_node(void *pw, void *node,
+											const css_qname *qname,
+											void **sibling);
+static css_error parent_node(void *pw, void *node, void **parent);
+static css_error sibling_node(void *pw, void *node, void **sibling);
+static css_error node_has_name(void *pw, void *node,
+							   const css_qname *qname,
+							   bool *match);
+static css_error node_has_class(void *pw, void *node,
+								lwc_string *name,
+								bool *match);
+static css_error node_has_id(void *pw, void *node,
+							 lwc_string *name,
+							 bool *match);
+static css_error node_has_attribute(void *pw, void *node,
+									const css_qname *qname,
+									bool *match);
+static css_error node_has_attribute_equal(void *pw, void *node,
+										  const css_qname *qname,
+										  lwc_string *value,
+										  bool *match);
+static css_error node_has_attribute_dashmatch(void *pw, void *node,
+											  const css_qname *qname,
+											  lwc_string *value,
+											  bool *match);
+static css_error node_has_attribute_includes(void *pw, void *node,
+											 const css_qname *qname,
+											 lwc_string *value,
+											 bool *match);
+static css_error node_has_attribute_prefix(void *pw, void *node,
+										   const css_qname *qname,
+										   lwc_string *value,
+										   bool *match);
+static css_error node_has_attribute_suffix(void *pw, void *node,
+										   const css_qname *qname,
+										   lwc_string *value,
+										   bool *match);
+static css_error node_has_attribute_substring(void *pw, void *node,
+											  const css_qname *qname,
+											  lwc_string *value,
+											  bool *match);
+static css_error node_is_root(void *pw, void *node, bool *match);
+static css_error node_count_siblings(void *pw, void *node,
+									 bool same_name, bool after, int32_t *count);
+static css_error node_is_empty(void *pw, void *node, bool *match);
+static css_error node_is_link(void *pw, void *node, bool *match);
+static css_error node_is_visited(void *pw, void *node, bool *match);
+static css_error node_is_hover(void *pw, void *node, bool *match);
+static css_error node_is_active(void *pw, void *node, bool *match);
+static css_error node_is_focus(void *pw, void *node, bool *match);
+static css_error node_is_enabled(void *pw, void *node, bool *match);
+static css_error node_is_disabled(void *pw, void *node, bool *match);
+static css_error node_is_checked(void *pw, void *node, bool *match);
+static css_error node_is_target(void *pw, void *node, bool *match);
+static css_error node_is_lang(void *pw, void *node,
+							  lwc_string *lang, bool *match);
+static css_error node_presentational_hint(void *pw, void *node,
+										  uint32_t *nhints, css_hint **hints);
+static css_error ua_default_for_property(void *pw, uint32_t property,
+										 css_hint *hints);
+static css_error compute_font_size(void *pw, const css_hint *parent,
+								   css_hint *size);
+static css_error set_libcss_node_data(void *pw, void *n,
+									  void *libcss_node_data);
+static css_error get_libcss_node_data(void *pw, void *n,
+									  void **libcss_node_data);
+
+static css_select_handler select_handler = {
+	CSS_SELECT_HANDLER_VERSION_1,
+	
+	node_name,
+	node_classes,
+	node_id,
+	named_ancestor_node,
+	named_parent_node,
+	named_sibling_node,
+	named_generic_sibling_node,
+	parent_node,
+	sibling_node,
+	node_has_name,
+	node_has_class,
+	node_has_id,
+	node_has_attribute,
+	node_has_attribute_equal,
+	node_has_attribute_dashmatch,
+	node_has_attribute_includes,
+	node_has_attribute_prefix,
+	node_has_attribute_suffix,
+	node_has_attribute_substring,
+	node_is_root,
+	node_count_siblings,
+	node_is_empty,
+	node_is_link,
+	node_is_visited,
+	node_is_hover,
+	node_is_active,
+	node_is_focus,
+	node_is_enabled,
+	node_is_disabled,
+	node_is_checked,
+	node_is_target,
+	node_is_lang,
+	node_presentational_hint,
+	ua_default_for_property,
+	compute_font_size,
+	set_libcss_node_data,
+	get_libcss_node_data
+};
+
+typedef struct sheet_ctx {
+	css_stylesheet *sheet;
+	css_origin origin;
+	uint64_t media;
+} sheet_ctx;
+
+static css_error resolve_url(void *pw,
+							 const char *base, lwc_string *rel, lwc_string **abs)
+{
+	/* About as useless as possible */
+	*abs = lwc_string_ref(rel);
+	
+	return CSS_OK;
+}
 
 @implementation DTCSSStylesheet
 {
 	NSMutableDictionary *_styles;
-	NSMutableDictionary *_orderedSelectorWeights;
-	NSMutableArray *_orderedSelectors;
+	
+	uint32_t n_sheets;
+	sheet_ctx *sheets;
+	
+	css_origin _defaultOrigin;
+	uint64_t _defaultMedia;
 }
 
 #pragma mark Creating Stylesheets
@@ -45,7 +189,7 @@ extern unsigned int default_css_len;
 			NSData *data = [NSData dataWithBytes:default_css length:default_css_len];
 			NSString *cssString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 			
-			defaultDTCSSStylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:cssString];
+			defaultDTCSSStylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:cssString origin:CSS_ORIGIN_UA media:CSS_MEDIA_ALL];
 		}
 	}
 	return defaultDTCSSStylesheet;
@@ -53,13 +197,18 @@ extern unsigned int default_css_len;
 
 - (id)initWithStyleBlock:(NSString *)css
 {
+	return [self initWithStyleBlock:css origin:CSS_ORIGIN_AUTHOR media:CSS_MEDIA_ALL];
+}
+
+- (id)initWithStyleBlock:(NSString *)css origin:(css_origin)origin media:(uint64_t)media
+{
 	self = [super init];
 	
 	if (self)
 	{
+		_defaultOrigin = origin;
+		_defaultMedia = media;
 		_styles	= [[NSMutableDictionary alloc] init];
-		_orderedSelectorWeights = [[NSMutableDictionary alloc] init];
-		_orderedSelectors = [[NSMutableArray alloc] init];
 		
 		[self parseStyleBlock:css];
 	}
@@ -73,9 +222,9 @@ extern unsigned int default_css_len;
 	
 	if (self)
 	{
+		_defaultOrigin = CSS_ORIGIN_AUTHOR;
+		_defaultMedia = CSS_MEDIA_ALL;
 		_styles	= [[NSMutableDictionary alloc] init];
-		_orderedSelectorWeights = [[NSMutableDictionary alloc] init];
-		_orderedSelectors = [[NSMutableArray alloc] init];
 		
 		[self mergeStylesheet:stylesheet];
 	}
@@ -88,642 +237,87 @@ extern unsigned int default_css_len;
 - (NSString *)description
 {
 	return [_styles description];
-	
 }
+
 #endif
 
 #pragma mark Working with Style Blocks
 
-- (void)_uncompressShorthands:(NSMutableDictionary *)styles
+- (css_stylesheet *)createStyleSheetWithStyleBlock:(NSString *)css
 {
-	// list-style shorthand
-	NSString *shortHand = [[styles objectForKey:@"list-style"] lowercaseString];
+	css_stylesheet_params params;
 	
-	if (shortHand && [shortHand isKindOfClass:[NSString class]])
-	{
-		[styles removeObjectForKey:@"list-style"];
-		
-		if ([shortHand isEqualToString:@"inherit"])
-		{
-			[styles setObject:@"inherit" forKey:@"list-style-type"];
-			[styles setObject:@"inherit" forKey:@"list-style-position"];
-			return;
-		}
-		
-		NSArray *components = [shortHand componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-		
-		BOOL typeWasSet = NO;
-		BOOL positionWasSet = NO;
-		
-		DTCSSListStyleType listStyleType = DTCSSListStyleTypeNone;
-		DTCSSListStylePosition listStylePosition = DTCSSListStylePositionInherit;
-		
-		for (NSString *oneComponent in components)
-		{
-			if ([oneComponent hasPrefix:@"url"])
-			{
-				// list-style-image
-				NSScanner *scanner = [NSScanner scannerWithString:oneComponent];
-				
-				if ([scanner scanCSSURL:NULL])
-				{
-					[styles setObject:oneComponent forKey:@"list-style-image"];
-					
-					continue;
-				}
-			}
-			
-			if (!typeWasSet)
-			{
-				// check if valid type
-				listStyleType = [DTCSSListStyle listStyleTypeFromString:oneComponent];
-				
-				if (listStyleType != DTCSSListStyleTypeInvalid)
-				{
-					[styles setObject:oneComponent forKey:@"list-style-type"];
-					
-					typeWasSet = YES;
-					continue;
-				}
-			}
-			
-			if (!positionWasSet)
-			{
-				// check if valid position
-				listStylePosition = [DTCSSListStyle listStylePositionFromString:oneComponent];
-				
-				if (listStylePosition != DTCSSListStylePositionInvalid)
-				{
-					[styles setObject:oneComponent forKey:@"list-style-position"];
-					
-					positionWasSet = YES;
-					continue;
-				}
-			}
-		}
-	}
+	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
+	params.level = CSS_LEVEL_21;
+	params.charset = "UTF-8";
+	params.url = "";
+	params.title = NULL;
+	params.allow_quirks = false;
+	params.inline_style = false;
+	params.resolve = resolve_url;
+	params.resolve_pw = NULL;
+	params.import = NULL;
+	params.import_pw = NULL;
+	params.color = NULL;
+	params.color_pw = NULL;
+	params.font = NULL;
+	params.font_pw = NULL;
 	
-	// font shorthand, see http://www.w3.org/TR/CSS21/fonts.html#font-shorthand
-	shortHand = [styles objectForKey:@"font"];
+	css_stylesheet *sheet;
+	assert(css_stylesheet_create(&params, &sheet) == CSS_OK);
 	
-	if (shortHand && [shortHand isKindOfClass:[NSString class]])
-	{
-		NSString *fontStyle = @"normal";
-		NSArray *validFontStyles = [NSArray arrayWithObjects:@"italic", @"oblique", nil];
-		
-		NSString *fontVariant = @"normal";
-		NSArray *validFontVariants = [NSArray arrayWithObjects:@"small-caps", nil];
-		BOOL fontVariantSet = NO;
-		
-		NSString *fontWeight = @"normal";
-		NSArray *validFontWeights = [NSArray arrayWithObjects:@"bold", @"bolder", @"lighter", @"100", @"200", @"300", @"400", @"500", @"600", @"700", @"800", @"900", nil];
-		BOOL fontWeightSet = NO;
-		
-		NSString *fontSize = @"normal";
-		NSArray *validFontSizes = [NSArray arrayWithObjects:@"xx-small", @"x-small", @"small", @"medium", @"large", @"x-large", @"xx-large", @"larger", @"smaller", nil];
-		BOOL fontSizeSet = NO;
-		
-		NSArray *suffixesToIgnore = [NSArray arrayWithObjects:@"caption", @"icon", @"menu", @"message-box", @"small-caption", @"status-bar", @"inherit", nil];
-		
-		NSString *lineHeight = @"normal";
-		
-		NSMutableString *fontFamily = [NSMutableString string];
-		
-		NSArray *components = [shortHand componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-		
-		for (NSString *oneComponent in components)
-		{
-			// try font size keywords
-			if ([validFontSizes containsObject:oneComponent])
-			{
-				fontSize = oneComponent;
-				fontSizeSet = YES;
-				
-				continue;
-			}
-			
-			NSInteger slashIndex = [oneComponent rangeOfString:@"/"].location;
-			
-			if (slashIndex != NSNotFound)
-			{
-				// font-size / line-height
-				
-				fontSize = [oneComponent substringToIndex:slashIndex];
-				fontSizeSet = YES;
-				
-				lineHeight = [oneComponent substringFromIndex:slashIndex+1];
-				
-				continue;
-			}
-			else
-			{
-				// length
-				if ([oneComponent hasSuffix:@"%"] || [oneComponent hasSuffix:@"em"] || [oneComponent hasSuffix:@"px"] || [oneComponent hasSuffix:@"pt"])
-				{
-					fontSize = oneComponent;
-					fontSizeSet = YES;
-					
-					continue;
-				}
-			}
-			
-			if (fontSizeSet)
-			{
-				if ([suffixesToIgnore containsObject:oneComponent])
-				{
-					break;
-				}
-				
-				// assume that this is part of font family
-				if ([fontFamily length])
-				{
-					[fontFamily appendString:@" "];
-				}
-				
-				[fontFamily appendString:oneComponent];
-			}
-			else
-			{
-				if (!fontWeightSet && [validFontStyles containsObject:oneComponent])
-				{
-					fontStyle = oneComponent;
-				}
-				else if (!fontVariantSet && [validFontVariants containsObject:oneComponent])
-				{
-					fontVariant = oneComponent;
-					fontVariantSet = YES;
-				}
-				else if (!fontWeightSet && [validFontWeights containsObject:oneComponent])
-				{
-					fontWeight = oneComponent;
-					fontWeightSet = YES;
-				}
-			}
-		}
-		
-		[styles removeObjectForKey:@"font"];
-		
-		// size and family are mandatory, without them this is invalid
-		if ([fontSize length] && [fontFamily length])
-		{
-			[styles setObject:fontStyle forKey:@"font-style"];
-			[styles setObject:fontWeight forKey:@"font-weight"];
-			[styles setObject:fontVariant forKey:@"font-variant"];
-			[styles setObject:fontSize forKey:@"font-size"];
-			[styles setObject:lineHeight forKey:@"line-height"];
-			[styles setObject:fontFamily forKey:@"font-family"];
-		}
-	}
+	css_error error = css_stylesheet_append_data(sheet, (const uint8_t *)css.UTF8String, css.length);
+	assert(error == CSS_OK || error == CSS_NEEDDATA);
+	assert(css_stylesheet_data_done(sheet) == CSS_OK);
 	
-	shortHand = [styles objectForKey:@"margin"];
+	return sheet;
 	
-	if (shortHand && [shortHand isKindOfClass:[NSString class]])
-	{
-		NSArray *parts = [shortHand componentsSeparatedByString:@" "];
-		
-		NSString *topMargin;
-		NSString *rightMargin;
-		NSString *bottomMargin;
-		NSString *leftMargin;
-		
-		if ([parts count] == 4)
-		{
-			topMargin = [parts objectAtIndex:0];
-			rightMargin = [parts objectAtIndex:1];
-			bottomMargin = [parts objectAtIndex:2];
-			leftMargin = [parts objectAtIndex:3];
-		}
-		else if ([parts count] == 3)
-		{
-			topMargin = [parts objectAtIndex:0];
-			rightMargin = [parts objectAtIndex:1];
-			bottomMargin = [parts objectAtIndex:2];
-			leftMargin = [parts objectAtIndex:1];
-		}
-		else if ([parts count] == 2)
-		{
-			topMargin = [parts objectAtIndex:0];
-			rightMargin = [parts objectAtIndex:1];
-			bottomMargin = [parts objectAtIndex:0];
-			leftMargin = [parts objectAtIndex:1];
-		}
-		else
-		{
-			NSString *onlyValue = [parts objectAtIndex:0];
-			
-			topMargin = onlyValue;
-			rightMargin = onlyValue;
-			bottomMargin = onlyValue;
-			leftMargin = onlyValue;
-		}
-		
-		// only apply the ones where there is no previous direct setting
-		
-		if (![styles objectForKey:@"margin-top"])
-		{
-			[styles setObject:topMargin forKey:@"margin-top"];
-		}
-		
-		if (![styles objectForKey:@"margin-right"])
-		{
-			[styles setObject:rightMargin forKey:@"margin-right"];
-		}
-		
-		if (![styles objectForKey:@"margin-bottom"])
-		{
-			[styles setObject:bottomMargin forKey:@"margin-bottom"];
-		}
-		
-		if (![styles objectForKey:@"margin-left"])
-		{
-			[styles setObject:leftMargin forKey:@"margin-left"];
-		}
-		
-		// remove the shorthand
-		[styles removeObjectForKey:@"margin"];
-	}
-	
-	shortHand = [styles objectForKey:@"padding"];
-	
-	if (shortHand && [shortHand isKindOfClass:[NSString class]])
-	{
-		NSArray *parts = [shortHand componentsSeparatedByString:@" "];
-		
-		NSString *topPadding;
-		NSString *rightPadding;
-		NSString *bottomPadding;
-		NSString *leftPadding;
-		
-		if ([parts count] == 4)
-		{
-			topPadding = [parts objectAtIndex:0];
-			rightPadding = [parts objectAtIndex:1];
-			bottomPadding = [parts objectAtIndex:2];
-			leftPadding = [parts objectAtIndex:3];
-		}
-		else if ([parts count] == 3)
-		{
-			topPadding = [parts objectAtIndex:0];
-			rightPadding = [parts objectAtIndex:1];
-			bottomPadding = [parts objectAtIndex:2];
-			leftPadding = [parts objectAtIndex:1];
-		}
-		else if ([parts count] == 2)
-		{
-			topPadding = [parts objectAtIndex:0];
-			rightPadding = [parts objectAtIndex:1];
-			bottomPadding = [parts objectAtIndex:0];
-			leftPadding = [parts objectAtIndex:1];
-		}
-		else
-		{
-			NSString *onlyValue = [parts objectAtIndex:0];
-			
-			topPadding = onlyValue;
-			rightPadding = onlyValue;
-			bottomPadding = onlyValue;
-			leftPadding = onlyValue;
-		}
-		
-		// only apply the ones where there is no previous direct setting
-		
-		if (![styles objectForKey:@"padding-top"])
-		{
-			[styles setObject:topPadding forKey:@"padding-top"];
-		}
-		
-		if (![styles objectForKey:@"padding-right"])
-		{
-			[styles setObject:rightPadding forKey:@"padding-right"];
-		}
-		
-		if (![styles objectForKey:@"padding-bottom"])
-		{
-			[styles setObject:bottomPadding forKey:@"padding-bottom"];
-		}
-		
-		if (![styles objectForKey:@"padding-left"])
-		{
-			[styles setObject:leftPadding forKey:@"padding-left"];
-		}
-		
-		// remove the shorthand
-		[styles removeObjectForKey:@"padding"];
-	}
-
-	shortHand = [styles objectForKey:@"background"];
-
-	if (shortHand && [shortHand isKindOfClass:[NSString class]])
-	{
-		// ignore most tokens except background-color
-		
-		[styles removeObjectForKey:@"background"];
-		
-		NSCharacterSet *tokenDelimiters = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-		NSString *trimmedString = [shortHand stringByTrimmingCharactersInSet:tokenDelimiters];
-		NSScanner *scanner = [NSScanner scannerWithString:trimmedString];
-
-		while (![scanner isAtEnd])
-		{
-			NSString *colorName;
-			if ([scanner scanHTMLColor:NULL HTMLName:&colorName])
-			{
-				[styles setObject:colorName forKey:@"background-color"];
-				break;
-			}
-			[scanner scanUpToCharactersFromSet:tokenDelimiters intoString:NULL];
-		}
-	}
+//	_styles = dump_objc_sheet(_sheet);
+//
+//#if DEBUG
+//	size_t explen = css.length;
+//	char *buf = malloc(2 * explen);
+//	if (buf == NULL) {
+//		assert(0 && "No memory for result data");
+//	}
+//
+//	size_t buflen = 2 * explen;
+//
+//	dump_sheet(_sheet, buf, &buflen);
+//#endif
+//
 }
-
-- (void)_addStyleRule:(NSString *)rule withSelector:(NSString*)selectors
-{
-	NSArray *split = [selectors componentsSeparatedByString:@","];
-	
-	for (NSString *selector in split)
-	{
-		NSString *cleanSelector = [selector stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-		
-		NSMutableDictionary *ruleDictionary = [[rule dictionaryOfCSSStyles] mutableCopy];
-		
-		// remove !important, we're ignoring these
-		for (NSString *oneKey in [ruleDictionary allKeys])
-		{
-			id value = [ruleDictionary objectForKey:oneKey];
-			if ([value isKindOfClass:[NSString class]])
-			{
-				NSRange rangeOfImportant = [value rangeOfString:@"!important" options:NSCaseInsensitiveSearch];
-				
-				if (rangeOfImportant.location != NSNotFound)
-				{
-					value = [value stringByReplacingCharactersInRange:rangeOfImportant withString:@""];
-					value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-					
-					[ruleDictionary setObject:value forKey:oneKey];
-				}
-				
-			} else if ([value isKindOfClass:[NSArray class]])
-			{
-				NSMutableArray *newVal;
-				
-				for (NSUInteger i = 0; i < [(NSArray*)value count]; ++i)
-				{
-					NSString *s = [value objectAtIndex:i];
-					
-					NSRange rangeOfImportant = [s rangeOfString:@"!important" options:NSCaseInsensitiveSearch];
-					
-					if (rangeOfImportant.location != NSNotFound)
-					{
-						s = [s stringByReplacingCharactersInRange:rangeOfImportant withString:@""];
-						s = [s stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-						
-						if (!newVal)
-						{
-							if ([value isKindOfClass:[NSMutableArray class]])
-							{
-								newVal = value;
-							} else
-							{
-								newVal = [value mutableCopy];
-							}
-						}
-						
-						// replace the value that had !important with a version without it
-						[newVal replaceObjectAtIndex:i withObject:s];
-					}
-				}
-				
-				if (newVal)
-				{
-					[ruleDictionary setObject:newVal forKey:oneKey];
-				}
-			}
-		}
-		
-		// need to uncompress because otherwise we might get shorthands and non-shorthands together
-		[self _uncompressShorthands:ruleDictionary];
-		
-		// check if there is a pseudo selector
-		NSRange colonRange = [cleanSelector rangeOfString:@":"];
-		NSString *pseudoSelector = nil;
-		
-		if (colonRange.length==1)
-		{
-			// css中可能包含有转义字符，需要特殊处理一下
-			if (colonRange.location != 0 && [cleanSelector characterAtIndex:colonRange.location-1] == '\\') {
-				cleanSelector = [cleanSelector stringByReplacingOccurrencesOfString:@"\\" withString:@""];
-			} else {
-				pseudoSelector = [cleanSelector substringFromIndex:colonRange.location+1];
-				cleanSelector = [cleanSelector substringToIndex:colonRange.location];
-				
-				// prefix all rules with the pseudo-selector
-				for (NSString *oneRuleKey in [ruleDictionary allKeys])
-				{
-					id value = [ruleDictionary objectForKey:oneRuleKey];
-					
-					// prefix key with the pseudo selector
-					NSString *prefixedKey = [NSString stringWithFormat:@"%@:%@", pseudoSelector, oneRuleKey];
-					[ruleDictionary setObject:value forKey:prefixedKey];
-					[ruleDictionary removeObjectForKey:oneRuleKey];
-				}
-			}
-		}
-		
-		NSDictionary *existingRulesForSelector = [_styles objectForKey:cleanSelector];
-		
-		if (existingRulesForSelector)
-		{
-			// substitute new rules over old ones
-			NSMutableDictionary *tmpDict = [existingRulesForSelector mutableCopy];
-			
-			// append new rules
-			[tmpDict addEntriesFromDictionary:ruleDictionary];
-			
-			// save it
-			[self _addStyles:tmpDict withSelector:cleanSelector];
-		}
-		else
-		{
-			[self _addStyles:ruleDictionary withSelector:cleanSelector];
-		}
-	}
-}
-
 
 - (void)parseStyleBlock:(NSString*)css
 {
-	NSUInteger braceMarker = 0;
+	sheet_ctx sheetCtx;
+	sheetCtx.sheet = [self createStyleSheetWithStyleBlock:css];
+	sheetCtx.origin = _defaultOrigin;
+	sheetCtx.media = _defaultMedia;
 	
-	NSInteger braceLevel = 0;
-	
-	NSString* selector;
-	
-	NSUInteger length = [css length];
-	
-    NSMutableArray *comments; // 记录selector中包含的注释
-	for (NSUInteger i = 0; i < length; i++)
-	{
-		unichar c = [css characterAtIndex:i];
-		
-		// 过滤掉 @namespace 的内容
-		if (c == '@') {
-			NSString *namespace = @"@namespace";
-			if ([[css substringWithRange:NSMakeRange(i, namespace.length)] isEqualToString:namespace]) {
-				for (; i < length; i++) {
-					if ([css characterAtIndex:i] == '\n') {
-						break;
-					}
-				}
-				
-				braceMarker = i+1;
-				continue;
-			}
-		}
-
-		if (c == '/')
-		{
-            int commentStart = i; // 记录注释的开始
-            
-			i++;
-			
-			if (i < length)
-			{
-				c = [css characterAtIndex:i];
-				
-				if (c == '*')
-				{
-					// skip comment until closing /
-					
-					for (; i < length; i++)
-					{
-						// 原处理逻辑中未判断/的前一个字符为*，这样会导致注释中含有单独的/字符时就会被当作注释结束。
-						if ([css characterAtIndex:i] == '/'
-							&& [css characterAtIndex:i-1] == '*')
-						{
-							break;
-						}
-					}
-					
-					if (i < length)
-					{
-                        if (comments) {
-                            [comments addObject:[css substringWithRange:NSMakeRange(commentStart, i-commentStart+1)]];
-                        } else {
-                            braceMarker = i+1;
-                        }
-                        
-						continue;
-					}
-					else
-					{
-						// end of string
-						return;
-					}
-				}
-				else
-				{
-					// not a comment
-					i--;
-				}
-			}
-		}
-		
-		// An opening brace! It could be the start of a new rule, or it could be a nested brace.
-		if (c == '{')
-		{
-			// If we start a new rule...
-			
-			if (braceLevel == 0)
-			{
-				// Grab the selector and clean up extraneous spaces (we'll process it in a moment)
-				selector = [css substringWithRange:NSMakeRange(braceMarker, i-braceMarker)];
-				NSArray *selectorParts = [selector componentsSeparatedByString:@" "];
-				NSMutableArray *cleanSelectorParts = [NSMutableArray array];
-				for (NSString *partialSelector in selectorParts)
-				{
-					if (partialSelector.length)
-					{
-						[cleanSelectorParts addObject:partialSelector];
-					}
-				}
-				selector = [cleanSelectorParts componentsJoinedByString:@" "];
-				
-				// And mark our position so we can grab the rule's CSS when it is closed
-				braceMarker = i + 1;
-                
-                comments = [NSMutableArray new]; // 从这个位置开始记录所有的注释
-			}
-			
-			// Increase the brace level.
-			braceLevel += 1;
-		}
-		
-		// A closing brace!
-		else if (c == '}')
-		{
-			// If we finished a rule...
-			if (braceLevel == 1)
-			{
-				NSString *rule = [css substringWithRange:NSMakeRange(braceMarker, i-braceMarker)];
-                
-                // 删除 rule 中包含的注释
-                for (NSString *comment in comments) {
-                    rule = [rule stringByReplacingOccurrencesOfString:comment withString:@""];
-                }
-                
-                comments = nil; // 重制comments
-				
-				[self _addStyleRule:rule withSelector: selector];
-				
-				braceMarker = i + 1;
-			}
-			// Skip unpaired closing brace
-			else if (braceLevel < 1) {
-				braceMarker += 1;	
-			}
-			
-			braceLevel = MAX(braceLevel-1, 0);
-		}
-	}
+	[self mergeCSSStylesheet:sheetCtx];
 }
 
+- (void)mergeCSSStylesheet:(sheet_ctx)sheetCtx
+{
+	/* Extend array of sheets and append new sheet to it */
+	sheet_ctx *temp = realloc(sheets,
+							  (n_sheets + 1) * sizeof(sheet_ctx));
+	assert(temp != NULL);
+	
+	sheets = temp;
+	
+	sheets[n_sheets].sheet = sheetCtx.sheet;
+	sheets[n_sheets].origin = sheetCtx.origin;
+	sheets[n_sheets].media = sheetCtx.media;
+	
+	n_sheets++;
+}
 
 - (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet
 {
-	NSArray *otherStylesheetStyleKeys = stylesheet.orderedSelectors;
-	
-	for (NSString *oneKey in otherStylesheetStyleKeys)
-	{
-		NSDictionary *existingStyles = [_styles objectForKey:oneKey];
-		NSDictionary *stylesToMerge = [[stylesheet styles] objectForKey:oneKey];
-		if (existingStyles)
-		{
-			NSMutableDictionary *mutableStyles = [existingStyles mutableCopy];
-			
-			for (NSString *oneStyleKey in stylesToMerge)
-			{
-				NSString *mergingStyleString = [stylesToMerge objectForKey:oneStyleKey];
-				
-				[mutableStyles setObject:mergingStyleString forKey:oneStyleKey];
-			}
-			
-			[self _addStyles:mutableStyles withSelector:oneKey];
-		}
-		else
-		{
-			// nothing to worry
-			[self _addStyles:stylesToMerge withSelector:oneKey];
-		}
-	}
-}
-
-- (void)_addStyles:(NSDictionary *)styles withSelector:(NSString *)selector {
-	[_styles setObject:styles forKey:selector];
-	
-	if (![_orderedSelectors containsObject:selector])
-	{
-		[_orderedSelectors addObject:selector];
-		[_orderedSelectorWeights setObject:@([self _weightForSelector:selector]) forKey:selector];
+	for (int i = 0; i < stylesheet->n_sheets; i++) {
+		[self mergeCSSStylesheet:stylesheet->sheets[i]];
 	}
 }
 
@@ -731,126 +325,24 @@ extern unsigned int default_css_len;
 
 - (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
 {
-	// We are going to combine all the relevant styles for this tag.
-	// (Note that when styles are applied, the later styles take precedence,
-	//  so the order in which we grab them matters!)
+	css_select_results *results;
 	
-	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
+	css_select_ctx *select;
+	assert(css_select_ctx_create(&select) == CSS_OK);
 	
-	// Get based on element
-	NSDictionary *byTagName = [self.styles objectForKey:element.name];
-	
-	if (byTagName)
-	{
-		[tmpDict addEntriesFromDictionary:byTagName];
+	for (int i = 0; i < n_sheets; i++) {
+		assert(css_select_ctx_append_sheet(select,
+										   sheets[i].sheet,
+										   sheets[i].origin,
+										   sheets[i].media) == CSS_OK);
 	}
 	
-    // Get based on class(es)
-	NSString *classString = [element.attributes objectForKey:@"class"];
-	NSArray *classes = [classString componentsSeparatedByString:@" "];
+	assert(css_select_style(select, (__bridge void *)(element), CSS_MEDIA_ALL, NULL, &select_handler, NULL, &results) == CSS_OK);
+	css_computed_style *styles = results->styles[CSS_PSEUDO_ELEMENT_NONE];
+	NSDictionary *stylesDict = dump_objc_computed_style(styles);
+	css_select_results_destroy(results);
 	
-	// Cascaded selectors with more than one part are sorted by specificity
-	NSMutableArray *matchingCascadingSelectors = [self matchingComplexCascadingSelectorsForElement:element];
-	[matchingCascadingSelectors sortUsingComparator:^NSComparisonResult(NSString *selector1, NSString *selector2)
-	 {
-		 NSInteger weightForSelector1 = [[_orderedSelectorWeights objectForKey:selector1] integerValue];
-		 NSInteger weightForSelector2 = [[_orderedSelectorWeights objectForKey:selector2] integerValue];
-		 
-		 if (weightForSelector1 == weightForSelector2)
-		 {
-			 weightForSelector1 += [_orderedSelectors indexOfObject:selector1];
-			 weightForSelector2 += [_orderedSelectors indexOfObject:selector2];
-		 }
-		 
-		 if (weightForSelector1 > weightForSelector2)
-		 {
-			 return (NSComparisonResult)NSOrderedDescending;
-		 }
-		 
-		 if (weightForSelector1 < weightForSelector2)
-		 {
-			 return (NSComparisonResult)NSOrderedAscending;
-		 }
-		 
-		 return (NSComparisonResult)NSOrderedSame;
-	 }];
-	
-	NSMutableSet *tmpMatchedSelectors;
-	
-	if (matchedSelectors)
-	{
-		tmpMatchedSelectors = [NSMutableSet set];
-	}
-	
-	// Apply complex cascading selectors first, then apply most specific selectors
-	for (NSString *cascadingSelector in matchingCascadingSelectors)
-	{
-		NSDictionary *byCascadingSelector = [_styles objectForKey:cascadingSelector];
-		[tmpDict addEntriesFromDictionary:byCascadingSelector];
-		[tmpMatchedSelectors addObject:cascadingSelector];
-	}
-	
-	// Applied the parameter element's classes last
-	for (NSString *class in classes)
-	{
-		NSString *classRule = [NSString stringWithFormat:@".%@", class];
-		NSDictionary *byClass = [_styles objectForKey: classRule];
-		
-		if (byClass)
-		{
-			[tmpDict addEntriesFromDictionary:byClass];
-			[tmpMatchedSelectors addObject:class];
-		}
-		
-		NSString *classAndTagRule = [NSString stringWithFormat:@"%@.%@", element.name, class];
-		NSDictionary *byClassAndName = [_styles objectForKey:classAndTagRule];
-		
-		if (byClassAndName)
-		{
-			[tmpDict addEntriesFromDictionary:byClassAndName];
-			[tmpMatchedSelectors addObject:classAndTagRule];
-		}
-	}
-	
-	// Get based on id
-	NSString *idRule = [NSString stringWithFormat:@"#%@", [element.attributes objectForKey:@"id"]];
-	NSDictionary *byID = [_styles objectForKey:idRule];
-	
-	if (byID)
-	{
-		[tmpDict addEntriesFromDictionary:byID];
-		[tmpMatchedSelectors addObject:idRule];
-	}
-	
-	if (!ignoreInlineStyle)
-	{
-		// Get tag's local style attribute
-		NSString *styleString = [element.attributes objectForKey:@"style"];
-		
-		if ([styleString length])
-		{
-			NSMutableDictionary *localStyles = [[styleString dictionaryOfCSSStyles] mutableCopy];
-			
-			// need to uncompress because otherwise we might get shorthands and non-shorthands together
-			[self _uncompressShorthands:localStyles];
-			
-			[tmpDict addEntriesFromDictionary:localStyles];
-		}
-	}
-	
-	if ([tmpDict count])
-	{
-		if (matchedSelectors && [tmpMatchedSelectors count])
-		{
-			*matchedSelectors = [tmpMatchedSelectors copy];
-		}
-		
-		return tmpDict;
-	}
-	else
-	{
-		return nil;
-	}
+	return stylesDict;
 }
 
 - (NSDictionary *)styles
@@ -860,138 +352,7 @@ extern unsigned int default_css_len;
 
 - (NSArray *)orderedSelectors
 {
-	return _orderedSelectors;
-}
-
-// This looks for cascaded selectors with more than one part to them
-- (NSMutableArray *)matchingComplexCascadingSelectorsForElement:(DTHTMLElement *)element
-{
-	__block NSMutableArray *matchedSelectors = [NSMutableArray array];
-	
-	for (NSString *selector in _orderedSelectors)
-	{
-		// We only process the selector if our selector has more than 1 part to it (e.g. ".foo" would be skipped and ".foo .bar" would not)
-	        if (![selector rangeOfString:@" "].length) {
-        	    continue;
-	        }
-	        
-		NSArray *selectorParts = [[selector stringByReplacingOccurrencesOfString:@">" withString:@" "] componentsSeparatedByString:@" "];
-        
-		if (selectorParts.count < 2)
-		{
-			continue;
-		}
-		
-		DTHTMLElement *nextElement = element;
-		
-		// Walking up the hierarchy so start at the right side of the selector and work to the left
-		// Aside: Manual for loop here is faster than for in with reverseObjectEnumerator
-		for (NSUInteger j = selectorParts.count; j-- > 0;)
-		{
-			NSString *selectorPart = [selectorParts objectAtIndex:j];
-            if (selectorPart.length == 0) {
-                continue;
-            }
-            
-			BOOL matched = NO;
-			
-			if (selectorPart.length)
-			{
-				while (nextElement != nil)
-				{
-					DTHTMLElement *currentElement = nextElement;
-					
-					//This must be set to advance here, above all of the breaks, so the loop properly advances.
-					nextElement = currentElement.parentElement;
-
-					if ([selectorPart characterAtIndex:0] == '#')
-					{
-						// If we're at an id and it doesn't match the current element then the style doesn't apply
-						NSString *currentElementId = [currentElement.attributes objectForKey:@"id"];
-						if (currentElementId && [[selectorPart substringFromIndex:1] isEqualToString:currentElementId])
-						{
-							matched = YES;
-							break;
-						}
-					} else if ([selectorPart characterAtIndex:0] == '.')
-					{
-						NSString *currentElementClassesString = [currentElement.attributes objectForKey:@"class"];
-						NSArray *currentElementClasses = [currentElementClassesString componentsSeparatedByString:@" "];
-						for (NSString *currentElementClass in currentElementClasses)
-						{
-							if ([currentElementClass isEqualToString:[selectorPart substringFromIndex:1]])
-							{
-								matched = YES;
-								break;
-							}
-						}
-						
-						if (matched)
-						{
-							break;
-						}
-					} else if ([selectorPart isEqualToString:currentElement.name] && (selectorParts.count > 1))
-					{
-						// This condition depends on the "if (selectorParts.count < 2)" conditional above. If that's removed, we must make sure selectorParts
-						// contains > 1 item for this to be matched (we want the element name alone to be matched last).
-						matched = YES;
-						break;
-					}
-					
-					// break if the right most portion of the selector doesn't match the target element
-					if (!matched && ([currentElement isEqual:element])) {
-						break;
-					}
-				}
-			}
-			
-			if (!matched)
-			{
-				break;
-			}
-			
-			//Only match if we really are on the last part of the selector and all other parts have matched so far
-			if (j == 0)
-			{
-				if (matched && ![matchedSelectors containsObject:selector])
-				{
-					[matchedSelectors addObject:selector];
-				}
-			}
-		}
-	}
-	
-	return matchedSelectors;
-}
-
-// This computes the specificity for a given selector
-- (NSUInteger)_weightForSelector:(NSString *)selector {
-	if ((selector == nil) || (selector.length == 0))
-	{
-		return 0;
-	}
-	
-	NSUInteger weight = 0;
-	
-	NSArray *selectorParts = [selector componentsSeparatedByString:@" "];
-	for (NSString *selectorPart in selectorParts)
-	{
-		if (selectorPart.length == 0) {
-			continue;
-		}
-		
-		if ([selectorPart characterAtIndex:0] == '#')
-		{
-			weight += 100;
-		} else if ([selectorPart characterAtIndex:0] == '.')
-		{
-			weight += 10;
-		} else {
-			weight += 1;
-		}
-	}
-	
-	return weight;
+	return nil;
 }
 
 #pragma mark NSCopying
@@ -1003,4 +364,712 @@ extern unsigned int default_css_len;
 	return newStylesheet;
 }
 
+- (void)dealloc
+{
+}
+
 @end
+
+// MARK: -
+
+static bool objc_string_is_equal_lwc_string(NSString *objcStr, lwc_string *lwc_str)
+{
+	bool match = false;
+	
+	lwc_string *objc_str;
+	assert(lwc_intern_string(objcStr.UTF8String, objcStr.length, &objc_str) == lwc_error_ok);
+	assert(lwc_string_caseless_isequal(
+									   objc_str, lwc_str, &match) ==
+		   lwc_error_ok);
+	lwc_string_unref(objc_str);
+	
+	return match;
+}
+
+css_error node_name(void *pw, void *n, css_qname *qname)
+{
+	DTHTMLElement *node = (__bridge DTHTMLElement *)n;
+	
+	lwc_string *element_name;
+	assert(lwc_intern_string(node.name.UTF8String, node.name.length, &element_name) == lwc_error_ok);
+	qname->name = element_name;
+	
+	return CSS_OK;
+}
+
+static css_error node_classes(void *pw, void *n,
+							  lwc_string ***classes, uint32_t *n_classes)
+{
+	DTHTMLElement *node = (__bridge DTHTMLElement *)n;
+	NSArray *classNames = [node.attributes[@"class"] componentsSeparatedByString:@" "];
+	
+	*classes = NULL;
+	*n_classes = 0;
+	if (classNames.count > 0) {
+		*classes = realloc(NULL, sizeof(lwc_string **) * classNames.count);
+		
+		for (int i = 0; i < classNames.count; i++) {
+			NSString *className = [classNames objectAtIndex:i];
+			
+			lwc_string *class_name;
+			assert(lwc_intern_string(className.UTF8String, className.length, &class_name) == lwc_error_ok);
+			
+			(*classes)[i] = class_name;
+		}
+		
+		*n_classes = classNames.count;
+	}
+	
+	return CSS_OK;
+	
+}
+
+css_error node_id(void *pw, void *n,
+				  lwc_string **id)
+{
+	DTHTMLElement *node = (__bridge DTHTMLElement *)n;
+	NSString *idName = node.attributes[@"id"];
+	
+	*id = NULL;
+	if (idName.length) {
+		lwc_string *id_name;
+		assert(lwc_intern_string(idName.UTF8String, idName.length, &id_name) == lwc_error_ok);
+		
+		*id = id_name;
+	}
+	
+	return CSS_OK;
+}
+
+css_error named_ancestor_node(void *pw, void *n,
+							  const css_qname *qname,
+							  void **ancestor)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	*ancestor = NULL;
+	for (node = node.parentNode; node != nil; node = node.parentNode) {
+		if (objc_string_is_equal_lwc_string(node.name, qname->name)) {
+			*ancestor = (__bridge void *)node;
+			break;
+		}
+	}
+	
+	return CSS_OK;
+}
+
+css_error named_parent_node(void *pw, void *n,
+							const css_qname *qname,
+							void **parent)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	*parent = NULL;
+	if (node.parentNode != nil) {
+		if (objc_string_is_equal_lwc_string(node.parentNode.name, qname->name)) {
+			*parent = (__bridge void *) node.parentNode;
+		}
+	}
+	
+	return CSS_OK;
+}
+
+css_error named_sibling_node(void *pw, void *n,
+							 const css_qname *qname,
+							 void **sibling)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	*sibling = NULL;
+	
+	NSInteger nodeIndex = [node.parentNode.childNodes indexOfObject:node];
+	NSInteger previousNodeIndex = nodeIndex - 1;
+	if (previousNodeIndex >= 0) {
+		DTHTMLParserNode *previousNode = [node.parentNode.childNodes objectAtIndex:previousNodeIndex];
+		
+		if (objc_string_is_equal_lwc_string(previousNode.name, qname->name)) {
+			*sibling = (__bridge void *) previousNode;
+		}
+	}
+	
+	return CSS_OK;
+}
+
+css_error named_generic_sibling_node(void *pw, void *n,
+									 const css_qname *qname,
+									 void **sibling)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	NSInteger nodeIndex = [node.parentNode.childNodes indexOfObject:node];
+	
+	*sibling = NULL;
+	for (nodeIndex = nodeIndex - 1; nodeIndex >= 0; nodeIndex--) {
+		DTHTMLParserNode *previousNode = [node.parentNode.childNodes objectAtIndex:nodeIndex];
+		
+		if (objc_string_is_equal_lwc_string(previousNode.name, qname->name)) {
+			*sibling = (__bridge void *) [node.parentNode.childNodes objectAtIndex:nodeIndex];
+			break;
+		}
+	}
+	
+	return CSS_OK;
+}
+
+css_error parent_node(void *pw, void *n, void **parent)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	*parent = NULL;
+	if (node.parentNode) {
+		*parent = (__bridge void *) node.parentNode;
+	}
+	
+	return CSS_OK;
+}
+
+css_error sibling_node(void *pw, void *n, void **sibling)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	NSInteger nodeIndex = [node.parentNode.childNodes indexOfObject:node];
+	if (--nodeIndex >= 0) {
+		*sibling = (__bridge void *) [node.parentNode.childNodes objectAtIndex:nodeIndex];
+	}
+	
+	return CSS_OK;
+}
+
+css_error node_has_name(void *pw, void *n,
+						const css_qname *qname,
+						bool *match)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	if (lwc_string_length(qname->name) == 1 &&
+		lwc_string_data(qname->name)[0] == '*') {
+		*match = true;
+	} else {
+		*match = objc_string_is_equal_lwc_string(node.name, qname->name);
+	}
+	
+	return CSS_OK;
+}
+
+css_error node_has_class(void *pw, void *n,
+						 lwc_string *name,
+						 bool *match)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	NSArray *classNames = [node.attributes[@"class"] componentsSeparatedByString:@" "];
+	
+	*match = false;
+	for (NSString *className in classNames) {
+		if (objc_string_is_equal_lwc_string(className, name)) {
+			*match = true;
+			break;
+		}
+	}
+	
+	return CSS_OK;
+}
+
+css_error node_has_id(void *pw, void *n,
+					  lwc_string *name,
+					  bool *match)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	*match = objc_string_is_equal_lwc_string(node.attributes[@"id"], name);
+	
+	return CSS_OK;
+}
+
+css_error node_has_attribute(void *pw, void *n,
+							 const css_qname *qname,
+							 bool *match)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	*match = false;
+	for (NSString *key in node.attributes) {
+		if (objc_string_is_equal_lwc_string(key, qname->name)) {
+			*match = true;
+			break;
+		}
+	}
+	
+	return CSS_OK;
+}
+
+css_error node_has_attribute_equal(void *pw, void *n,
+								   const css_qname *qname,
+								   lwc_string *value,
+								   bool *match)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	*match = false;
+	for (NSString *key in node.attributes) {
+		if (objc_string_is_equal_lwc_string(key, qname->name)) {
+			*match = objc_string_is_equal_lwc_string(node.attributes[key], value);
+			break;
+		}
+	}
+	
+	return CSS_OK;
+}
+
+css_error node_has_attribute_includes(void *pw, void *n,
+									  const css_qname *qname,
+									  lwc_string *value,
+									  bool *match)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	size_t vlen = lwc_string_length(value);
+	*match = false;
+	for (NSString *key in node.attributes) {
+		if (objc_string_is_equal_lwc_string(key, qname->name)) {
+			NSString *valueStr = node.attributes[key];
+			
+			lwc_string *value_str;
+			lwc_intern_string(valueStr.UTF8String, valueStr.length, &value_str);
+			
+			const char *p;
+			const char *start = lwc_string_data(value_str);
+			const char *end = start +
+			lwc_string_length(value_str);
+			
+			*match = false;
+			
+			for (p = start; p < end; p++) {
+				if (*p == ' ') {
+					if ((size_t) (p - start) == vlen &&
+						strncasecmp(start,
+									lwc_string_data(value),
+									vlen) == 0) {
+							*match = true;
+							break;
+						}
+					
+					start = p + 1;
+				}
+			}
+			
+			lwc_string_destroy(value_str);
+			break;
+		}
+	}
+	
+	return CSS_OK;
+}
+
+css_error node_has_attribute_dashmatch(void *pw, void *n,
+									   const css_qname *qname,
+									   lwc_string *value,
+									   bool *match)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	size_t vlen = lwc_string_length(value);
+	*match = false;
+	
+	for (NSString *key in node.attributes) {
+		if (objc_string_is_equal_lwc_string(key, qname->name)) {
+			NSString *valueStr = node.attributes[key];
+			
+			lwc_string *value_str;
+			lwc_intern_string(valueStr.UTF8String, valueStr.length, &value_str);
+			
+			const char *p;
+			const char *start = lwc_string_data(value_str);
+			const char *end = start +
+			lwc_string_length(value_str);
+			
+			*match = false;
+			
+			for (p = start; p < end; p++) {
+				if (*p == '-') {
+					if ((size_t) (p - start) == vlen &&
+						strncasecmp(start,
+									lwc_string_data(value),
+									vlen) == 0) {
+							*match = true;
+							break;
+						}
+					
+					start = p + 1;
+				}
+			}
+			
+			lwc_string_destroy(value_str);
+			break;
+		}
+	}
+	
+	return CSS_OK;
+}
+
+css_error node_has_attribute_prefix(void *pw, void *n,
+									const css_qname *qname,
+									lwc_string *value,
+									bool *match)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	*match = false;
+	for (NSString *key in node.attributes) {
+		if (objc_string_is_equal_lwc_string(key, qname->name)) {
+			NSString *valueStr = node.attributes[key];
+			
+			lwc_string *value_str;
+			lwc_intern_string(valueStr.UTF8String, valueStr.length, &value_str);
+			
+			size_t len = lwc_string_length(value_str);
+			const char *data = lwc_string_data(value_str);
+			
+			size_t vlen = lwc_string_length(value);
+			const char *vdata = lwc_string_data(value);
+			
+			if (len < vlen)
+				*match = false;
+			else
+				*match = (strncasecmp(data, vdata, vlen) == 0);
+			
+			lwc_string_destroy(value_str);
+			break;
+		}
+	}
+	
+	return CSS_OK;
+}
+
+css_error node_has_attribute_suffix(void *pw, void *n,
+									const css_qname *qname,
+									lwc_string *value,
+									bool *match)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+
+	*match = false;
+	for (NSString *key in node.attributes) {
+		if (objc_string_is_equal_lwc_string(key, qname->name)) {
+			NSString *valueStr = node.attributes[key];
+			
+			lwc_string *value_str;
+			lwc_intern_string(valueStr.UTF8String, valueStr.length, &value_str);
+			
+			size_t len = lwc_string_length(value_str);
+			const char *data = lwc_string_data(value_str);
+			
+			size_t vlen = lwc_string_length(value);
+			const char *vdata = lwc_string_data(value);
+			
+			size_t suffix_start = len - vlen;
+			
+			if (len < vlen)
+				*match = false;
+			else {
+				*match = (strncasecmp(data + suffix_start,
+									  vdata, vlen) == 0);
+			}
+			
+			lwc_string_destroy(value_str);
+			break;
+		}
+	}
+
+	return CSS_OK;
+}
+
+css_error node_has_attribute_substring(void *pw, void *n,
+									   const css_qname *qname,
+									   lwc_string *value,
+									   bool *match)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	*match = false;
+	for (NSString *key in node.attributes) {
+		if (objc_string_is_equal_lwc_string(key, qname->name)) {
+			NSString *valueStr = node.attributes[key];
+			
+			lwc_string *value_str;
+			lwc_intern_string(valueStr.UTF8String, valueStr.length, &value_str);
+			
+			size_t len = lwc_string_length(value_str);
+			const char *data = lwc_string_data(value_str);
+			
+			size_t vlen = lwc_string_length(value);
+			const char *vdata = lwc_string_data(value);
+			
+			const char *last_start = data + len - vlen;
+			
+			if (len < vlen)
+				*match = false;
+			else {
+				while (data <= last_start) {
+					if (strncasecmp(data, vdata, vlen) == 0) {
+						*match = true;
+						break;
+					}
+					
+					data++;
+				}
+				
+				if (data > last_start)
+					*match = false;
+			}
+			
+			lwc_string_destroy(value_str);
+			break;
+		}
+	}
+	
+	return CSS_OK;
+}
+
+css_error node_is_root(void *pw, void *n, bool *match)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	*match = (node.parentNode == nil);
+	
+	return CSS_OK;
+}
+
+css_error node_count_siblings(void *pw, void *n,
+							  bool same_name, bool after, int32_t *count)
+{
+	int32_t cnt = 0;
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	NSInteger nodeIndex = [node.parentNode.childNodes indexOfObject:node];
+	
+	if (after) {
+		NSInteger nextIndex = nodeIndex + 1;
+		while (nextIndex < node.parentNode.childNodes.count) {
+			if (same_name) {
+				DTHTMLParserNode *nextNode = [node.parentNode.childNodes objectAtIndex:nextIndex];
+				if ([node.name isEqualToString:nextNode.name]) {
+					cnt++;
+				}
+			} else {
+				cnt++;
+			}
+			
+			nextIndex++;
+		}
+	} else {
+		NSInteger prevIndex = nodeIndex - 1;
+		while (prevIndex >= 0) {
+			if (same_name) {
+				DTHTMLParserNode *prevNode = [node.parentNode.childNodes objectAtIndex:prevIndex];
+				if ([node.name isEqualToString:prevNode.name]) {
+					cnt++;
+				}
+			} else {
+				cnt++;
+			}
+			
+			prevIndex--;
+		}
+	}
+	
+	*count = cnt;
+	
+	return CSS_OK;
+}
+
+css_error node_is_empty(void *pw, void *n, bool *match)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	*match = (node.childNodes.count == 0);
+	
+	return CSS_OK;
+}
+
+css_error node_is_link(void *pw, void *n, bool *match)
+{
+	*match = false;
+	
+	return CSS_OK;
+}
+
+css_error node_is_visited(void *pw, void *n, bool *match)
+{
+	*match = false;
+	
+	return CSS_OK;
+}
+
+css_error node_is_hover(void *pw, void *n, bool *match)
+{
+	*match = false;
+	
+	return CSS_OK;
+}
+
+css_error node_is_active(void *pw, void *n, bool *match)
+{
+	*match = false;
+	
+	return CSS_OK;
+}
+
+css_error node_is_focus(void *pw, void *n, bool *match)
+{
+	*match = false;
+	
+	return CSS_OK;
+}
+
+css_error node_is_enabled(void *pw, void *n, bool *match)
+{
+	*match = false;
+	
+	return CSS_OK;
+}
+
+css_error node_is_disabled(void *pw, void *n, bool *match)
+{
+	*match = false;
+	
+	return CSS_OK;
+}
+
+css_error node_is_checked(void *pw, void *n, bool *match)
+{
+	*match = false;
+	
+	return CSS_OK;
+}
+
+css_error node_is_target(void *pw, void *n, bool *match)
+{
+	*match = false;
+	
+	return CSS_OK;
+}
+
+css_error node_is_lang(void *pw, void *n,
+					   lwc_string *lang,
+					   bool *match)
+{
+	*match = false;
+	
+	return CSS_OK;
+}
+
+css_error node_presentational_hint(void *pw, void *node,
+								   uint32_t *nhints, css_hint **hints)
+{
+	*nhints = 0;
+	*hints = NULL;
+	
+	return CSS_OK;
+}
+
+css_error ua_default_for_property(void *pw, uint32_t property, css_hint *hint)
+{
+	if (property == CSS_PROP_COLOR) {
+		hint->data.color = 0xff000000;
+		hint->status = CSS_COLOR_COLOR;
+	} else if (property == CSS_PROP_FONT_FAMILY) {
+		hint->data.strings = NULL;
+		hint->status = CSS_FONT_FAMILY_SANS_SERIF;
+	} else if (property == CSS_PROP_QUOTES) {
+		/* Not exactly useful :) */
+		hint->data.strings = NULL;
+		hint->status = CSS_QUOTES_NONE;
+	} else if (property == CSS_PROP_VOICE_FAMILY) {
+		/** \todo Fix this when we have voice-family done */
+		hint->data.strings = NULL;
+		hint->status = 0;
+	} else {
+		return CSS_INVALID;
+	}
+	
+	return CSS_OK;
+}
+
+css_error compute_font_size(void *pw, const css_hint *parent, css_hint *size)
+{
+	static css_hint_length sizes[] = {
+		{ FLTTOFIX(6.75), CSS_UNIT_PT },
+		{ FLTTOFIX(7.50), CSS_UNIT_PT },
+		{ FLTTOFIX(9.75), CSS_UNIT_PT },
+		{ FLTTOFIX(12.0), CSS_UNIT_PT },
+		{ FLTTOFIX(13.5), CSS_UNIT_PT },
+		{ FLTTOFIX(18.0), CSS_UNIT_PT },
+		{ FLTTOFIX(24.0), CSS_UNIT_PT }
+	};
+	const css_hint_length *parent_size;
+	
+	/* Grab parent size, defaulting to medium if none */
+	if (parent == NULL) {
+		parent_size = &sizes[CSS_FONT_SIZE_MEDIUM - 1];
+	} else {
+		assert(parent->status == CSS_FONT_SIZE_DIMENSION);
+		assert(parent->data.length.unit != CSS_UNIT_EM);
+		assert(parent->data.length.unit != CSS_UNIT_EX);
+		parent_size = &parent->data.length;
+	}
+	
+	assert(size->status != CSS_FONT_SIZE_INHERIT);
+	
+	if (size->status < CSS_FONT_SIZE_LARGER) {
+		/* Keyword -- simple */
+		size->data.length = sizes[size->status - 1];
+	} else if (size->status == CSS_FONT_SIZE_LARGER) {
+		/** \todo Step within table, if appropriate */
+		size->data.length.value =
+		FMUL(parent_size->value, FLTTOFIX(1.2));
+		size->data.length.unit = parent_size->unit;
+	} else if (size->status == CSS_FONT_SIZE_SMALLER) {
+		/** \todo Step within table, if appropriate */
+		size->data.length.value =
+		FDIV(parent_size->value, FLTTOFIX(1.2));
+		size->data.length.unit = parent_size->unit;
+	} else if (size->data.length.unit == CSS_UNIT_EM ||
+			   size->data.length.unit == CSS_UNIT_EX) {
+		size->data.length.value =
+		FMUL(size->data.length.value, parent_size->value);
+		
+		if (size->data.length.unit == CSS_UNIT_EX) {
+			size->data.length.value = FMUL(size->data.length.value,
+										   FLTTOFIX(0.6));
+		}
+		
+		size->data.length.unit = parent_size->unit;
+	} else if (size->data.length.unit == CSS_UNIT_PCT) {
+		size->data.length.value = FDIV(FMUL(size->data.length.value,
+											parent_size->value), FLTTOFIX(100));
+		size->data.length.unit = parent_size->unit;
+	}
+	
+	size->status = CSS_FONT_SIZE_DIMENSION;
+	
+	return CSS_OK;
+}
+
+static css_error set_libcss_node_data(void *pw, void *n,
+									  void *libcss_node_data)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	node.libCSSData = libcss_node_data;
+	
+	return CSS_OK;
+}
+
+static css_error get_libcss_node_data(void *pw, void *n,
+									  void **libcss_node_data)
+{
+	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
+	
+	/* Pass any node data back to libcss */
+	*libcss_node_data = node.libCSSData;
+	
+	return CSS_OK;
+}

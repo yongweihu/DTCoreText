@@ -34,4 +34,13 @@ Pod::Spec.new do |spec|
     ap.source_files = 'Core/Source/*.{h,m,c}'
     ap.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DT_APP_EXTENSIONS=1' }
   end
+  
+  spec.library = 'iconv'
+  spec.vendored_library = 'Core/netsurf/libnetsurf.a'
+
+  netsurf_root = '/Users/yongweihu/Documents/Others/DTCoreText/Core/netsurf'
+  spec.pod_target_xcconfig = {
+    'NETSURF_SRC_ROOT' => netsurf_root,
+    'HEADER_SEARCH_PATHS' => '"$(NETSURF_SRC_ROOT)/include"'
+  }
 end
