@@ -47,6 +47,11 @@
 @property (nonatomic, readonly) NSArray *childNodes;
 
 /**
+ * 存放libCSS的额外数据
+ */
+@property (nonatomic, assign) void *libCSSData;
+
+/**
  Adds a child node to the receiver. 
  @param childNode The child node to be appended to the list of children
  */

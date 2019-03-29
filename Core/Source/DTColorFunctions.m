@@ -43,11 +43,19 @@ NSUInteger _integerValueFromHexString(NSString *hexString)
 
 DTColor *DTColorCreateWithHexString(NSString *hexString)
 {
-	if ([hexString length]!=6 && [hexString length]!=3)
+	if ([hexString length]!=6 && [hexString length]!=3 && [hexString length]!=8)
 	{
 		return nil;
 	}
 	
+    CGFloat alpha = 1.0;
+    if ([hexString length] == 8) {
+        NSUInteger alphaValue = _integerValueFromHexString([hexString substringWithRange:NSMakeRange(0, 2)]);
+        alpha = alphaValue / 255.0;
+        
+        hexString = [hexString substringFromIndex:2];
+    }
+    
 	NSUInteger digits = [hexString length]/3;
 	CGFloat maxValue = (digits==1)?15.0:255.0;
 	
@@ -60,9 +68,9 @@ DTColor *DTColorCreateWithHexString(NSString *hexString)
 	CGFloat blue = blueValue/maxValue;
 	
 #if TARGET_OS_IPHONE
-	return [DTColor colorWithRed:red green:green blue:blue alpha:1.0];
+	return [DTColor colorWithRed:red green:green blue:blue alpha:alpha];
 #else
-	return (DTColor *)[NSColor colorWithDeviceRed:red green:green blue:blue alpha:1.0];
+	return (DTColor *)[NSColor colorWithDeviceRed:red green:green blue:blue alpha:alpha];
 #endif
 }
 

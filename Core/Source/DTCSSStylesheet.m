@@ -16,6 +16,7 @@
 
 #import <libcss/libcss.h>
 #import <libcss/dump_computed_objc.h>
+#import <libcss/dump_objc.h>
 
 // external symbols generated via custom build rule and xxd
 extern unsigned char default_css[];
@@ -149,6 +150,7 @@ typedef struct sheet_ctx {
 	css_stylesheet *sheet;
 	css_origin origin;
 	uint64_t media;
+    void *cssString;
 } sheet_ctx;
 
 static css_error resolve_url(void *pw,
@@ -164,8 +166,8 @@ static css_error resolve_url(void *pw,
 {
 	NSMutableDictionary *_styles;
 	
-	uint32_t n_sheets;
-	sheet_ctx *sheets;
+	uint32_t _n_sheets;
+	sheet_ctx *_sheets;
 	
 	css_origin _defaultOrigin;
 	uint64_t _defaultMedia;
@@ -225,7 +227,7 @@ static css_error resolve_url(void *pw,
 		_defaultOrigin = CSS_ORIGIN_AUTHOR;
 		_defaultMedia = CSS_MEDIA_ALL;
 		_styles	= [[NSMutableDictionary alloc] init];
-		
+        
 		[self mergeStylesheet:stylesheet];
 	}
 	
@@ -269,29 +271,34 @@ static css_error resolve_url(void *pw,
 	css_error error = css_stylesheet_append_data(sheet, (const uint8_t *)css.UTF8String, css.length);
 	assert(error == CSS_OK || error == CSS_NEEDDATA);
 	assert(css_stylesheet_data_done(sheet) == CSS_OK);
-	
-	return sheet;
-	
-//	_styles = dump_objc_sheet(_sheet);
-//
-//#if DEBUG
-//	size_t explen = css.length;
-//	char *buf = malloc(2 * explen);
-//	if (buf == NULL) {
-//		assert(0 && "No memory for result data");
-//	}
-//
-//	size_t buflen = 2 * explen;
-//
-//	dump_sheet(_sheet, buf, &buflen);
-//#endif
-//
+    
+#if DEBUG
+    
+    NSDictionary *styles = dump_objc_sheet(sheet);
+    NSLog(@"%@", styles);
+    
+    /*
+    size_t explen = css.length;
+    char *buf = malloc(2 * explen);
+    if (buf == NULL) {
+        assert(0 && "No memory for result data");
+    }
+
+    size_t buflen = 2 * explen;
+
+    dump_sheet(_sheet, buf, &buflen);
+     */
+#endif
+    
+    return sheet;
+
 }
 
 - (void)parseStyleBlock:(NSString*)css
 {
 	sheet_ctx sheetCtx;
-	sheetCtx.sheet = [self createStyleSheetWithStyleBlock:css];
+    
+    sheetCtx.cssString = (__bridge_retained void *)(css);
 	sheetCtx.origin = _defaultOrigin;
 	sheetCtx.media = _defaultMedia;
 	
@@ -301,23 +308,24 @@ static css_error resolve_url(void *pw,
 - (void)mergeCSSStylesheet:(sheet_ctx)sheetCtx
 {
 	/* Extend array of sheets and append new sheet to it */
-	sheet_ctx *temp = realloc(sheets,
-							  (n_sheets + 1) * sizeof(sheet_ctx));
+	sheet_ctx *temp = realloc(_sheets,
+							  (_n_sheets + 1) * sizeof(sheet_ctx));
 	assert(temp != NULL);
 	
-	sheets = temp;
+	_sheets = temp;
 	
-	sheets[n_sheets].sheet = sheetCtx.sheet;
-	sheets[n_sheets].origin = sheetCtx.origin;
-	sheets[n_sheets].media = sheetCtx.media;
+    _sheets[_n_sheets].cssString = sheetCtx.cssString;
+    _sheets[_n_sheets].sheet = [self createStyleSheetWithStyleBlock:(__bridge NSString *)(sheetCtx.cssString)];
+	_sheets[_n_sheets].origin = sheetCtx.origin;
+	_sheets[_n_sheets].media = sheetCtx.media;
 	
-	n_sheets++;
+	_n_sheets++;
 }
 
 - (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet
 {
-	for (int i = 0; i < stylesheet->n_sheets; i++) {
-		[self mergeCSSStylesheet:stylesheet->sheets[i]];
+	for (int i = 0; i < stylesheet->_n_sheets; i++) {
+		[self mergeCSSStylesheet:stylesheet->_sheets[i]];
 	}
 }
 
@@ -330,17 +338,20 @@ static css_error resolve_url(void *pw,
 	css_select_ctx *select;
 	assert(css_select_ctx_create(&select) == CSS_OK);
 	
-	for (int i = 0; i < n_sheets; i++) {
-		assert(css_select_ctx_append_sheet(select,
-										   sheets[i].sheet,
-										   sheets[i].origin,
-										   sheets[i].media) == CSS_OK);
-	}
+    for (int i = 0; i < _n_sheets; i++) {
+        assert(css_select_ctx_append_sheet(select,
+                                           _sheets[i].sheet,
+                                           _sheets[i].origin,
+                                           _sheets[i].media) == CSS_OK);
+    }
 	
 	assert(css_select_style(select, (__bridge void *)(element), CSS_MEDIA_ALL, NULL, &select_handler, NULL, &results) == CSS_OK);
+    
 	css_computed_style *styles = results->styles[CSS_PSEUDO_ELEMENT_NONE];
 	NSDictionary *stylesDict = dump_objc_computed_style(styles);
+    
 	css_select_results_destroy(results);
+    css_select_ctx_destroy(select);
 	
 	return stylesDict;
 }
@@ -366,6 +377,14 @@ static css_error resolve_url(void *pw,
 
 - (void)dealloc
 {
+    for (int i = 0; i < _n_sheets; i++) {
+        _sheets[i].cssString = NULL;
+        css_stylesheet_destroy(_sheets[i].sheet);
+    }
+    
+    _n_sheets = 0;
+    free(_sheets);
+    _sheets = NULL;
 }
 
 @end
