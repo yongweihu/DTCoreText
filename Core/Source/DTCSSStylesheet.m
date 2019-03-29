@@ -245,7 +245,7 @@ static css_error resolve_url(void *pw,
 
 #pragma mark Working with Style Blocks
 
-- (css_stylesheet *)createStyleSheetWithStyleBlock:(NSString *)css
+- (css_stylesheet *)createStyleSheetWithStyleBlock:(NSString *)css inline:(BOOL)inlineStyle
 {
 	css_stylesheet_params params;
 	
@@ -255,7 +255,7 @@ static css_error resolve_url(void *pw,
 	params.url = "";
 	params.title = NULL;
 	params.allow_quirks = false;
-	params.inline_style = false;
+	params.inline_style = inlineStyle;
 	params.resolve = resolve_url;
 	params.resolve_pw = NULL;
 	params.import = NULL;
@@ -274,8 +274,8 @@ static css_error resolve_url(void *pw,
     
 #if DEBUG
     
-    NSDictionary *styles = dump_objc_sheet(sheet);
-    NSLog(@"%@", styles);
+//    NSDictionary *styles = dump_objc_sheet(sheet);
+//    NSLog(@"%@", styles);
     
     /*
     size_t explen = css.length;
@@ -315,7 +315,7 @@ static css_error resolve_url(void *pw,
 	_sheets = temp;
 	
     _sheets[_n_sheets].cssString = sheetCtx.cssString;
-    _sheets[_n_sheets].sheet = [self createStyleSheetWithStyleBlock:(__bridge NSString *)(sheetCtx.cssString)];
+    _sheets[_n_sheets].sheet = [self createStyleSheetWithStyleBlock:(__bridge NSString *)(sheetCtx.cssString) inline:NO];
 	_sheets[_n_sheets].origin = sheetCtx.origin;
 	_sheets[_n_sheets].media = sheetCtx.media;
 	
@@ -344,14 +344,27 @@ static css_error resolve_url(void *pw,
                                            _sheets[i].origin,
                                            _sheets[i].media) == CSS_OK);
     }
+    
+    css_stylesheet *inlineSheet = NULL;
+    if (!ignoreInlineStyle) {
+        // Get tag's local style attribute
+        NSString *styleString = [element.attributes objectForKey:@"style"];
+        
+        if ([styleString length]) {
+            inlineSheet = [self createStyleSheetWithStyleBlock:styleString inline:YES];
+        }
+    }
 	
-	assert(css_select_style(select, (__bridge void *)(element), CSS_MEDIA_ALL, NULL, &select_handler, NULL, &results) == CSS_OK);
+	assert(css_select_style(select, (__bridge void *)(element), CSS_MEDIA_ALL, inlineSheet, &select_handler, NULL, &results) == CSS_OK);
     
 	css_computed_style *styles = results->styles[CSS_PSEUDO_ELEMENT_NONE];
 	NSDictionary *stylesDict = dump_objc_computed_style(styles);
     
 	css_select_results_destroy(results);
     css_select_ctx_destroy(select);
+    if (inlineSheet) {
+        css_stylesheet_destroy(inlineSheet);
+    }
 	
 	return stylesDict;
 }
