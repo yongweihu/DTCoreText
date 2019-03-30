@@ -412,16 +412,11 @@ static css_error resolve_url(void *pw,
 static bool objc_string_is_equal_lwc_string(NSString *objcStr, lwc_string *lwc_str)
 {
 	bool match = false;
+    
+    const char *lwc_data = lwc_string_data(lwc_str);
+    NSString *lwcStr = [[NSString alloc] initWithUTF8String:lwc_data];
 	
-	lwc_string *objc_str;
-    const char *s = objcStr.UTF8String;
-	assert(lwc_intern_string(s, strlen(s), &objc_str) == lwc_error_ok);
-	assert(lwc_string_caseless_isequal(
-									   objc_str, lwc_str, &match) ==
-		   lwc_error_ok);
-	lwc_string_unref(objc_str);
-	
-	return match;
+	return [objcStr isEqualToString:lwcStr];
 }
 
 css_error node_name(void *pw, void *n, css_qname *qname)
@@ -431,7 +426,7 @@ css_error node_name(void *pw, void *n, css_qname *qname)
 	lwc_string *element_name;
     const char *s = node.name.UTF8String;
 	assert(lwc_intern_string(s, strlen(s), &element_name) == lwc_error_ok);
-	qname->name = element_name;
+	qname->name = lwc_string_ref(element_name);
 	
 	return CSS_OK;
 }
@@ -454,7 +449,7 @@ static css_error node_classes(void *pw, void *n,
             const char *s = className.UTF8String;
 			assert(lwc_intern_string(s, strlen(s), &class_name) == lwc_error_ok);
 			
-			(*classes)[i] = class_name;
+			(*classes)[i] = lwc_string_ref(class_name);
 		}
 		
 		*n_classes = classNames.count;
@@ -476,7 +471,7 @@ css_error node_id(void *pw, void *n,
         const char *s = idName.UTF8String;
 		assert(lwc_intern_string(s, strlen(s), &id_name) == lwc_error_ok);
 		
-		*id = id_name;
+		*id = lwc_string_ref(id_name);
 	}
 	
 	return CSS_OK;
