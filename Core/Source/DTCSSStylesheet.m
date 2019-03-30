@@ -146,12 +146,18 @@ static css_select_handler select_handler = {
 	get_libcss_node_data
 };
 
-typedef struct sheet_ctx {
-	css_stylesheet *sheet;
-	css_origin origin;
-	uint64_t media;
-    void *cssString;
-} sheet_ctx;
+@interface DTSheetContext : NSObject
+
+@property (nonatomic, assign) css_stylesheet *sheet;
+@property (nonatomic, assign) css_origin origin;
+@property (nonatomic, assign) uint64_t media;
+@property (nonatomic, copy) NSString *cssString;
+
+@end
+
+@implementation DTSheetContext
+
+@end
 
 static css_error resolve_url(void *pw,
 							 const char *base, lwc_string *rel, lwc_string **abs)
@@ -166,8 +172,8 @@ static css_error resolve_url(void *pw,
 {
 	NSMutableDictionary *_styles;
 	
-	uint32_t _n_sheets;
-	sheet_ctx *_sheets;
+	NSMutableArray<DTSheetContext *> *_sheets;
+    css_select_ctx *_select;
 	
 	css_origin _defaultOrigin;
 	uint64_t _defaultMedia;
@@ -268,14 +274,15 @@ static css_error resolve_url(void *pw,
 	css_stylesheet *sheet;
 	assert(css_stylesheet_create(&params, &sheet) == CSS_OK);
 	
-	css_error error = css_stylesheet_append_data(sheet, (const uint8_t *)css.UTF8String, css.length);
+    const char *data = css.UTF8String;
+	css_error error = css_stylesheet_append_data(sheet, (const uint8_t *)data, strlen(data));
 	assert(error == CSS_OK || error == CSS_NEEDDATA);
 	assert(css_stylesheet_data_done(sheet) == CSS_OK);
     
 #if DEBUG
     
-//    NSDictionary *styles = dump_objc_sheet(sheet);
-//    NSLog(@"%@", styles);
+    NSDictionary *styles = dump_objc_sheet(sheet);
+    NSLog(@"%@", styles);
     
     /*
     size_t explen = css.length;
@@ -296,35 +303,38 @@ static css_error resolve_url(void *pw,
 
 - (void)parseStyleBlock:(NSString*)css
 {
-	sheet_ctx sheetCtx;
+	DTSheetContext *sheetCtx = [DTSheetContext new];
     
-    sheetCtx.cssString = (__bridge_retained void *)(css);
+    sheetCtx.cssString = css;
 	sheetCtx.origin = _defaultOrigin;
 	sheetCtx.media = _defaultMedia;
 	
 	[self mergeCSSStylesheet:sheetCtx];
 }
 
-- (void)mergeCSSStylesheet:(sheet_ctx)sheetCtx
+- (void)mergeCSSStylesheet:(DTSheetContext *)sheetCtx
 {
-	/* Extend array of sheets and append new sheet to it */
-	sheet_ctx *temp = realloc(_sheets,
-							  (_n_sheets + 1) * sizeof(sheet_ctx));
-	assert(temp != NULL);
+    if (_sheets == nil) {
+        _sheets = [NSMutableArray new];
+    }
+    
+    DTSheetContext *newSheetCtx = [DTSheetContext new];
+    newSheetCtx.cssString = sheetCtx.cssString;
+    newSheetCtx.sheet = [self createStyleSheetWithStyleBlock:newSheetCtx.cssString inline:NO];
+	newSheetCtx.origin = sheetCtx.origin;
+	newSheetCtx.media = sheetCtx.media;
 	
-	_sheets = temp;
-	
-    _sheets[_n_sheets].cssString = sheetCtx.cssString;
-    _sheets[_n_sheets].sheet = [self createStyleSheetWithStyleBlock:(__bridge NSString *)(sheetCtx.cssString) inline:NO];
-	_sheets[_n_sheets].origin = sheetCtx.origin;
-	_sheets[_n_sheets].media = sheetCtx.media;
-	
-	_n_sheets++;
+    [_sheets addObject:newSheetCtx];
+    
+    if (_select != NULL) {
+        css_select_ctx_destroy(_select);
+        _select = NULL; // 保证下次获取元素sytles时会被重建
+    }
 }
 
 - (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet
 {
-	for (int i = 0; i < stylesheet->_n_sheets; i++) {
+	for (int i = 0; i < stylesheet->_sheets.count; i++) {
 		[self mergeCSSStylesheet:stylesheet->_sheets[i]];
 	}
 }
@@ -334,15 +344,15 @@ static css_error resolve_url(void *pw,
 - (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
 {
 	css_select_results *results;
-	
-	css_select_ctx *select;
-	assert(css_select_ctx_create(&select) == CSS_OK);
-	
-    for (int i = 0; i < _n_sheets; i++) {
-        assert(css_select_ctx_append_sheet(select,
-                                           _sheets[i].sheet,
-                                           _sheets[i].origin,
-                                           _sheets[i].media) == CSS_OK);
+    if (_select == NULL) {
+        assert(css_select_ctx_create(&_select) == CSS_OK);
+        
+        for (int i = 0; i < _sheets.count; i++) {
+            assert(css_select_ctx_append_sheet(_select,
+                                               _sheets[i].sheet,
+                                               _sheets[i].origin,
+                                               _sheets[i].media) == CSS_OK);
+        }
     }
     
     css_stylesheet *inlineSheet = NULL;
@@ -355,13 +365,12 @@ static css_error resolve_url(void *pw,
         }
     }
 	
-	assert(css_select_style(select, (__bridge void *)(element), CSS_MEDIA_ALL, inlineSheet, &select_handler, NULL, &results) == CSS_OK);
+	assert(css_select_style(_select, (__bridge void *)(element), CSS_MEDIA_ALL, inlineSheet, &select_handler, NULL, &results) == CSS_OK);
     
 	css_computed_style *styles = results->styles[CSS_PSEUDO_ELEMENT_NONE];
 	NSDictionary *stylesDict = dump_objc_computed_style(styles);
     
 	css_select_results_destroy(results);
-    css_select_ctx_destroy(select);
     if (inlineSheet) {
         css_stylesheet_destroy(inlineSheet);
     }
@@ -390,14 +399,10 @@ static css_error resolve_url(void *pw,
 
 - (void)dealloc
 {
-    for (int i = 0; i < _n_sheets; i++) {
-        _sheets[i].cssString = NULL;
+    css_select_ctx_destroy(_select);
+    for (int i = 0; i < _sheets.count; i++) {
         css_stylesheet_destroy(_sheets[i].sheet);
     }
-    
-    _n_sheets = 0;
-    free(_sheets);
-    _sheets = NULL;
 }
 
 @end
@@ -409,7 +414,8 @@ static bool objc_string_is_equal_lwc_string(NSString *objcStr, lwc_string *lwc_s
 	bool match = false;
 	
 	lwc_string *objc_str;
-	assert(lwc_intern_string(objcStr.UTF8String, objcStr.length, &objc_str) == lwc_error_ok);
+    const char *s = objcStr.UTF8String;
+	assert(lwc_intern_string(s, strlen(s), &objc_str) == lwc_error_ok);
 	assert(lwc_string_caseless_isequal(
 									   objc_str, lwc_str, &match) ==
 		   lwc_error_ok);
@@ -423,7 +429,8 @@ css_error node_name(void *pw, void *n, css_qname *qname)
 	DTHTMLElement *node = (__bridge DTHTMLElement *)n;
 	
 	lwc_string *element_name;
-	assert(lwc_intern_string(node.name.UTF8String, node.name.length, &element_name) == lwc_error_ok);
+    const char *s = node.name.UTF8String;
+	assert(lwc_intern_string(s, strlen(s), &element_name) == lwc_error_ok);
 	qname->name = element_name;
 	
 	return CSS_OK;
@@ -444,7 +451,8 @@ static css_error node_classes(void *pw, void *n,
 			NSString *className = [classNames objectAtIndex:i];
 			
 			lwc_string *class_name;
-			assert(lwc_intern_string(className.UTF8String, className.length, &class_name) == lwc_error_ok);
+            const char *s = className.UTF8String;
+			assert(lwc_intern_string(s, strlen(s), &class_name) == lwc_error_ok);
 			
 			(*classes)[i] = class_name;
 		}
@@ -465,7 +473,8 @@ css_error node_id(void *pw, void *n,
 	*id = NULL;
 	if (idName.length) {
 		lwc_string *id_name;
-		assert(lwc_intern_string(idName.UTF8String, idName.length, &id_name) == lwc_error_ok);
+        const char *s = idName.UTF8String;
+		assert(lwc_intern_string(s, strlen(s), &id_name) == lwc_error_ok);
 		
 		*id = id_name;
 	}
@@ -538,7 +547,10 @@ css_error named_generic_sibling_node(void *pw, void *n,
 	*sibling = NULL;
 	for (nodeIndex = nodeIndex - 1; nodeIndex >= 0; nodeIndex--) {
 		DTHTMLParserNode *previousNode = [node.parentNode.childNodes objectAtIndex:nodeIndex];
-		
+        if (previousNode.name == nil) {
+            continue;
+        }
+        
 		if (objc_string_is_equal_lwc_string(previousNode.name, qname->name)) {
 			*sibling = (__bridge void *) [node.parentNode.childNodes objectAtIndex:nodeIndex];
 			break;
@@ -665,7 +677,8 @@ css_error node_has_attribute_includes(void *pw, void *n,
 			NSString *valueStr = node.attributes[key];
 			
 			lwc_string *value_str;
-			lwc_intern_string(valueStr.UTF8String, valueStr.length, &value_str);
+            const char *s = valueStr.UTF8String;
+			lwc_intern_string(s, strlen(s), &value_str);
 			
 			const char *p;
 			const char *start = lwc_string_data(value_str);
@@ -711,7 +724,8 @@ css_error node_has_attribute_dashmatch(void *pw, void *n,
 			NSString *valueStr = node.attributes[key];
 			
 			lwc_string *value_str;
-			lwc_intern_string(valueStr.UTF8String, valueStr.length, &value_str);
+            const char *s = valueStr.UTF8String;
+			lwc_intern_string(s, strlen(s), &value_str);
 			
 			const char *p;
 			const char *start = lwc_string_data(value_str);
@@ -755,7 +769,8 @@ css_error node_has_attribute_prefix(void *pw, void *n,
 			NSString *valueStr = node.attributes[key];
 			
 			lwc_string *value_str;
-			lwc_intern_string(valueStr.UTF8String, valueStr.length, &value_str);
+            const char *s = valueStr.UTF8String;
+			lwc_intern_string(s, strlen(s), &value_str);
 			
 			size_t len = lwc_string_length(value_str);
 			const char *data = lwc_string_data(value_str);
@@ -789,7 +804,8 @@ css_error node_has_attribute_suffix(void *pw, void *n,
 			NSString *valueStr = node.attributes[key];
 			
 			lwc_string *value_str;
-			lwc_intern_string(valueStr.UTF8String, valueStr.length, &value_str);
+            const char *s = valueStr.UTF8String;
+			lwc_intern_string(s, strlen(s), &value_str);
 			
 			size_t len = lwc_string_length(value_str);
 			const char *data = lwc_string_data(value_str);
@@ -827,7 +843,8 @@ css_error node_has_attribute_substring(void *pw, void *n,
 			NSString *valueStr = node.attributes[key];
 			
 			lwc_string *value_str;
-			lwc_intern_string(valueStr.UTF8String, valueStr.length, &value_str);
+            const char *s = valueStr.UTF8String;
+			lwc_intern_string(s, strlen(s), &value_str);
 			
 			size_t len = lwc_string_length(value_str);
 			const char *data = lwc_string_data(value_str);
