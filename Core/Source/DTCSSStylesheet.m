@@ -281,8 +281,8 @@ static css_error resolve_url(void *pw,
     
 #if DEBUG
     
-    NSDictionary *styles = dump_objc_sheet(sheet);
-    NSLog(@"%@", styles);
+//    NSDictionary *styles = dump_objc_sheet(sheet);
+//    NSLog(@"%@", styles);
     
     /*
     size_t explen = css.length;
