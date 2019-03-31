@@ -22,6 +22,7 @@
 extern unsigned char default_css[];
 extern unsigned int default_css_len;
 
+static lwc_string *lwc_string_for_nsstring(NSString *objcStr);
 static css_error node_name(void *pw, void *node,
 						   css_qname *qname);
 static css_error node_classes(void *pw, void *n,
@@ -233,6 +234,7 @@ static css_error resolve_url(void *pw,
 		_defaultOrigin = CSS_ORIGIN_AUTHOR;
 		_defaultMedia = CSS_MEDIA_ALL;
 		_styles	= [[NSMutableDictionary alloc] init];
+        _defaultOptions = stylesheet.defaultOptions;
         
 		[self mergeStylesheet:stylesheet];
 	}
@@ -274,10 +276,11 @@ static css_error resolve_url(void *pw,
 	css_stylesheet *sheet;
 	assert(css_stylesheet_create(&params, &sheet) == CSS_OK);
 	
-    const char *data = css.UTF8String;
-	css_error error = css_stylesheet_append_data(sheet, (const uint8_t *)data, strlen(data));
+    lwc_string *lwc_str = lwc_string_for_nsstring(css);
+	css_error error = css_stylesheet_append_data(sheet, (const uint8_t *)lwc_string_data(lwc_str), lwc_string_length(lwc_str));
 	assert(error == CSS_OK || error == CSS_NEEDDATA);
 	assert(css_stylesheet_data_done(sheet) == CSS_OK);
+    lwc_string_unref(lwc_str);
     
 #if DEBUG
     
@@ -365,7 +368,7 @@ static css_error resolve_url(void *pw,
         }
     }
 	
-	assert(css_select_style(_select, (__bridge void *)(element), CSS_MEDIA_ALL, inlineSheet, &select_handler, NULL, &results) == CSS_OK);
+	assert(css_select_style(_select, (__bridge void *)(element), CSS_MEDIA_ALL, inlineSheet, &select_handler, (__bridge void *)(self), &results) == CSS_OK);
     
 	css_computed_style *styles = results->styles[CSS_PSEUDO_ELEMENT_NONE];
 	NSDictionary *stylesDict = dump_objc_computed_style(styles);
@@ -419,14 +422,19 @@ static bool objc_string_is_equal_lwc_string(NSString *objcStr, lwc_string *lwc_s
 	return [objcStr isEqualToString:lwcStr];
 }
 
+lwc_string *lwc_string_for_nsstring(NSString *objcStr)
+{
+    size_t strLen = strlen(objcStr.UTF8String);
+    lwc_string *lwc_str;
+    assert(lwc_intern_string(objcStr.UTF8String, strLen, &lwc_str) == lwc_error_ok);
+    
+    return lwc_str;
+}
+
 css_error node_name(void *pw, void *n, css_qname *qname)
 {
 	DTHTMLElement *node = (__bridge DTHTMLElement *)n;
-	
-	lwc_string *element_name;
-    const char *s = node.name.UTF8String;
-	assert(lwc_intern_string(s, strlen(s), &element_name) == lwc_error_ok);
-	qname->name = lwc_string_ref(element_name);
+    qname->name = lwc_string_for_nsstring(node.name);
 	
 	return CSS_OK;
 }
@@ -444,12 +452,7 @@ static css_error node_classes(void *pw, void *n,
 		
 		for (int i = 0; i < classNames.count; i++) {
 			NSString *className = [classNames objectAtIndex:i];
-			
-			lwc_string *class_name;
-            const char *s = className.UTF8String;
-			assert(lwc_intern_string(s, strlen(s), &class_name) == lwc_error_ok);
-			
-			(*classes)[i] = lwc_string_ref(class_name);
+			(*classes)[i] = lwc_string_for_nsstring(className);
 		}
 		
 		*n_classes = classNames.count;
@@ -467,11 +470,7 @@ css_error node_id(void *pw, void *n,
 	
 	*id = NULL;
 	if (idName.length) {
-		lwc_string *id_name;
-        const char *s = idName.UTF8String;
-		assert(lwc_intern_string(s, strlen(s), &id_name) == lwc_error_ok);
-		
-		*id = lwc_string_ref(id_name);
+        *id = lwc_string_for_nsstring(idName);
 	}
 	
 	return CSS_OK;
@@ -671,9 +670,7 @@ css_error node_has_attribute_includes(void *pw, void *n,
 		if (objc_string_is_equal_lwc_string(key, qname->name)) {
 			NSString *valueStr = node.attributes[key];
 			
-			lwc_string *value_str;
-            const char *s = valueStr.UTF8String;
-			lwc_intern_string(s, strlen(s), &value_str);
+			lwc_string *value_str = lwc_string_for_nsstring(valueStr);
 			
 			const char *p;
 			const char *start = lwc_string_data(value_str);
@@ -718,9 +715,7 @@ css_error node_has_attribute_dashmatch(void *pw, void *n,
 		if (objc_string_is_equal_lwc_string(key, qname->name)) {
 			NSString *valueStr = node.attributes[key];
 			
-			lwc_string *value_str;
-            const char *s = valueStr.UTF8String;
-			lwc_intern_string(s, strlen(s), &value_str);
+			lwc_string *value_str = lwc_string_for_nsstring(valueStr);
 			
 			const char *p;
 			const char *start = lwc_string_data(value_str);
@@ -763,9 +758,7 @@ css_error node_has_attribute_prefix(void *pw, void *n,
 		if (objc_string_is_equal_lwc_string(key, qname->name)) {
 			NSString *valueStr = node.attributes[key];
 			
-			lwc_string *value_str;
-            const char *s = valueStr.UTF8String;
-			lwc_intern_string(s, strlen(s), &value_str);
+			lwc_string *value_str = lwc_string_for_nsstring(valueStr);
 			
 			size_t len = lwc_string_length(value_str);
 			const char *data = lwc_string_data(value_str);
@@ -798,9 +791,7 @@ css_error node_has_attribute_suffix(void *pw, void *n,
 		if (objc_string_is_equal_lwc_string(key, qname->name)) {
 			NSString *valueStr = node.attributes[key];
 			
-			lwc_string *value_str;
-            const char *s = valueStr.UTF8String;
-			lwc_intern_string(s, strlen(s), &value_str);
+			lwc_string *value_str = lwc_string_for_nsstring(valueStr);
 			
 			size_t len = lwc_string_length(value_str);
 			const char *data = lwc_string_data(value_str);
@@ -837,9 +828,7 @@ css_error node_has_attribute_substring(void *pw, void *n,
 		if (objc_string_is_equal_lwc_string(key, qname->name)) {
 			NSString *valueStr = node.attributes[key];
 			
-			lwc_string *value_str;
-            const char *s = valueStr.UTF8String;
-			lwc_intern_string(s, strlen(s), &value_str);
+			lwc_string *value_str = lwc_string_for_nsstring(valueStr);
 			
 			size_t len = lwc_string_length(value_str);
 			const char *data = lwc_string_data(value_str);
@@ -1016,12 +1005,38 @@ css_error node_presentational_hint(void *pw, void *node,
 
 css_error ua_default_for_property(void *pw, uint32_t property, css_hint *hint)
 {
+    DTCSSStylesheet *stylesheet = (__bridge DTCSSStylesheet *)pw;
 	if (property == CSS_PROP_COLOR) {
-		hint->data.color = 0xff000000;
+        UIColor *defaultColor = stylesheet.defaultOptions[DTDefaultTextColor];
+        if (defaultColor != nil) {
+            CGFloat red, green, blue, alpha;
+            [defaultColor getRed:&red green:&green blue:&blue alpha:&alpha];
+            css_color rgb = (int) (alpha * 255.0f)<<24 | (int) (red * 255.0f)<<16 | (int) (green * 255.0f)<<8 | (int) (blue * 255.0f)<<0;
+            hint->data.color = rgb;
+        } else {
+            hint->data.color = stylesheet.defaultOptions[DTDefaultTextColor];
+        }
+        
 		hint->status = CSS_COLOR_COLOR;
 	} else if (property == CSS_PROP_FONT_FAMILY) {
-		hint->data.strings = NULL;
+        NSString *fontFamily = stylesheet.defaultOptions[DTDefaultFontFamily];
+        if (fontFamily.length) {
+            lwc_string **fonts = NULL;
+            lwc_string **temp = realloc(fonts, sizeof(lwc_string *));
+            fonts = temp;
+            
+            fonts[0] = lwc_string_for_nsstring(fontFamily);
+            hint->data.strings = NULL;
+        } else {
+            hint->data.strings = NULL;
+        }
+    
 		hint->status = CSS_FONT_FAMILY_SANS_SERIF;
+    } else if (property == CSS_PROP_FONT_SIZE) {
+        float fontSize = [stylesheet.defaultOptions[DTDefaultFontSize] floatValue];
+        hint->data.length.value = FLTTOFIX(fontSize);
+        hint->data.length.unit = CSS_UNIT_PX;
+        hint->status = CSS_FONT_SIZE_DIMENSION;
 	} else if (property == CSS_PROP_QUOTES) {
 		/* Not exactly useful :) */
 		hint->data.strings = NULL;

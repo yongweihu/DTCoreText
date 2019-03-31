@@ -868,7 +868,11 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *color = [styles objectForKey:@"color"];
-	if (color)
+    if ([color isEqualToString:@"inherit"])
+    {
+        self.textColor = self.parentElement.textColor;
+    }
+    else
 	{
 		self.textColor = DTColorCreateWithHTMLName(color);
 	}

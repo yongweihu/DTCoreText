@@ -187,7 +187,8 @@
 	
 	// the combined style sheet for entire document
 	_globalStyleSheet = [[DTCSSStylesheet defaultStyleSheet] copy];
-	
+    _globalStyleSheet.defaultOptions = _options;
+    
 	// do we have a default style sheet passed as option?
 	DTCSSStylesheet *defaultStylesheet = [_options objectForKey:DTDefaultStyleSheet];
 	if (defaultStylesheet)

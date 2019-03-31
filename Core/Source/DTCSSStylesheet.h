@@ -29,6 +29,8 @@
  */
 + (DTCSSStylesheet *)defaultStyleSheet;
 
+@property (nonatomic, strong) NSDictionary *defaultOptions;
+
 
 /**
  Creates a stylesheet with a given style block
