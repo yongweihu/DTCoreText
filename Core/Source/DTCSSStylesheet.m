@@ -425,8 +425,11 @@ static bool objc_string_is_equal_lwc_string(NSString *objcStr, lwc_string *lwc_s
 lwc_string *lwc_string_for_nsstring(NSString *objcStr)
 {
     size_t strLen = strlen(objcStr.UTF8String);
+    char *tmpStr = malloc(strLen * sizeof(char));
+    strncpy(tmpStr, objcStr.UTF8String, strLen);
+    
     lwc_string *lwc_str;
-    assert(lwc_intern_string(objcStr.UTF8String, strLen, &lwc_str) == lwc_error_ok);
+    assert(lwc_intern_string(tmpStr, strLen, &lwc_str) == lwc_error_ok);
     
     return lwc_str;
 }
