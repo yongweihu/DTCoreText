@@ -147,6 +147,8 @@ static css_select_handler select_handler = {
 	get_libcss_node_data
 };
 
+dispatch_queue_t _styleSheetSyncQueue;
+
 @interface DTSheetContext : NSObject
 
 @property (nonatomic, assign) css_stylesheet *sheet;
@@ -255,10 +257,25 @@ static css_error resolve_url(void *pw,
 
 - (css_stylesheet *)createStyleSheetWithStyleBlock:(NSString *)css inline:(BOOL)inlineStyle
 {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _styleSheetSyncQueue = dispatch_queue_create("syncQueue", DISPATCH_QUEUE_SERIAL);
+    });
+    
+    __block css_stylesheet *sheet;
+    dispatch_sync(_styleSheetSyncQueue, ^{
+        sheet = [self _createStyleSheetWithStyleBlock:css inline:inlineStyle];
+    });
+    
+    return sheet;
+}
+
+- (css_stylesheet *)_createStyleSheetWithStyleBlock:(NSString *)css inline:(BOOL)inlineStyle
+{
 	css_stylesheet_params params;
 	
 	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
-	params.level = CSS_LEVEL_21;
+	params.level = CSS_LEVEL_3;
 	params.charset = "UTF-8";
 	params.url = "";
 	params.title = NULL;
@@ -345,6 +362,16 @@ static css_error resolve_url(void *pw,
 #pragma mark Accessing Style Information
 
 - (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
+{
+    __block NSDictionary *result;
+    dispatch_sync(_styleSheetSyncQueue, ^{
+        result = [self _mergedStyleDictionaryForElement:element matchedSelectors:matchedSelectors ignoreInlineStyle:ignoreInlineStyle];
+    });
+    
+    return result;
+}
+
+- (NSDictionary *)_mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
 {
 	css_select_results *results;
     if (_select == NULL) {
