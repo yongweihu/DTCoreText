@@ -147,8 +147,6 @@ static css_select_handler select_handler = {
 	get_libcss_node_data
 };
 
-dispatch_queue_t _styleSheetSyncQueue;
-
 @interface DTSheetContext : NSObject
 
 @property (nonatomic, assign) css_stylesheet *sheet;
@@ -255,15 +253,21 @@ static css_error resolve_url(void *pw,
 
 #pragma mark Working with Style Blocks
 
-- (css_stylesheet *)createStyleSheetWithStyleBlock:(NSString *)css inline:(BOOL)inlineStyle
+- (dispatch_queue_t)styleSheetSyncQueue
 {
+    static dispatch_queue_t styleSheetSyncQueue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _styleSheetSyncQueue = dispatch_queue_create("syncQueue", DISPATCH_QUEUE_SERIAL);
+        styleSheetSyncQueue = dispatch_queue_create("syncQueue", DISPATCH_QUEUE_SERIAL);
     });
     
+    return styleSheetSyncQueue;
+}
+
+- (css_stylesheet *)createStyleSheetWithStyleBlock:(NSString *)css inline:(BOOL)inlineStyle
+{
     __block css_stylesheet *sheet;
-    dispatch_sync(_styleSheetSyncQueue, ^{
+    dispatch_sync(self.styleSheetSyncQueue, ^{
         sheet = [self _createStyleSheetWithStyleBlock:css inline:inlineStyle];
     });
     
@@ -293,11 +297,9 @@ static css_error resolve_url(void *pw,
 	css_stylesheet *sheet;
 	assert(css_stylesheet_create(&params, &sheet) == CSS_OK);
 	
-    lwc_string *lwc_str = lwc_string_for_nsstring(css);
-	css_error error = css_stylesheet_append_data(sheet, (const uint8_t *)lwc_string_data(lwc_str), lwc_string_length(lwc_str));
+	css_error error = css_stylesheet_append_data(sheet, (const uint8_t *)css.UTF8String, strlen(css.UTF8String));
 	assert(error == CSS_OK || error == CSS_NEEDDATA);
 	assert(css_stylesheet_data_done(sheet) == CSS_OK);
-    lwc_string_unref(lwc_str);
     
 #if DEBUG
     
@@ -364,7 +366,7 @@ static css_error resolve_url(void *pw,
 - (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
 {
     __block NSDictionary *result;
-    dispatch_sync(_styleSheetSyncQueue, ^{
+    dispatch_sync(self.styleSheetSyncQueue, ^{
         result = [self _mergedStyleDictionaryForElement:element matchedSelectors:matchedSelectors ignoreInlineStyle:ignoreInlineStyle];
     });
     
@@ -391,7 +393,7 @@ static css_error resolve_url(void *pw,
         NSString *styleString = [element.attributes objectForKey:@"style"];
         
         if ([styleString length]) {
-            inlineSheet = [self createStyleSheetWithStyleBlock:styleString inline:YES];
+            inlineSheet = [self _createStyleSheetWithStyleBlock:styleString inline:YES];
         }
     }
 	
@@ -451,12 +453,8 @@ static bool objc_string_is_equal_lwc_string(NSString *objcStr, lwc_string *lwc_s
 
 lwc_string *lwc_string_for_nsstring(NSString *objcStr)
 {
-    size_t strLen = strlen(objcStr.UTF8String);
-    char *tmpStr = malloc(strLen * sizeof(char));
-    strncpy(tmpStr, objcStr.UTF8String, strLen);
-    
     lwc_string *lwc_str;
-    assert(lwc_intern_string(tmpStr, strLen, &lwc_str) == lwc_error_ok);
+    assert(lwc_intern_string(objcStr.UTF8String, strlen(objcStr.UTF8String), &lwc_str) == lwc_error_ok);
     
     return lwc_str;
 }

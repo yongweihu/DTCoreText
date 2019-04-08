@@ -177,6 +177,11 @@
 @property (nonatomic, assign) CGFloat letterSpacing;
 
 /**
+ The baseline offset of the receiver
+ */
+@property (nonatomic, assign) CGFloat baselineOffset;
+
+/**
  Additional text to be inserted before the text content of the receiver
  */
 @property (nonatomic, copy) NSString *beforeContent;

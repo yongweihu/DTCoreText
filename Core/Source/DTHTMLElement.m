@@ -297,6 +297,22 @@ NSDictionary *_classesForNames = nil;
 			[tmpDict setObject:letterSpacingNum forKey:(id)kCTKernAttributeName];
 		}
 	}
+    
+    if (_baselineOffset != 0.)
+    {
+        NSNumber *baselineOffsetNum = DTNSNumberFromCGFloat(_baselineOffset);
+        
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+        if (___useiOS6Attributes)
+        {
+            [tmpDict setObject:baselineOffsetNum forKey:NSBaselineOffsetAttributeName];
+        }
+        else
+#endif
+        {
+            [tmpDict setObject:baselineOffsetNum forKey:(id)kCTBaselineOffsetAttributeName];
+        }
+    }
 
 	if (_headerLevel)
 	{
@@ -1173,7 +1189,9 @@ NSDictionary *_classesForNames = nil;
 		else if ([verticalAlignment isEqualToString:@"baseline"])
 		{
 			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentBaseline;
-		}
+        } else {
+            _baselineOffset = [verticalAlignment pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+        }
 	}
 	
 	NSString *letterSpacing = [[styles objectForKey:@"letter-spacing"] lowercaseString];
@@ -1584,6 +1602,7 @@ NSDictionary *_classesForNames = nil;
 	_strikeOut = element.strikeOut;
 	_superscriptStyle = element.superscriptStyle;
 	_letterSpacing = element.letterSpacing;
+    _baselineOffset = element.baselineOffset;
 	
 	_shadows = [element.shadows copy];
 	
@@ -1812,6 +1831,7 @@ NSDictionary *_classesForNames = nil;
 @synthesize backgroundCornerRadius = _backgroundCornerRadius;
 @synthesize letterSpacing = _letterSpacing;
 @synthesize textTransform = _textTransform;
+@synthesize baselineOffset = _baselineOffset;
 
 @end
 
