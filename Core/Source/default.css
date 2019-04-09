@@ -47,21 +47,21 @@ p
 	display:block;
 
     /* yongwei: default paragraph margin is set to 0 */
-	-webkit-margin-before:0;
-	-webkit-margin-after:0;
-	-webkit-margin-start:0;
-	-webkit-margin-end:0;
+	margin-top:0;
+	margin-bottom:0;
+	margin-left:0;
+	margin-right:0;
 }
 
 ul,menu,dir
 {
 	display:block;
 	list-style-type:disc;
-	-webkit-margin-before:1em;
-	-webkit-margin-after:1em;
-	-webkit-margin-start:0;
-	-webkit-margin-end:0;
-	-webkit-padding-start:27px;
+	margin-top:1em;
+	margin-bottom:1em;
+	margin-left:0;
+	margin-right:0;
+	padding-left:27px;
 }
 
 li
@@ -73,11 +73,11 @@ ol
 {
 	display:block;
 	list-style-type:decimal;
-	-webkit-margin-before:1em;
-	-webkit-margin-after:1em;
-	-webkit-margin-start:0;
-	-webkit-margin-end:0;
-	-webkit-padding-start:27px;
+	margin-top:1em;
+	margin-bottom:1em;
+	margin-left:0;
+	margin-right:0;
+	padding-left:27px;
 }
 
 ul ul, ol ul 
@@ -180,10 +180,10 @@ h1
 {
 	display:block;
 	font-size:2em;
-	-webkit-margin-before:.67em;
-	-webkit-margin-after:.67em;
-	-webkit-margin-start:0;
-	-webkit-margin-end:0;
+	margin-top:.67em;
+	margin-bottom:.67em;
+	margin-left:0;
+	margin-right:0;
 	font-weight:bold;
 }
 
@@ -191,10 +191,10 @@ h2
 {
 	display:block;
 	font-size:1.5em;
-	-webkit-margin-before:.83em;
-	-webkit-margin-after:.83em;
-	-webkit-margin-start:0;
-	-webkit-margin-end:0;
+	margin-top:.83em;
+	margin-bottom:.83em;
+	margin-left:0;
+	margin-right:0;
 	font-weight:bold;
 }
 
@@ -202,20 +202,20 @@ h3
 {
 	display:block;
 	font-size:1.17em;
-	-webkit-margin-before:1em;
-	-webkit-margin-after:1em;
-	-webkit-margin-start:0;
-	-webkit-margin-end:0;
+	margin-top:1em;
+	margin-bottom:1em;
+	margin-left:0;
+	margin-right:0;
 	font-weight:bold;
 }
 
 h4
 {
 	display:block;
-	-webkit-margin-before:1.33em;
-	-webkit-margin-after:1.33em;
-	-webkit-margin-start:0;
-	-webkit-margin-end:0;
+	margin-top:1.33em;
+	margin-bottom:1.33em;
+	margin-left:0;
+	margin-right:0;
 	font-weight:bold;
 }
 
@@ -223,10 +223,10 @@ h5
 {
 	display:block;
 	font-size:.83em;
-	-webkit-margin-before:1.67em;
-	-webkit-margin-after:1.67em;
-	-webkit-margin-start:0;
-	-webkit-margin-end:0;
+	margin-top:1.67em;
+	margin-bottom:1.67em;
+	margin-left:0;
+	margin-right:0;
 	font-weight:bold;
 }
 
@@ -234,10 +234,10 @@ h6
 {
 	display:block;
 	font-size:.67em;
-	-webkit-margin-before:2.33em;
-	-webkit-margin-after:2.33em;
-	-webkit-margin-start:0;
-	-webkit-margin-end:0;
+	margin-top:2.33em;
+	margin-bottom:2.33em;
+	margin-left:0;
+	margin-right:0;
 	font-weight:bold;
 }
 
@@ -259,10 +259,10 @@ script {
 
 hr {
 	display: block;
-	-webkit-margin-before: 0.5em;
-	-webkit-margin-after: 0.5em;
-	-webkit-margin-start: auto;
-	-webkit-margin-end: auto;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+	margin-left: auto;
+	margin-right: auto;
 	border-style: inset;
 	border-width: 1px;
 }
@@ -277,10 +277,10 @@ table {
 /* yongwei: added this from Safari */
 dl {
 	display: block;
-	-webkit-margin-before: 1em;
-	-webkit-margin-after: 1em;
-	-webkit-margin-start: 0px;
-	-webkit-margin-end: 0px;
+	margin-top: 1em;
+	margin-bottom: 1em;
+	margin-left: 0px;
+	margin-right: 0px;
 }
 
 dt {
@@ -289,5 +289,5 @@ dt {
 
 dd {
 	display: block;
-	-webkit-margin-start: 40px;
+	margin-left: 40px;
 }

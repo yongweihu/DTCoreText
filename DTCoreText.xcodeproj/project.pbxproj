@@ -744,6 +744,12 @@
 		A91A597020A7C32B00A81CBE /* mecd.css in Resources */ = {isa = PBXBuildFile; fileRef = A91A596E20A7C32B00A81CBE /* mecd.css */; };
 		A937826420BF932700036EC0 /* collins3.html in Resources */ = {isa = PBXBuildFile; fileRef = A937824C20BF932600036EC0 /* collins3.html */; };
 		A937826520BF932700036EC0 /* collins3.css in Resources */ = {isa = PBXBuildFile; fileRef = A937826320BF932600036EC0 /* collins3.css */; };
+		A966E51F225C57BE00269534 /* libnetsurf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A966E51E225C57BE00269534 /* libnetsurf.a */; };
+		A966E520225C57BE00269534 /* libnetsurf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A966E51E225C57BE00269534 /* libnetsurf.a */; };
+		A966E521225C57BE00269534 /* libnetsurf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A966E51E225C57BE00269534 /* libnetsurf.a */; };
+		A966E522225C57BE00269534 /* libnetsurf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A966E51E225C57BE00269534 /* libnetsurf.a */; };
+		A966E523225C57BE00269534 /* libnetsurf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A966E51E225C57BE00269534 /* libnetsurf.a */; };
+		A966E524225C57BE00269534 /* libnetsurf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A966E51E225C57BE00269534 /* libnetsurf.a */; };
 		C2CDBAEC17CCD5E5000E4AD7 /* CSSOOMCrash.html in Resources */ = {isa = PBXBuildFile; fileRef = C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */; };
 		DDCCEB1E17005A4F009FF923 /* css.css in Resources */ = {isa = PBXBuildFile; fileRef = DDCCEB1D17005A4F009FF923 /* css.css */; };
 		E2262DC71638331500BFDAD7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F5671C14D8469000D1F167 /* Cocoa.framework */; };
@@ -1448,6 +1454,7 @@
 		A91A596E20A7C32B00A81CBE /* mecd.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = mecd.css; sourceTree = "<group>"; };
 		A937824C20BF932600036EC0 /* collins3.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = collins3.html; sourceTree = "<group>"; };
 		A937826320BF932600036EC0 /* collins3.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = collins3.css; sourceTree = "<group>"; };
+		A966E51E225C57BE00269534 /* libnetsurf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnetsurf.a; path = Core/netsurf/libnetsurf.a; sourceTree = "<group>"; };
 		C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CSSOOMCrash.html; sourceTree = "<group>"; };
 		DDCCEB1D17005A4F009FF923 /* css.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = css.css; sourceTree = "<group>"; };
 		E2262DC61638331500BFDAD7 /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1465,6 +1472,7 @@
 				A704C93A13901FDB0045CFC6 /* ImageIO.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				A7D29D611CB68D2A0068F043 /* DTFoundation.framework in Frameworks */,
+				A966E51F225C57BE00269534 /* libnetsurf.a in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */,
 				A73BC42912DA014300F064C6 /* CoreText.framework in Frameworks */,
@@ -1479,6 +1487,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				94D24B4A1D4AFE7800C7F33C /* QuartzCore.framework in Frameworks */,
+				A966E524225C57BE00269534 /* libnetsurf.a in Frameworks */,
 				94D24B4B1D4AFE7800C7F33C /* CoreGraphics.framework in Frameworks */,
 				94D24B4C1D4AFE7800C7F33C /* UIKit.framework in Frameworks */,
 				94D24B4D1D4AFE7800C7F33C /* ImageIO.framework in Frameworks */,
@@ -1495,6 +1504,7 @@
 				A901F5AB2249D08700FE8DBC /* libiconv.tbd in Frameworks */,
 				A758EE6B1965A2A400773D22 /* libDTAnimatedGIF.a in Frameworks */,
 				A71F5B7617FAB89500D5E42C /* libDTHTMLParser_iOS.a in Frameworks */,
+				A966E520225C57BE00269534 /* libnetsurf.a in Frameworks */,
 				A71F5B7517FAB88F00D5E42C /* libDTFoundation.a in Frameworks */,
 				A70F11DF148632CD009202BF /* Foundation.framework in Frameworks */,
 			);
@@ -1535,6 +1545,7 @@
 				A74A7AA91B617222004163BE /* UIKit.framework in Frameworks */,
 				A74A7AA71B6171FC004163BE /* ImageIO.framework in Frameworks */,
 				A74A7AA51B6171F7004163BE /* CoreText.framework in Frameworks */,
+				A966E523225C57BE00269534 /* libnetsurf.a in Frameworks */,
 				A766D65A1B610E4B00394D48 /* DTFoundation.framework in Frameworks */,
 				A79BA6C51B46A3AA0086C2F6 /* libxml2.dylib in Frameworks */,
 			);
@@ -1545,6 +1556,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7F7EFA01573603100F5A4D0 /* Foundation.framework in Frameworks */,
+				A966E521225C57BE00269534 /* libnetsurf.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1553,6 +1565,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A79BA8431B46E55D0086C2F6 /* DTFoundation.framework in Frameworks */,
+				A966E522225C57BE00269534 /* libnetsurf.a in Frameworks */,
 				E2262DC71638331500BFDAD7 /* Cocoa.framework in Frameworks */,
 				E2262E031638346200BFDAD7 /* AppKit.framework in Frameworks */,
 			);
@@ -1775,6 +1788,7 @@
 		A788C90C14863E5000E1AFD9 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				A966E51E225C57BE00269534 /* libnetsurf.a */,
 				A70B4C9E1486558200873A4A /* DTCoreText.h */,
 				A7A672B91532F2D100920A18 /* DTCompatibility.h */,
 				A788CA1514863EC600E1AFD9 /* DTCoreText-Prefix.pch */,
@@ -3475,7 +3489,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -3500,7 +3513,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -3557,7 +3569,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf/",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -3567,6 +3579,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/include\"/**";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -3610,7 +3623,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf/",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3620,6 +3633,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/include\"/**";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -3664,7 +3678,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
+					"$(PROJECT_DIR)/Core/netsurf/",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3674,6 +3688,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/include\"/**";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -3704,7 +3719,6 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				PRODUCT_NAME = DTCoreText;
@@ -3735,7 +3749,6 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				PRODUCT_NAME = DTCoreText;
@@ -3996,7 +4009,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -4006,7 +4018,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\"/** \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/libcss/include\"/** \"$(SRCROOT)/Core/netsurf/libwapcaplet/include\"";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\"/** \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/include\"/**";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -4050,7 +4062,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -4060,7 +4071,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\"/** \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/libcss/include\"/** \"$(SRCROOT)/Core/netsurf/libwapcaplet/include\"";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\"/** \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/include\"/**";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -4105,7 +4116,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -4115,7 +4125,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\"/** \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/libcss/include\"/** \"$(SRCROOT)/Core/netsurf/libwapcaplet/include\"";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\"/** \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/include\"/**";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -4158,7 +4168,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/libcss/include\"/**";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/include\"/**";
 			};
 			name = Coverage;
 		};
@@ -4177,7 +4187,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -4215,7 +4224,6 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				PRODUCT_NAME = DTCoreText;
@@ -4281,7 +4289,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -4322,7 +4329,6 @@
 				INSTALL_PATH = "@rpath";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -4350,7 +4356,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -4377,7 +4382,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -4433,7 +4437,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/libcss/include\"/**";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/include\"/**";
 			};
 			name = Debug;
 		};
@@ -4474,7 +4478,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/libcss/include\"/**";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/** \"$(SRCROOT)/Core/netsurf/include\"/**";
 			};
 			name = Release;
 		};
@@ -4504,7 +4508,6 @@
 				INSTALL_PATH = "@rpath";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -4539,7 +4542,6 @@
 				INSTALL_PATH = "@rpath";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Core/Source/netsurf",
 					"$(PROJECT_DIR)/Core/netsurf",
 				);
 				OTHER_LDFLAGS = "-ObjC";

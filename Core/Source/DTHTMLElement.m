@@ -310,7 +310,9 @@ NSDictionary *_classesForNames = nil;
         else
 #endif
         {
-            [tmpDict setObject:baselineOffsetNum forKey:(id)kCTBaselineOffsetAttributeName];
+			if (@available(iOS 11.0, *)) {
+				[tmpDict setObject:baselineOffsetNum forKey:(id)kCTBaselineOffsetAttributeName];
+			}
         }
     }
 
@@ -1460,7 +1462,6 @@ NSDictionary *_classesForNames = nil;
 	if (_displayStyle == DTHTMLElementDisplayStyleListItem || [self.name isEqualToString:@"li"])
 	{
 		self.paragraphStyle.paragraphSpacing = _margins.bottom;
-		self.paragraphStyle.paragraphSpacingBefore = _margins.top;
 	}
     
     NSString *coretextFontString = [styles objectForKey:@"-coretext-fontname"];
@@ -1522,6 +1523,9 @@ NSDictionary *_classesForNames = nil;
 - (DTCSSListStyle *)listStyle
 {
 	DTCSSListStyle *style = [[DTCSSListStyle alloc] initWithStyles:_styles];
+	if (style.type == DTCSSListStyleTypeInherit) {
+		style = self.parentElement.listStyle;
+	}
 	
 	NSString *startingIndex = [_attributes objectForKey:@"start"];
 	

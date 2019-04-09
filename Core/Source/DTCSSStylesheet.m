@@ -443,8 +443,6 @@ static css_error resolve_url(void *pw,
 
 static bool objc_string_is_equal_lwc_string(NSString *objcStr, lwc_string *lwc_str)
 {
-	bool match = false;
-    
     const char *lwc_data = lwc_string_data(lwc_str);
     NSString *lwcStr = [[NSString alloc] initWithUTF8String:lwc_data];
 	
@@ -1042,7 +1040,7 @@ css_error ua_default_for_property(void *pw, uint32_t property, css_hint *hint)
             css_color rgb = (int) (alpha * 255.0f)<<24 | (int) (red * 255.0f)<<16 | (int) (green * 255.0f)<<8 | (int) (blue * 255.0f)<<0;
             hint->data.color = rgb;
         } else {
-            hint->data.color = stylesheet.defaultOptions[DTDefaultTextColor];
+            hint->data.color = 0xff000000;
         }
         
 		hint->status = CSS_COLOR_COLOR;
