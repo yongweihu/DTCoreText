@@ -886,17 +886,13 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *color = [styles objectForKey:@"color"];
-    if ([color isEqualToString:@"inherit"])
+    if (![color isEqualToString:@"inherit"])
     {
-        self.textColor = self.parentElement.textColor;
+        self.textColor = DTColorCreateWithHTMLName(color);
     }
-    else
-	{
-		self.textColor = DTColorCreateWithHTMLName(color);
-	}
 	
 	NSString *bgColor = [styles objectForKey:@"background-color"];
-	if (bgColor)
+	if (![bgColor isEqualToString:@"inherit"])
 	{
 		self.backgroundColor = DTColorCreateWithHTMLName(bgColor);
 	}
@@ -921,7 +917,7 @@ NSDictionary *_classesForNames = nil;
 	
 	id fontFamilyStyle = [styles objectForKey:@"font-family"];
 	
-	if (fontFamilyStyle)
+	if (fontFamilyStyle && ![fontFamilyStyle isEqualToString:@"inherit"])
 	{
 		NSArray *fontFamilies;
 		
@@ -1027,7 +1023,7 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *fontStyle = [[styles objectForKey:@"font-style"] lowercaseString];
-	if (fontStyle)
+	if (fontStyle && ![fontStyle isEqualToString:@"inherit"])
 	{
 		// remove font name since this would cause font creation to ignore the trait
 		_fontDescriptor.fontName = nil;
@@ -1040,14 +1036,10 @@ NSDictionary *_classesForNames = nil;
 		{
 			_fontDescriptor.italicTrait = YES;
 		}
-		else if ([fontStyle isEqualToString:@"inherit"])
-		{
-			// nothing to do
-		}
 	}
 	
 	NSString *fontWeight = [[styles objectForKey:@"font-weight"] lowercaseString];
-	if (fontWeight)
+	if (fontWeight && ![fontWeight isEqualToString:@"inherit"])
 	{
 		// remove font name since this would cause font creation to ignore the trait
 		_fontDescriptor.fontName = nil;
@@ -1086,7 +1078,7 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *decoration = [[styles objectForKey:@"text-decoration"] lowercaseString];
-	if (decoration)
+	if (decoration && ![decoration isEqualToString:@"inherit"])
 	{
 		if ([decoration isEqualToString:@"underline"])
 		{
@@ -1110,14 +1102,10 @@ NSDictionary *_classesForNames = nil;
 		{
 			DTLogInfo(@"Note: 'blink' text decoration not supported");
 		}
-		else if ([decoration isEqualToString:@"inherit"])
-		{
-			// nothing to do
-		}
 	}
 	
 	NSString *alignment = [[styles objectForKey:@"text-align"] lowercaseString];
-	if (alignment)
+	if (alignment && ![alignment isEqualToString:@"inherit"])
 	{
 		if ([alignment isEqualToString:@"left"])
 		{
@@ -1151,14 +1139,10 @@ NSDictionary *_classesForNames = nil;
 			self.paragraphStyle.alignment = kCTJustifiedTextAlignment;
 #endif
 		}
-		else if ([alignment isEqualToString:@"inherit"])
-		{
-			// nothing to do
-		}
 	}
 	
 	NSString *verticalAlignment = [[styles objectForKey:@"vertical-align"] lowercaseString];
-	if (verticalAlignment)
+	if (verticalAlignment && ![verticalAlignment isEqualToString:@"inherit"])
 	{
 		if ([verticalAlignment isEqualToString:@"sub"])
 		{
@@ -1171,10 +1155,6 @@ NSDictionary *_classesForNames = nil;
 		else if ([verticalAlignment isEqualToString:@"baseline"])
 		{
 			self.superscriptStyle = 0;
-		}
-		else if ([verticalAlignment isEqualToString:@"inherit"])
-		{
-			// nothing to do
 		}
 		else if ([verticalAlignment isEqualToString:@"text-top"])
 		{
@@ -1197,15 +1177,11 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *letterSpacing = [[styles objectForKey:@"letter-spacing"] lowercaseString];
-	if (letterSpacing)
+	if (letterSpacing && ![letterSpacing isEqualToString:@"inherit"])
 	{
 		if ([letterSpacing isEqualToString:@"normal"])
 		{
 			_letterSpacing = 0;
-		}
-		else if ([letterSpacing isEqualToString:@"inherit"])
-		{
-			// no op, we already inherited it
 		}
 		else // interpret as length
 		{
@@ -1224,17 +1200,13 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *lineHeight = [[styles objectForKey:@"line-height"] lowercaseString];
-	if (lineHeight)
+	if (lineHeight && ![lineHeight isEqualToString:@"inherit"])
 	{
 		if ([lineHeight isEqualToString:@"normal"])
 		{
 			self.paragraphStyle.lineHeightMultiple = 0.0; // default
 			self.paragraphStyle.minimumLineHeight = 0.0; // default
 			self.paragraphStyle.maximumLineHeight = 0.0; // default
-		}
-		else if ([lineHeight isEqualToString:@"inherit"])
-		{
-			// no op, we already inherited it
 		}
 		else if ([lineHeight isNumeric])
 		{
@@ -1251,15 +1223,11 @@ NSDictionary *_classesForNames = nil;
     // Specializations on line-height:
     
     NSString *minimumLineHeight = [[styles objectForKey:@"minimum-line-height"] lowercaseString];
-    if (minimumLineHeight)
+    if (minimumLineHeight && ![minimumLineHeight isEqualToString:@"inherit"])
     {
         if ([minimumLineHeight isEqualToString:@"normal"])
         {
             // no op, that was already done above
-        }
-        else if ([minimumLineHeight isEqualToString:@"inherit"])
-        {
-            // no op, we already inherited it
         }
         else if ([minimumLineHeight isNumeric])
         {
@@ -1273,15 +1241,11 @@ NSDictionary *_classesForNames = nil;
     }
 
     NSString *maximumLineHeight = [[styles objectForKey:@"maximum-line-height"] lowercaseString];
-    if (maximumLineHeight)
+    if (maximumLineHeight && ![maximumLineHeight isEqualToString:@"inherit"])
     {
         if ([maximumLineHeight isEqualToString:@"normal"])
         {
             // no op, that was already done above
-        }
-        else if ([maximumLineHeight isEqualToString:@"inherit"])
-        {
-            // no op, we already inherited it
         }
         else if ([maximumLineHeight isNumeric])
         {
@@ -1316,13 +1280,13 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *widthString = [styles objectForKey:@"width"];
-	if (widthString && ![widthString isEqualToString:@"auto"])
+	if (widthString && ![widthString isEqualToString:@"auto"] && ![widthString isEqualToString:@"inherit"])
 	{
 		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 	}
 	
 	NSString *heightString = [styles objectForKey:@"height"];
-	if (heightString && ![heightString isEqualToString:@"auto"])
+	if (heightString && ![heightString isEqualToString:@"auto"] && ![widthString isEqualToString:@"inherit"])
 	{
 		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 	}
@@ -1332,7 +1296,7 @@ NSDictionary *_classesForNames = nil;
 	{
 		_preserveNewlines = YES;
 	}
-	else
+	else if (![whitespaceString isEqualToString:@"inherit"])
 	{
 		_preserveNewlines = NO;
 	}
@@ -1348,20 +1312,24 @@ NSDictionary *_classesForNames = nil;
 	{
 		self.backgroundStrokeColor = DTColorCreateWithHTMLName(borderColor);
 	}
+	
 	NSString *borderWidth = [[styles objectForKey:@"border-width"] lowercaseString];
 	if (borderWidth)
 	{
 		_backgroundStrokeWidth = [borderWidth floatValue];
 	}
-	else {
+	else if (![borderWidth isEqualToString:@"inherit"])
+	{
 		_backgroundStrokeWidth = 0.0f;
 	}
+	
 	NSString *cornerRadius = [[styles objectForKey:@"border-radius"] lowercaseString];
 	if (cornerRadius)
 	{
 		_backgroundCornerRadius = [cornerRadius floatValue];
 	}
-	else {
+	else if (![borderWidth isEqualToString:@"inherit"])
+	{
 		_backgroundCornerRadius = 0.0f;
 	}
 	
@@ -1482,7 +1450,7 @@ NSDictionary *_classesForNames = nil;
 	}
     
     NSString *textIndentStr = [styles objectForKey:@"text-indent"];
-    if (textIndentStr)
+    if (textIndentStr && ![textIndentStr isEqualToString:@"inherit"])
     {
         self.paragraphStyle.firstLineHeadIndent += [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale pageWidth:320];;
     }
@@ -1513,10 +1481,10 @@ NSDictionary *_classesForNames = nil;
         {
             _displayStyle = DTHTMLElementDisplayStyleTable;
         }
-//        else if ([verticalAlignment isEqualToString:@"inherit"])
-//        {
-//            // nothing to do
-//        }
+        else if ([displayString isEqualToString:@"inherit"])
+        {
+            // nothing to do
+        }
     }
 }
 
