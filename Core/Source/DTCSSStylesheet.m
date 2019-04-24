@@ -147,27 +147,91 @@ static css_select_handler select_handler = {
 	get_libcss_node_data
 };
 
+static css_error resolve_url(void *pw,
+                             const char *base, lwc_string *rel, lwc_string **abs)
+{
+    /* About as useless as possible */
+    *abs = lwc_string_ref(rel);
+    
+    return CSS_OK;
+}
+
+static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inlineStyle)
+{
+    css_stylesheet_params params;
+    
+    params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
+    params.level = CSS_LEVEL_3;
+    params.charset = "UTF-8";
+    params.url = "";
+    params.title = NULL;
+    params.allow_quirks = false;
+    params.inline_style = inlineStyle;
+    params.resolve = resolve_url;
+    params.resolve_pw = NULL;
+    params.import = NULL;
+    params.import_pw = NULL;
+    params.color = NULL;
+    params.color_pw = NULL;
+    params.font = NULL;
+    params.font_pw = NULL;
+    
+    css_stylesheet *sheet;
+    assert(css_stylesheet_create(&params, &sheet) == CSS_OK);
+    
+    css_error error = css_stylesheet_append_data(sheet, (const uint8_t *)css.UTF8String, strlen(css.UTF8String));
+    assert(error == CSS_OK || error == CSS_NEEDDATA);
+    assert(css_stylesheet_data_done(sheet) == CSS_OK);
+    
+#if DEBUG
+    
+    //    NSDictionary *styles = dump_objc_sheet(sheet);
+    //    NSLog(@"%@", styles);
+    
+    /*
+     size_t explen = css.length;
+     char *buf = malloc(2 * explen);
+     if (buf == NULL) {
+     assert(0 && "No memory for result data");
+     }
+     
+     size_t buflen = 2 * explen;
+     
+     dump_sheet(_sheet, buf, &buflen);
+     */
+#endif
+    
+    return sheet;
+}
+
 @interface DTSheetContext : NSObject
 
-@property (nonatomic, assign) css_stylesheet *sheet;
-@property (nonatomic, assign) css_origin origin;
-@property (nonatomic, assign) uint64_t media;
-@property (nonatomic, copy) NSString *cssString;
+@property (nonatomic, assign, readonly) css_stylesheet *sheet;
+@property (nonatomic, assign, readonly) css_origin origin;
+@property (nonatomic, assign, readonly) uint64_t media;
 
 @end
 
 @implementation DTSheetContext
 
-@end
-
-static css_error resolve_url(void *pw,
-							 const char *base, lwc_string *rel, lwc_string **abs)
+- (instancetype)initWithCSSString:(NSString *)cssString origin:(css_origin)origin media:(uint64_t)media
 {
-	/* About as useless as possible */
-	*abs = lwc_string_ref(rel);
-	
-	return CSS_OK;
+    self = [super init];
+    if (self) {
+        _sheet = createStyleSheetWithStyleBlock(cssString, NO);
+        _origin = origin;
+        _media = media;
+    }
+    
+    return self;
 }
+
+- (void)dealloc
+{
+    css_stylesheet_destroy(self.sheet);
+}
+
+@end
 
 @implementation DTCSSStylesheet
 {
@@ -264,73 +328,9 @@ static css_error resolve_url(void *pw,
     return styleSheetSyncQueue;
 }
 
-- (css_stylesheet *)createStyleSheetWithStyleBlock:(NSString *)css inline:(BOOL)inlineStyle
-{
-    __block css_stylesheet *sheet;
-    dispatch_sync(self.styleSheetSyncQueue, ^{
-        sheet = [self _createStyleSheetWithStyleBlock:css inline:inlineStyle];
-    });
-    
-    return sheet;
-}
-
-- (css_stylesheet *)_createStyleSheetWithStyleBlock:(NSString *)css inline:(BOOL)inlineStyle
-{
-	css_stylesheet_params params;
-	
-	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
-	params.level = CSS_LEVEL_3;
-	params.charset = "UTF-8";
-	params.url = "";
-	params.title = NULL;
-	params.allow_quirks = false;
-	params.inline_style = inlineStyle;
-	params.resolve = resolve_url;
-	params.resolve_pw = NULL;
-	params.import = NULL;
-	params.import_pw = NULL;
-	params.color = NULL;
-	params.color_pw = NULL;
-	params.font = NULL;
-	params.font_pw = NULL;
-	
-	css_stylesheet *sheet;
-	assert(css_stylesheet_create(&params, &sheet) == CSS_OK);
-	
-	css_error error = css_stylesheet_append_data(sheet, (const uint8_t *)css.UTF8String, strlen(css.UTF8String));
-	assert(error == CSS_OK || error == CSS_NEEDDATA);
-	assert(css_stylesheet_data_done(sheet) == CSS_OK);
-    
-#if DEBUG
-    
-//    NSDictionary *styles = dump_objc_sheet(sheet);
-//    NSLog(@"%@", styles);
-    
-    /*
-    size_t explen = css.length;
-    char *buf = malloc(2 * explen);
-    if (buf == NULL) {
-        assert(0 && "No memory for result data");
-    }
-
-    size_t buflen = 2 * explen;
-
-    dump_sheet(_sheet, buf, &buflen);
-     */
-#endif
-    
-    return sheet;
-
-}
-
 - (void)parseStyleBlock:(NSString*)css
 {
-	DTSheetContext *sheetCtx = [DTSheetContext new];
-    
-    sheetCtx.cssString = css;
-	sheetCtx.origin = _defaultOrigin;
-	sheetCtx.media = _defaultMedia;
-	
+	DTSheetContext *sheetCtx = [[DTSheetContext alloc] initWithCSSString:css origin:_defaultOrigin media:_defaultMedia];
 	[self mergeCSSStylesheet:sheetCtx];
 }
 
@@ -339,14 +339,8 @@ static css_error resolve_url(void *pw,
     if (_sheets == nil) {
         _sheets = [NSMutableArray new];
     }
-    
-    DTSheetContext *newSheetCtx = [DTSheetContext new];
-    newSheetCtx.cssString = sheetCtx.cssString;
-    newSheetCtx.sheet = [self createStyleSheetWithStyleBlock:newSheetCtx.cssString inline:NO];
-	newSheetCtx.origin = sheetCtx.origin;
-	newSheetCtx.media = sheetCtx.media;
 	
-    [_sheets addObject:newSheetCtx];
+    [_sheets addObject:sheetCtx];
     
     if (_select != NULL) {
         css_select_ctx_destroy(_select);
@@ -393,7 +387,7 @@ static css_error resolve_url(void *pw,
         NSString *styleString = [element.attributes objectForKey:@"style"];
         
         if ([styleString length]) {
-            inlineSheet = [self _createStyleSheetWithStyleBlock:styleString inline:YES];
+            inlineSheet = createStyleSheetWithStyleBlock(styleString, YES);
         }
     }
 	
@@ -432,9 +426,6 @@ static css_error resolve_url(void *pw,
 - (void)dealloc
 {
     css_select_ctx_destroy(_select);
-    for (int i = 0; i < _sheets.count; i++) {
-        css_stylesheet_destroy(_sheets[i].sheet);
-    }
 }
 
 @end
