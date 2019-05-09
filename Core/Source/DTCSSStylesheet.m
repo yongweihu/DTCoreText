@@ -156,7 +156,24 @@ static css_error resolve_url(void *pw,
     return CSS_OK;
 }
 
+static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlineStyle);
 static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inlineStyle)
+{
+    static dispatch_queue_t styleSheetSyncQueue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        styleSheetSyncQueue = dispatch_queue_create("syncQueue", DISPATCH_QUEUE_SERIAL);
+    });
+    
+    __block css_stylesheet *sheet;
+    dispatch_sync(styleSheetSyncQueue, ^{
+        sheet = _createStyleSheetWithStyleBlock(css, inlineStyle);
+    });
+    
+    return sheet;
+}
+
+static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlineStyle)
 {
     css_stylesheet_params params;
     
