@@ -1379,7 +1379,8 @@ NSDictionary *_classesForNames = nil;
 	if (_displayStyle == DTHTMLElementDisplayStyleBlock)
 	{
 		// we only care for margins of block level elements
-		if (hasMargins)
+        // 去掉body元素的边距
+		if (hasMargins && ![self.name isEqualToString:@"body"])
 		{
 			self.paragraphStyle.paragraphSpacing = _margins.bottom;
 			self.paragraphStyle.paragraphSpacingBefore = _margins.top;
