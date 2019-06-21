@@ -1055,17 +1055,15 @@ css_error ua_default_for_property(void *pw, uint32_t property, css_hint *hint)
 	} else if (property == CSS_PROP_FONT_FAMILY) {
         NSString *fontFamily = stylesheet.defaultOptions[DTDefaultFontFamily];
         if (fontFamily.length) {
-            lwc_string **fonts = NULL;
-            lwc_string **temp = realloc(fonts, sizeof(lwc_string *));
-            fonts = temp;
-            
+            lwc_string **fonts = malloc(2 * sizeof(lwc_string *));
             fonts[0] = lwc_string_for_nsstring(fontFamily);
-            hint->data.strings = NULL;
+            fonts[1] = NULL;
+            hint->data.strings = fonts;
         } else {
             hint->data.strings = NULL;
         }
-    
-		hint->status = CSS_FONT_FAMILY_SANS_SERIF;
+        
+        hint->status = CSS_FONT_FAMILY_SANS_SERIF;
     } else if (property == CSS_PROP_FONT_SIZE) {
         float fontSize = [stylesheet.defaultOptions[DTDefaultFontSize] floatValue];
         hint->data.length.value = FLTTOFIX(fontSize);

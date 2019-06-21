@@ -923,7 +923,7 @@ NSDictionary *_classesForNames = nil;
 		
 		if ([fontFamilyStyle isKindOfClass:[NSString class]])
 		{
-			fontFamilies = [NSArray arrayWithObject:fontFamilyStyle];
+            fontFamilies = [fontFamilyStyle componentsSeparatedByString:@","];
 		}
 		else if ([fontFamilyStyle isKindOfClass:[NSArray class]])
 		{
@@ -932,8 +932,10 @@ NSDictionary *_classesForNames = nil;
 				
 		BOOL foundFontFamily = NO;
 		
-		for (NSString *fontFamily in fontFamilies)
+		for (NSString *tmpFontFamily in fontFamilies)
 		{
+            NSString *fontFamily = [tmpFontFamily stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            fontFamily = [fontFamily stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
 			_fontDescriptor.fontFamily = fontFamily;
 			
 			// check if this is a known font family
