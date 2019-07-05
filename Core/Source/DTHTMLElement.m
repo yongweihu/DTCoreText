@@ -1453,9 +1453,15 @@ NSDictionary *_classesForNames = nil;
 	}
     
     NSString *textIndentStr = [styles objectForKey:@"text-indent"];
-    if (textIndentStr && ![textIndentStr isEqualToString:@"inherit"])
+    if (textIndentStr)
     {
-        self.paragraphStyle.firstLineHeadIndent += [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale pageWidth:320];;
+        if ([textIndentStr isEqualToString:@"inherit"]) { // 解决“The Judge's House”这本书文本indent的问题
+            if ([self.parentNode isKindOfClass:[DTHTMLElement class]]) {
+                self.paragraphStyle.firstLineHeadIndent = ((DTHTMLElement *)self.parentNode).paragraphStyle.firstLineHeadIndent;
+            }
+        } else {
+            self.paragraphStyle.firstLineHeadIndent += [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale pageWidth:320];
+        }
     }
 }
 
