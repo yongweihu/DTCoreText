@@ -159,6 +159,10 @@ static css_error resolve_url(void *pw,
 static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlineStyle);
 static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inlineStyle)
 {
+    if (css.length == 0) {
+        return nil;
+    }
+    
     static dispatch_queue_t styleSheetSyncQueue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -245,7 +249,9 @@ static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlin
 
 - (void)dealloc
 {
-    css_stylesheet_destroy(self.sheet);
+    if (self.sheet) {
+        css_stylesheet_destroy(self.sheet);
+    }
 }
 
 @end
@@ -391,6 +397,10 @@ static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlin
         assert(css_select_ctx_create(&_select) == CSS_OK);
         
         for (int i = 0; i < _sheets.count; i++) {
+            if (!_sheets[i].sheet) {
+                continue;
+            }
+            
             assert(css_select_ctx_append_sheet(_select,
                                                _sheets[i].sheet,
                                                _sheets[i].origin,
@@ -489,7 +499,7 @@ static css_error node_classes(void *pw, void *n,
 			(*classes)[i] = lwc_string_for_nsstring(className);
 		}
 		
-		*n_classes = classNames.count;
+		*n_classes = (uint32_t)classNames.count;
 	}
 	
 	return CSS_OK;
