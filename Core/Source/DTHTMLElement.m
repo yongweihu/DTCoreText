@@ -409,7 +409,7 @@ NSDictionary *_classesForNames = nil;
 		// Ignore Apple-converted-space helper CSS class
 		if ([@"class" isEqualToString:key] && [@"Apple-converted-space" isEqualToString:value]) return;
 
-		if (_CSSClassNamesToIgnoreForCustomAttributes && [key isEqualToString:@"class"])
+		if (self.CSSClassNamesToIgnoreForCustomAttributes && [key isEqualToString:@"class"])
 		{
 			NSMutableArray *classNamesToKeep = [NSMutableArray array];
 			
@@ -428,7 +428,7 @@ NSDictionary *_classesForNames = nil;
 			
 			for (NSString *oneClassName in components)
 			{
-				if (![_CSSClassNamesToIgnoreForCustomAttributes containsObject:oneClassName])
+				if (![self.CSSClassNamesToIgnoreForCustomAttributes containsObject:oneClassName])
 				{
 					[classNamesToKeep addObject:oneClassName];
 				}

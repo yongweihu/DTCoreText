@@ -18,9 +18,6 @@
 #import <libcss/dump_computed_objc.h>
 #import <libcss/dump_objc.h>
 
-// external symbols generated via custom build rule and xxd
-extern unsigned char default_css[];
-extern unsigned int default_css_len;
 
 static lwc_string *lwc_string_for_nsstring(NSString *objcStr);
 static css_error node_name(void *pw, void *node,
@@ -281,9 +278,16 @@ static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlin
 	{
 		if (!defaultDTCSSStylesheet)
 		{
-			// get the data from the external symbol
-			NSData *data = [NSData dataWithBytes:default_css length:default_css_len];
-			NSString *cssString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+			NSBundle *bundle = [NSBundle bundleForClass:self];
+			NSString *path = [bundle pathForResource:@"default" ofType:@"css"];
+			// Cocoapods uses a separate Resources bundle to include default.css
+			if (!path)
+			{
+				NSString *resourcesBundlePath = [bundle pathForResource:@"Resources" ofType:@"bundle"];
+				NSBundle *resourcesBundle = [NSBundle bundleWithPath:resourcesBundlePath];
+				path = [resourcesBundle pathForResource:@"default" ofType:@"css"];
+			}
+			NSString *cssString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
 			
 			defaultDTCSSStylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:cssString origin:CSS_ORIGIN_UA media:CSS_MEDIA_ALL];
 		}
