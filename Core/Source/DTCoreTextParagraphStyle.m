@@ -18,9 +18,11 @@
 	CGFloat _defaultTabInterval;
 	CGFloat _paragraphSpacingBefore;
 	CGFloat _paragraphSpacing;
+    CGFloat _paragraphSpaceAddition;
 	CGFloat _headIndent;
 	CGFloat _tailIndent;
 	CGFloat _lineHeightMultiple;
+    CGFloat _lineSpacing;
 	CGFloat _minimumLineHeight;
 	CGFloat _maximumLineHeight;
 	
@@ -57,6 +59,7 @@
 	retStyle.paragraphSpacingBefore = paragraphStyle.paragraphSpacingBefore;
 	
 	retStyle.lineHeightMultiple = paragraphStyle.lineHeightMultiple;
+    retStyle.lineSpacing = paragraphStyle.lineSpacing;
 	retStyle.minimumLineHeight = paragraphStyle.minimumLineHeight;
 	retStyle.maximumLineHeight = paragraphStyle.maximumLineHeight;
 	
@@ -130,9 +133,11 @@
 		_alignment = kCTNaturalTextAlignment;
 #endif
 		_lineHeightMultiple = 0.0;
+        _lineSpacing = 0.;
 		_minimumLineHeight = 0.0;
 		_maximumLineHeight = 0.0;
 		_paragraphSpacing = 0.0;
+        _paragraphSpaceAddition = 0.0;
 	}
 	
 	return self;
@@ -174,6 +179,7 @@
 
 		
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(_lineHeightMultiple), &_lineHeightMultiple);
+        CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierLineSpacingAdjustment, sizeof(_lineSpacing), &_lineSpacing);
 	}
 	
 	return self;
@@ -184,6 +190,7 @@
 	// This just makes it that much easier to track down memory issues with tabstops
 	CFArrayRef stops = _tabStops ? CFArrayCreateCopy (NULL, (__bridge CFArrayRef)_tabStops) : NULL;
 	
+    CGFloat trueParagraphSpacing = _paragraphSpacing + _paragraphSpaceAddition;
 	CTParagraphStyleSetting settings[] = 
 	{
 		{kCTParagraphStyleSpecifierAlignment, sizeof(_alignment), &_alignment},
@@ -192,13 +199,14 @@
 		
 		{kCTParagraphStyleSpecifierTabStops, sizeof(stops), &stops},
 		
-		{kCTParagraphStyleSpecifierParagraphSpacing, sizeof(_paragraphSpacing), &_paragraphSpacing},
+		{kCTParagraphStyleSpecifierParagraphSpacing, sizeof(trueParagraphSpacing), &trueParagraphSpacing},
 		{kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(_paragraphSpacingBefore), &_paragraphSpacingBefore},
 		
 		{kCTParagraphStyleSpecifierHeadIndent, sizeof(_headIndent), &_headIndent},
 		{kCTParagraphStyleSpecifierTailIndent, sizeof(_tailIndent), &_tailIndent},
 		{kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(_baseWritingDirection), &_baseWritingDirection},
 		{kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(_lineHeightMultiple), &_lineHeightMultiple},
+        {kCTParagraphStyleSpecifierLineSpacingAdjustment, sizeof(_lineSpacing), &_lineSpacing},
 		
 		{kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(_minimumLineHeight), &_minimumLineHeight},
 		{kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(_maximumLineHeight), &_maximumLineHeight}
@@ -221,7 +229,7 @@
 
 	[mps setFirstLineHeadIndent:_firstLineHeadIndent];
 
-	[mps setParagraphSpacing:_paragraphSpacing];
+	[mps setParagraphSpacing:_paragraphSpacing + _paragraphSpaceAddition];
 	[mps setParagraphSpacingBefore:_paragraphSpacingBefore];
 	
 	[mps setHeadIndent:_headIndent];
@@ -230,6 +238,7 @@
 	[mps setMinimumLineHeight:_minimumLineHeight];
 	[mps setMaximumLineHeight:_maximumLineHeight];
 	[mps setLineHeightMultiple:_lineHeightMultiple];
+    [mps setLineSpacing:_lineSpacing];
 	
 	[mps setAlignment:DTNSTextAlignmentFromCTTextAlignment(_alignment)];
 	
@@ -376,7 +385,7 @@
 	// Spacing at the bottom
 	if (_paragraphSpacing!=0.0f)
 	{
-		NSNumber *number = DTNSNumberFromCGFloat(_paragraphSpacing);
+		NSNumber *number = DTNSNumberFromCGFloat(_paragraphSpacing + _paragraphSpaceAddition);
 		[retString appendFormat:@"margin-bottom:%@px;", number];
 	}
 
@@ -424,7 +433,9 @@
 	newObject.defaultTabInterval = self.defaultTabInterval;
 	newObject.paragraphSpacing = self.paragraphSpacing;
 	newObject.paragraphSpacingBefore = self.paragraphSpacingBefore;
+    newObject.paragraphSpaceAddition = self.paragraphSpaceAddition;
 	newObject.lineHeightMultiple = self.lineHeightMultiple;
+    newObject.lineSpacing = self.lineSpacing;
 	newObject.minimumLineHeight = self.minimumLineHeight;
 	newObject.maximumLineHeight = self.maximumLineHeight;
 	newObject.headIndent = self.headIndent;
@@ -493,6 +504,10 @@
 	{
 		return NO;
 	}
+    
+    if (_lineSpacing != otherStyle->_lineSpacing) {
+        return NO;
+    }
 	
 	if (_minimumLineHeight != otherStyle->_minimumLineHeight)
 	{
@@ -574,12 +589,26 @@
 	}
 }
 
+- (void)setParagraphSpaceAddition:(CGFloat)paragraphSpaceAddition
+{
+    if (_paragraphSpaceAddition != paragraphSpaceAddition) {
+        _paragraphSpaceAddition = paragraphSpaceAddition;
+    }
+}
+
 - (void)setLineHeightMultiple:(CGFloat)lineHeightMultiple
 {
 	if (_lineHeightMultiple != lineHeightMultiple)
 	{
 		_lineHeightMultiple = lineHeightMultiple;
 	}
+}
+
+- (void)setLineSpacing:(CGFloat)lineSpacing
+{
+    if (_lineSpacing != lineSpacing) {
+        _lineSpacing = lineSpacing;
+    }
 }
 
 - (void)setMinimumLineHeight:(CGFloat)minimumLineHeight
@@ -650,8 +679,10 @@
 @synthesize defaultTabInterval = _defaultTabInterval;
 @synthesize paragraphSpacingBefore = _paragraphSpacingBefore;
 @synthesize paragraphSpacing = _paragraphSpacing;
+@synthesize paragraphSpaceAddition = _paragraphSpaceAddition;
 
 @synthesize lineHeightMultiple = _lineHeightMultiple;
+@synthesize lineSpacing = _lineSpacing;
 @synthesize minimumLineHeight = _minimumLineHeight;
 @synthesize maximumLineHeight = _maximumLineHeight;
 @synthesize headIndent = _headIndent;

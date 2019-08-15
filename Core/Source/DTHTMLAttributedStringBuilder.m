@@ -53,6 +53,8 @@
 	NSURL *_baseURL;
 	DTCoreTextFontDescriptor *_defaultFontDescriptor;
 	DTCoreTextParagraphStyle *_defaultParagraphStyle;
+    
+    CGFloat _lineSpaceAddition;
 	
 	// root node inherits these defaults
 	DTHTMLElement *_defaultTag;
@@ -231,7 +233,7 @@
 	if (defaultFontName) {
 		_defaultFontDescriptor.fontName = defaultFontName;
 	}
-
+	
 	
 	_defaultLinkColor = [_options objectForKey:DTDefaultLinkColor];
 	
@@ -310,6 +312,9 @@
 	{
 		_defaultParagraphStyle.headIndent = [defaultHeadIndent integerValue];
 	}
+    
+    _defaultParagraphStyle.lineSpacing = [[_options objectForKey:DTLineSpacingAdjustment] floatValue];
+    _defaultParagraphStyle.paragraphSpaceAddition = [[_options objectForKey:DTParagraphSpacingAdjustment] floatValue];
 	
 	_defaultTag = [[DTHTMLElement alloc] init];
 	_defaultTag.fontDescriptor = _defaultFontDescriptor;

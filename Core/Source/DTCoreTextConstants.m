@@ -35,6 +35,9 @@ NSString * const DTProcessCustomHTMLAttributes = @"DTProcessCustomHTMLAttributes
 NSString * const DTIgnoreInlineStylesOption = @"DTIgnoreInlineStyles";
 NSString * const DTDocumentPreserveTrailingSpaces = @"DTDocumentPreserveTrailingSpaces";
 
+NSString * const DTLineSpacingAdjustment = @"DTLineSpacingAdjustment";
+NSString * const DTParagraphSpacingAdjustment = @"DTParagraphSpacingAdjustment";
+
 // attributed string attribute constants
 
 NSString * const DTTextListsAttribute = @"DTTextLists";

@@ -916,8 +916,12 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	id fontFamilyStyle = [styles objectForKey:@"font-family"];
-	
-	if (fontFamilyStyle && ![fontFamilyStyle isEqualToString:@"inherit"])
+    BOOL useDefaultFont = NO;
+    if ([self.name isEqualToString:@"body"] && self.fontDescriptor) { // 针对body tag我们强制使用用户设置的默认字体
+        useDefaultFont = YES;
+    }
+    
+	if (fontFamilyStyle && ![fontFamilyStyle isEqualToString:@"inherit"] && !useDefaultFont)
 	{
 		NSArray *fontFamilies;
 		
@@ -1460,7 +1464,7 @@ NSDictionary *_classesForNames = nil;
                 self.paragraphStyle.firstLineHeadIndent = ((DTHTMLElement *)self.parentNode).paragraphStyle.firstLineHeadIndent;
             }
         } else {
-            self.paragraphStyle.firstLineHeadIndent += [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale pageWidth:320];
+            self.paragraphStyle.firstLineHeadIndent += [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320];
         }
     }
 }

@@ -61,6 +61,8 @@ extern NSString * const DTProcessCustomHTMLAttributes;
 extern NSString * const DTIgnoreInlineStylesOption;
 extern NSString * const DTDocumentPreserveTrailingSpaces;
 
+extern NSString * const DTLineSpacingAdjustment;
+extern NSString * const DTParagraphSpacingAdjustment;
 
 // attributed string attribute constants
 

@@ -104,6 +104,10 @@
  */
 @property (nonatomic, assign) CGFloat paragraphSpacing;
 
+/**
+ The space added to the default paragraph spacing.
+ */
+@property (nonatomic, assign) CGFloat paragraphSpaceAddition;
 
 /**
  The line height multiple.
@@ -111,6 +115,11 @@
  Internally line height multiples get converted into minimum and maximum line height.
  */
 @property (nonatomic, assign) CGFloat lineHeightMultiple;
+
+/**
+ The line spacing.
+ */
+@property (nonatomic, assign) CGFloat lineSpacing;
 
 
 /**
