@@ -111,6 +111,7 @@ NSDictionary *_classesForNames = nil;
 	self = [super initWithName:name attributes:attributes];
 	if (self)
 	{
+        _lightenTextColor = [[options objectForKey:DTLightenTextColor] boolValue];
 	}
 	
 	return self;
@@ -889,6 +890,9 @@ NSDictionary *_classesForNames = nil;
     if (![color isEqualToString:@"inherit"])
     {
         self.textColor = DTColorCreateWithHTMLName(color);
+        if (_lightenTextColor) {
+            self.textColor = DTLightenedColorFromDTColor(self.textColor);
+        }
     }
 	
 	NSString *bgColor = [styles objectForKey:@"background-color"];

@@ -79,6 +79,8 @@
 	BOOL _shouldProcessCustomHTMLAttributes;
 	
 	DTHTMLElementTextTransformStyle _textTransform;
+    
+    BOOL _lightenTextColor;
 }
 
 /**

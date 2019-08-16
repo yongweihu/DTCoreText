@@ -35,10 +35,6 @@ NSString * const DTProcessCustomHTMLAttributes = @"DTProcessCustomHTMLAttributes
 NSString * const DTIgnoreInlineStylesOption = @"DTIgnoreInlineStyles";
 NSString * const DTDocumentPreserveTrailingSpaces = @"DTDocumentPreserveTrailingSpaces";
 
-NSString * const DTLineSpacingAdjustment = @"DTLineSpacingAdjustment";
-NSString * const DTParagraphSpacingAdjustment = @"DTParagraphSpacingAdjustment";
-NSString * const DTCustomImageLoader = @"DTCustomImageLoader";
-
 // attributed string attribute constants
 
 NSString * const DTTextListsAttribute = @"DTTextLists";
@@ -60,6 +56,13 @@ NSString * const DTBackgroundStrokeColorAttribute = @"DTBackgroundStrokeColor";
 NSString * const DTBackgroundStrokeWidthAttribute = @"DTBackgroundStrokeWidth";
 NSString * const DTBackgroundCornerRadiusAttribute = @"DTBackgroundCornerRadius";
 NSString * const DTArchivingAttribute = @"DTArchivingAttribute";
+
+// 听阅添加的属性
+
+NSString * const DTLineSpacingAdjustment = @"DTLineSpacingAdjustment";
+NSString * const DTParagraphSpacingAdjustment = @"DTParagraphSpacingAdjustment";
+NSString * const DTCustomImageLoader = @"DTCustomImageLoader";
+NSString * const DTLightenTextColor = @"DTLightenTextColor";
 
 // field constants
 NSString * const DTListPrefixField = @"{listprefix}";

@@ -311,3 +311,65 @@ NSString *DTHexStringFromDTColor(DTColor *color)
 	return nil;
 }
 
+CGFloat brightnessOfDTColor(DTColor *color)
+{
+    CGFloat colorBrightness = 0;
+    
+    CGColorSpaceRef colorSpace = CGColorGetColorSpace(color.CGColor);
+    CGColorSpaceModel colorSpaceModel = CGColorSpaceGetModel(colorSpace);
+    
+    if(colorSpaceModel == kCGColorSpaceModelRGB) {
+        const CGFloat *componentColors = CGColorGetComponents(color.CGColor);
+        
+        colorBrightness = ((componentColors[0] * 299) + (componentColors[1] * 587) + (componentColors[2] * 114)) / 1000;
+    } else {
+        [color getWhite:&colorBrightness alpha:0];
+    }
+    
+    return colorBrightness;
+}
+
+DTColor *DTLightenedColorFromDTColorWithPercentage(DTColor *color, CGFloat percentage)
+{
+    CGFloat alpha, hue, saturation, brightness, red, green, blue, white;
+
+    CGFloat multiplier = percentage / 100.0;
+
+    if ([color getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha]) {
+        if (brightness < 1.0) {
+            CGFloat newBrightness;
+            if (brightness == 0.0) {
+                newBrightness = MAX(MIN(brightness + multiplier, 1.0), 0.0);
+            } else {
+                newBrightness = MAX(MIN(brightness + multiplier*brightness, 1.0), 0.0);
+            }
+            
+            return [DTColor colorWithHue:hue saturation:saturation brightness:newBrightness alpha:alpha];
+        } else {
+            CGFloat newSaturation =  MIN(MAX(saturation - multiplier*saturation, 0.0), 1.0);
+            return [DTColor colorWithHue:hue saturation:newSaturation brightness:brightness alpha:alpha];
+        }
+    } else if ([color getRed:&red green:&green blue:&blue alpha:&alpha]) {
+        CGFloat newRed = MIN(MAX(red + multiplier*red, 0.0), 1.0);
+        CGFloat newGreen = MIN(MAX(green + multiplier*green, 0.0), 1.0);
+        CGFloat newBlue = MIN(MAX(blue + multiplier*blue, 0.0), 1.0);
+        return [DTColor colorWithRed:newRed green:newGreen blue:newBlue alpha:alpha];
+    } else if ([color getWhite:&white alpha:&alpha]) {
+        CGFloat newWhite = white + multiplier*white;
+        return [UIColor colorWithWhite:newWhite alpha:alpha];
+    }
+    
+    return color;
+}
+
+DTColor *DTLightenedColorFromDTColor(DTColor *color)
+{
+    DTColor *res = color;
+    CGFloat colorBrightness = brightnessOfDTColor(color);
+    if (colorBrightness < 0.5) {
+        res = DTLightenedColorFromDTColorWithPercentage(color, 50);
+    }
+    
+    return res;
+}
+

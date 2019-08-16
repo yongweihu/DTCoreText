@@ -32,3 +32,8 @@ DTColor *DTColorCreateWithHTMLName(NSString *name);
  @returns A CSS hexadecimal NSString specifying this UIColor.
  */
 NSString *DTHexStringFromDTColor(DTColor *color);
+
+/**
+ 调整指定颜色，让其适用于黑色背景。
+ */
+DTColor *DTLightenedColorFromDTColor(DTColor *color);

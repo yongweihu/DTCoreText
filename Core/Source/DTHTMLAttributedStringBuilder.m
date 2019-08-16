@@ -614,6 +614,9 @@
 		if (color)
 		{
 			self->_currentTag.textColor = DTColorCreateWithHTMLName(color);
+            if ([[_options objectForKey:DTLightenTextColor] boolValue]) {
+                self->_currentTag.textColor = DTLightenedColorFromDTColor(self->_currentTag.textColor);
+            }
 		}
 	};
 	

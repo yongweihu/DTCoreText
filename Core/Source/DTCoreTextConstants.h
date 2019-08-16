@@ -60,9 +60,6 @@ extern NSString * const DTProcessCustomHTMLAttributes;
 extern NSString * const DTIgnoreInlineStylesOption;
 extern NSString * const DTDocumentPreserveTrailingSpaces;
 
-extern NSString * const DTLineSpacingAdjustment;
-extern NSString * const DTParagraphSpacingAdjustment;
-
 // attributed string attribute constants
 
 extern NSString * const DTTextListsAttribute;
@@ -84,7 +81,12 @@ extern NSString * const DTBackgroundStrokeColorAttribute;
 extern NSString * const DTBackgroundStrokeWidthAttribute;
 extern NSString * const DTBackgroundCornerRadiusAttribute;
 extern NSString * const DTArchivingAttribute;
+
+// 听阅添加的属性
+extern NSString * const DTLineSpacingAdjustment;
+extern NSString * const DTParagraphSpacingAdjustment;
 extern NSString * const DTCustomImageLoader;
+extern NSString * const DTLightenTextColor;
 
 // field constants
 
