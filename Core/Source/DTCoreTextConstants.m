@@ -37,6 +37,7 @@ NSString * const DTDocumentPreserveTrailingSpaces = @"DTDocumentPreserveTrailing
 
 NSString * const DTLineSpacingAdjustment = @"DTLineSpacingAdjustment";
 NSString * const DTParagraphSpacingAdjustment = @"DTParagraphSpacingAdjustment";
+NSString * const DTCustomImageLoader = @"DTCustomImageLoader";
 
 // attributed string attribute constants
 

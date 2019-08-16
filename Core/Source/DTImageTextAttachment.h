@@ -39,3 +39,12 @@
 @property (nonatomic, strong) DTImage *image;
 
 @end
+
+/**
+ The delegate to load image.
+ */
+@protocol DTImageLoader <NSObject>
+
+- (UIImage *)imageForURL:(NSURL *)imageURL;
+
+@end

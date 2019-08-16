@@ -77,6 +77,7 @@ static NSCache *imageCache = nil;
 	// get base URL
 	NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];
 	NSString *src = [element.attributes objectForKey:@"src"];
+    id<DTImageLoader> imageLoader = [options objectForKey:DTCustomImageLoader];
 	
 	NSURL *contentURL = nil;
 	
@@ -183,26 +184,21 @@ static NSCache *imageCache = nil;
 				else
 				{
 					// file in app bundle
-					NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-					NSString *path = [bundle pathForResource:src ofType:nil];
-					
-					if (path)
-					{
-						// Prevent a crash if path turns up nil.
-						contentURL = [NSURL fileURLWithPath:path];
-					}
-					else
-					{
-						// might also be in a different bundle, e.g. when unit testing
-						bundle = [NSBundle bundleForClass:[DTTextAttachment class]];
-						
-						path = [bundle pathForResource:src ofType:nil];
-						if (path)
-						{
-							// Prevent a crash if path turns up nil.
-							contentURL = [NSURL fileURLWithPath:path];
-						}
-					}
+                    NSArray *bundlesToSearch = @[
+                        [NSBundle bundleForClass:[self class]],
+                        [NSBundle bundleForClass:[DTTextAttachment class]],
+                        [NSBundle mainBundle],
+                    ];
+                    
+                    for (NSBundle *bundle in bundlesToSearch) {
+                        NSString *path = [bundle pathForResource:src ofType:nil];
+                        if (path)
+                        {
+                            // Prevent a crash if path turns up nil.
+                            contentURL = [NSURL fileURLWithPath:path];
+                            break;
+                        }
+                    }
 				}
 			}
 		}
@@ -237,6 +233,10 @@ static NSCache *imageCache = nil;
 					image = [[DTImage alloc] initWithContentsOfFile:[contentURL path]];
 				}
 			}
+            
+            if (!image && imageLoader) {
+                image = [imageLoader imageForURL:contentURL];
+            }
 			
 			// cache that for later
 			if (image)
