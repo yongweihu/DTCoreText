@@ -261,7 +261,16 @@ NSDictionary *_classesForNames = nil;
 		if (___useiOS6Attributes)
 		{
 			NSParagraphStyle *style = [self.paragraphStyle NSParagraphStyle];
-			[tmpDict setObject:style forKey:NSParagraphStyleAttributeName];
+            if (_textAttachment) {
+                // 图片设置lineHeight会导致显示异常
+                NSMutableParagraphStyle *tmpStyle = [style mutableCopy];
+                tmpStyle.minimumLineHeight = 0.;
+                tmpStyle.maximumLineHeight = 0.;
+                
+                style = tmpStyle;
+            }
+            
+            [tmpDict setObject:style forKey:NSParagraphStyleAttributeName];
 		}
 		else
 #endif
