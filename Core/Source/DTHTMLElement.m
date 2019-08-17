@@ -23,6 +23,7 @@
 #import "DTCoreTextParagraphStyle.h"
 #import "DTCoreTextFontDescriptor.h"
 #import "NSAttributedStringRunDelegates.h"
+#import "DTImageTextAttachmentWraper.h"
 
 #import "NSMutableAttributedString+HTML.h"
 #import "NSCharacterSet+HTML.h"
@@ -132,8 +133,17 @@ NSDictionary *_classesForNames = nil;
 		[tmpDict setObject:CFBridgingRelease(embeddedObjectRunDelegate) forKey:(id)kCTRunDelegateAttributeName];
 #endif
 		
-		// add attachment
-		[tmpDict setObject:_textAttachment forKey:NSAttachmentAttributeName];
+        // add attachment
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+        if (___useiOS6Attributes && [_textAttachment isKindOfClass:[DTImageTextAttachment class]])
+        {
+            [tmpDict setObject:[[DTImageTextAttachmentWraper alloc] initWithDTImageTextAttachment:(DTImageTextAttachment *)_textAttachment] forKey:NSAttachmentAttributeName];
+        }
+        else
+#endif
+        {
+            [tmpDict setObject:_textAttachment forKey:NSAttachmentAttributeName];
+        }
 		
 		// remember original paragraphSpacing
 		[tmpDict setObject:DTNSNumberFromCGFloat(self.paragraphStyle.paragraphSpacing) forKey:DTAttachmentParagraphSpacingAttribute];
