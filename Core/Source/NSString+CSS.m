@@ -163,6 +163,23 @@
 				}
 			}
 		}
+        else if (ch == 'r')
+        {
+            if (i<stringLength)
+            {
+                if (_characters[i++] == 'e')
+                {
+                    if (i<stringLength)
+                    {
+                        if (_characters[i] == 'm')
+                        {
+                            // rem value
+                            value *= textSize;
+                        }
+                    }
+                }
+            }
+        }
 	}
 	
 	if (negative)
