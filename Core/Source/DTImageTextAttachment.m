@@ -77,6 +77,10 @@ static NSCache *imageCache = nil;
 	// get base URL
 	NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];
 	NSString *src = [element.attributes objectForKey:@"src"];
+    if (src == nil) {
+        src = [element.attributes objectForKey:@"xlink:href"];
+    }
+    
     id<DTImageLoader> imageLoader = [options objectForKey:DTCustomImageLoader];
 	
 	NSURL *contentURL = nil;

@@ -48,6 +48,7 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	
 	// register standard tags
 	[DTTextAttachment registerClass:[DTImageTextAttachment class] forTagName:@"img"];
+    [DTTextAttachment registerClass:[DTImageTextAttachment class] forTagName:@"image"];
 	[DTTextAttachment registerClass:[DTVideoTextAttachment class] forTagName:@"video"];
 	[DTTextAttachment registerClass:[DTIframeTextAttachment class] forTagName:@"iframe"];
 	[DTTextAttachment registerClass:[DTObjectTextAttachment class] forTagName:@"object"];

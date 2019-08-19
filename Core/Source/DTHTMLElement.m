@@ -73,6 +73,7 @@ NSDictionary *_classesForNames = nil;
 	[tmpDict setObject:[DTListItemHTMLElement class] forKey:@"li"];
 	[tmpDict setObject:[DTStylesheetHTMLElement class] forKey:@"style"];
 	[tmpDict setObject:[DTTextAttachmentHTMLElement class] forKey:@"img"];
+    [tmpDict setObject:[DTTextAttachmentHTMLElement class] forKey:@"image"];
 	[tmpDict setObject:[DTTextAttachmentHTMLElement class] forKey:@"object"];
 	[tmpDict setObject:[DTTextAttachmentHTMLElement class] forKey:@"video"];
 	[tmpDict setObject:[DTTextAttachmentHTMLElement class] forKey:@"iframe"];
