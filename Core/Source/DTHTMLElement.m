@@ -37,6 +37,8 @@
 #import "UIFont+DTCoreText.h"
 #endif
 
+static const kDefaultPageWidth = 414;
+
 @interface DTHTMLElement ()
 
 @property (nonatomic, strong) NSString *linkGUID;
@@ -781,29 +783,29 @@ NSDictionary *_classesForNames = nil;
 		{
 			if ([oneKey hasSuffix:leftKey])
 			{
-				edgeInsets.left = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320];
+				edgeInsets.left = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:kDefaultPageWidth];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:bottomKey])
 			{
-				edgeInsets.bottom = [attributeValue	pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320];
+				edgeInsets.bottom = [attributeValue	pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:kDefaultPageWidth];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:rightKey])
 			{
-				edgeInsets.right = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320];
+				edgeInsets.right = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:kDefaultPageWidth];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:topKey])
 			{
-				edgeInsets.top = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320];
+				edgeInsets.top = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:kDefaultPageWidth];
 				didModify = YES;
 			}
 		}
 		else
 		{
 			// shortcut with multiple values
-			edgeInsets = [attributeValue DTEdgeInsetsRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320];
+			edgeInsets = [attributeValue DTEdgeInsetsRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:kDefaultPageWidth];
 			didModify = YES;
 		}
 	}
@@ -1313,13 +1315,13 @@ NSDictionary *_classesForNames = nil;
 	NSString *widthString = [styles objectForKey:@"width"];
 	if (widthString && ![widthString isEqualToString:@"auto"] && ![widthString isEqualToString:@"inherit"])
 	{
-		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:kDefaultPageWidth];
 	}
 	
 	NSString *heightString = [styles objectForKey:@"height"];
 	if (heightString && ![heightString isEqualToString:@"auto"] && ![widthString isEqualToString:@"inherit"])
 	{
-		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:kDefaultPageWidth];
 	}
 	
 	NSString *whitespaceString = [styles objectForKey:@"white-space"];
@@ -1489,7 +1491,7 @@ NSDictionary *_classesForNames = nil;
                 self.paragraphStyle.firstLineHeadIndent = ((DTHTMLElement *)self.parentNode).paragraphStyle.firstLineHeadIndent;
             }
         } else {
-            self.paragraphStyle.firstLineHeadIndent += [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:320];
+            self.paragraphStyle.firstLineHeadIndent += [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale pageWidth:kDefaultPageWidth];
         }
     }
 }
