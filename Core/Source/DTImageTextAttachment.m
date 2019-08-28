@@ -275,12 +275,12 @@ static NSCache *imageCache = nil;
 		if (_originalSize.width==0 && _originalSize.height!=0)
 		{
 			CGFloat factor = _originalSize.height/image.size.height;
-			_originalSize.width = image.size.height * factor;
+			_originalSize.width = image.size.width * factor;
 		}
 		else if (_originalSize.width!=0 && _originalSize.height==0)
 		{
 			CGFloat factor = _originalSize.width/image.size.width;
-			_originalSize.height = image.size.width * factor;
+			_originalSize.height = image.size.height * factor;
 		}
 	}
 	
