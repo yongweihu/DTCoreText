@@ -153,6 +153,7 @@ static css_error resolve_url(void *pw,
     return CSS_OK;
 }
 
+static dispatch_semaphore_t cssLock;
 static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlineStyle);
 static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inlineStyle)
 {
@@ -160,22 +161,13 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
         return nil;
     }
     
-    static dispatch_queue_t styleSheetSyncQueue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        styleSheetSyncQueue = dispatch_queue_create("syncQueue", DISPATCH_QUEUE_SERIAL);
+        cssLock = dispatch_semaphore_create(1);
     });
     
-    __block css_stylesheet *sheet;
-    dispatch_sync(styleSheetSyncQueue, ^{
-        sheet = _createStyleSheetWithStyleBlock(css, inlineStyle);
-    });
-    
-    return sheet;
-}
+    dispatch_semaphore_wait(cssLock, DISPATCH_TIME_FOREVER);
 
-static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlineStyle)
-{
     css_stylesheet_params params;
     
     params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
@@ -218,6 +210,8 @@ static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlin
      dump_sheet(_sheet, buf, &buflen);
      */
 #endif
+    
+    dispatch_semaphore_signal(cssLock);
     
     return sheet;
 }
@@ -269,29 +263,22 @@ static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlin
 + (DTCSSStylesheet *)defaultStyleSheet
 {
 	static DTCSSStylesheet *defaultDTCSSStylesheet = nil;
-	if (defaultDTCSSStylesheet)
-	{
-		return defaultDTCSSStylesheet;
-	}
-	
-	@synchronized(self)
-	{
-		if (!defaultDTCSSStylesheet)
-		{
-			NSBundle *bundle = [NSBundle bundleForClass:self];
-			NSString *path = [bundle pathForResource:@"default" ofType:@"css"];
-			// Cocoapods uses a separate Resources bundle to include default.css
-			if (!path)
-			{
-				NSString *resourcesBundlePath = [bundle pathForResource:@"Resources" ofType:@"bundle"];
-				NSBundle *resourcesBundle = [NSBundle bundleWithPath:resourcesBundlePath];
-				path = [resourcesBundle pathForResource:@"default" ofType:@"css"];
-			}
-			NSString *cssString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-			
-			defaultDTCSSStylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:cssString origin:CSS_ORIGIN_UA media:CSS_MEDIA_ALL];
-		}
-	}
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSBundle *bundle = [NSBundle bundleForClass:self];
+        NSString *path = [bundle pathForResource:@"default" ofType:@"css"];
+        // Cocoapods uses a separate Resources bundle to include default.css
+        if (!path)
+        {
+            NSString *resourcesBundlePath = [bundle pathForResource:@"Resources" ofType:@"bundle"];
+            NSBundle *resourcesBundle = [NSBundle bundleWithPath:resourcesBundlePath];
+            path = [resourcesBundle pathForResource:@"default" ofType:@"css"];
+        }
+        NSString *cssString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+        
+        defaultDTCSSStylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:cssString origin:CSS_ORIGIN_UA media:CSS_MEDIA_ALL];
+    });
+    
 	return defaultDTCSSStylesheet;
 }
 
@@ -344,17 +331,6 @@ static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlin
 
 #pragma mark Working with Style Blocks
 
-- (dispatch_queue_t)styleSheetSyncQueue
-{
-    static dispatch_queue_t styleSheetSyncQueue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        styleSheetSyncQueue = dispatch_queue_create("syncQueue", DISPATCH_QUEUE_SERIAL);
-    });
-    
-    return styleSheetSyncQueue;
-}
-
 - (void)parseStyleBlock:(NSString*)css
 {
 	DTSheetContext *sheetCtx = [[DTSheetContext alloc] initWithCSSString:css origin:_defaultOrigin media:_defaultMedia];
@@ -386,16 +362,8 @@ static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlin
 
 - (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
 {
-    __block NSDictionary *result;
-    dispatch_sync(self.styleSheetSyncQueue, ^{
-        result = [self _mergedStyleDictionaryForElement:element matchedSelectors:matchedSelectors ignoreInlineStyle:ignoreInlineStyle];
-    });
+    dispatch_semaphore_wait(cssLock, DISPATCH_TIME_FOREVER);
     
-    return result;
-}
-
-- (NSDictionary *)_mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
-{
 	css_select_results *results;
     if (_select == NULL) {
         assert(css_select_ctx_create(&_select) == CSS_OK);
@@ -412,6 +380,8 @@ static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlin
         }
     }
     
+    dispatch_semaphore_signal(cssLock);
+    
     css_stylesheet *inlineSheet = NULL;
     if (!ignoreInlineStyle) {
         // Get tag's local style attribute
@@ -422,6 +392,8 @@ static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlin
         }
     }
 	
+    dispatch_semaphore_wait(cssLock, DISPATCH_TIME_FOREVER);
+    
 	assert(css_select_style(_select, (__bridge void *)(element), CSS_MEDIA_ALL, inlineSheet, &select_handler, (__bridge void *)(self), &results) == CSS_OK);
     
 	css_computed_style *styles = results->styles[CSS_PSEUDO_ELEMENT_NONE];
@@ -431,6 +403,8 @@ static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlin
     if (inlineSheet) {
         css_stylesheet_destroy(inlineSheet);
     }
+    
+    dispatch_semaphore_signal(cssLock);
 	
 	return stylesDict;
 }
@@ -456,7 +430,9 @@ static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlin
 
 - (void)dealloc
 {
-    css_select_ctx_destroy(_select);
+    if (_select != NULL) {
+        css_select_ctx_destroy(_select);
+    }
 }
 
 @end
