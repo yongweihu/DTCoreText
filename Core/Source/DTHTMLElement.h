@@ -81,6 +81,8 @@
 	DTHTMLElementTextTransformStyle _textTransform;
     
     BOOL _lightenTextColor;
+    
+    NSNumber *_defaultTextAlignmentNum;
 }
 
 /**
