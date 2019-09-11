@@ -1139,7 +1139,7 @@ NSDictionary *_classesForNames = nil;
 	}
     
     // 如果YES，对于left/justified类型，我们直接使用default的属性，以支持用户控制是否两端对齐。
-    BOOL useDefaultAlignment = [self.name isEqualToString:@"body"] && (_defaultTextAlignmentNum != nil);
+    BOOL useDefaultAlignment = (_defaultTextAlignmentNum != nil);
 	
 	NSString *alignment = [[styles objectForKey:@"text-align"] lowercaseString];
 	if (alignment && ![alignment isEqualToString:@"inherit"])
