@@ -153,7 +153,6 @@ static css_error resolve_url(void *pw,
     return CSS_OK;
 }
 
-static dispatch_semaphore_t cssLock;
 static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlineStyle);
 static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inlineStyle)
 {
@@ -161,13 +160,6 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
         return nil;
     }
     
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        cssLock = dispatch_semaphore_create(1);
-    });
-    
-    dispatch_semaphore_wait(cssLock, DISPATCH_TIME_FOREVER);
-
     css_stylesheet_params params;
     
     params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
@@ -210,8 +202,6 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
      dump_sheet(_sheet, buf, &buflen);
      */
 #endif
-    
-    dispatch_semaphore_signal(cssLock);
     
     return sheet;
 }
@@ -362,8 +352,6 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
 
 - (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
 {
-    dispatch_semaphore_wait(cssLock, DISPATCH_TIME_FOREVER);
-    
 	css_select_results *results;
     if (_select == NULL) {
         assert(css_select_ctx_create(&_select) == CSS_OK);
@@ -380,8 +368,6 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
         }
     }
     
-    dispatch_semaphore_signal(cssLock);
-    
     css_stylesheet *inlineSheet = NULL;
     if (!ignoreInlineStyle) {
         // Get tag's local style attribute
@@ -391,8 +377,6 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
             inlineSheet = createStyleSheetWithStyleBlock(styleString, YES);
         }
     }
-	
-    dispatch_semaphore_wait(cssLock, DISPATCH_TIME_FOREVER);
     
 	assert(css_select_style(_select, (__bridge void *)(element), CSS_MEDIA_ALL, inlineSheet, &select_handler, (__bridge void *)(self), &results) == CSS_OK);
     
@@ -403,8 +387,6 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
     if (inlineSheet) {
         css_stylesheet_destroy(inlineSheet);
     }
-    
-    dispatch_semaphore_signal(cssLock);
 	
 	return stylesDict;
 }
@@ -594,6 +576,7 @@ css_error sibling_node(void *pw, void *n, void **sibling)
 {
 	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
 	
+    *sibling = NULL;
 	NSInteger nodeIndex = [node.parentNode.childNodes indexOfObject:node];
 	if (--nodeIndex >= 0) {
 		*sibling = (__bridge void *) [node.parentNode.childNodes objectAtIndex:nodeIndex];
