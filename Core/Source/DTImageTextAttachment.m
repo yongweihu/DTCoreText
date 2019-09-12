@@ -298,7 +298,7 @@ static NSCache *imageCache = nil;
 			CGSize newDisplaySize = _displaySize;
 
 			CGFloat factor = _displaySize.height/_originalSize.height;
-			newDisplaySize.width = _originalSize.height * factor;
+			newDisplaySize.width = _originalSize.width * factor;
 			
 			[self setDisplaySize:newDisplaySize withMaxDisplaySize:_maxImageSize];
 		}
@@ -307,7 +307,7 @@ static NSCache *imageCache = nil;
 			CGSize newDisplaySize = _displaySize;
 			
 			CGFloat factor = _displaySize.width/_originalSize.width;
-			newDisplaySize.height = _originalSize.width * factor;
+			newDisplaySize.height = _originalSize.height * factor;
 			
 			[self setDisplaySize:newDisplaySize withMaxDisplaySize:_maxImageSize];
 		}
