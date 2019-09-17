@@ -367,7 +367,7 @@ DTColor *DTLightenedColorFromDTColor(DTColor *color)
     DTColor *res = color;
     CGFloat colorBrightness = brightnessOfDTColor(color);
     if (colorBrightness < 0.5) {
-        res = DTLightenedColorFromDTColorWithPercentage(color, 50);
+        res = DTLightenedColorFromDTColorWithPercentage(color, 100);
     }
     
     return res;
