@@ -35,7 +35,7 @@ Pod::Spec.new do |spec|
   spec.library = 'iconv'
   spec.vendored_library = 'Core/netsurf/libnetsurf.a'
 
-  netsurf_root = '/Users/yongweihu/Documents/Others/DTCoreText/Core/netsurf'
+  netsurf_root = '/Users/yongweihu/Documents/Develop/DTCoreText/Core/netsurf'
   spec.pod_target_xcconfig = {
     'NETSURF_SRC_ROOT' => netsurf_root,
     'HEADER_SEARCH_PATHS' => '"$(NETSURF_SRC_ROOT)/include"'
