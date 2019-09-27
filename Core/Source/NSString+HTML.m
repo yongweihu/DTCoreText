@@ -13,7 +13,7 @@
 static NSDictionary *entityLookup = nil;
 static NSDictionary *entityReverseLookup = nil;
 
-@implementation NSString (HTML)
+@implementation NSString (HTML2)
 
 - (NSUInteger)integerValueFromHex 
 {
