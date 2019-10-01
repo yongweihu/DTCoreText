@@ -181,9 +181,15 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
     css_stylesheet *sheet;
     assert(css_stylesheet_create(&params, &sheet) == CSS_OK);
     
-    css_error error = css_stylesheet_append_data(sheet, (const uint8_t *)css.UTF8String, strlen(css.UTF8String));
+    size_t dataLength = strlen(css.UTF8String);
+    uint8_t *data = malloc(dataLength);
+    strncpy(data, (const uint8_t *)css.UTF8String, dataLength);
+    
+    css_error error = css_stylesheet_append_data(sheet, data, dataLength);
     assert(error == CSS_OK || error == CSS_NEEDDATA);
     assert(css_stylesheet_data_done(sheet) == CSS_OK);
+    
+    free(data);
     
 #if DEBUG
     
