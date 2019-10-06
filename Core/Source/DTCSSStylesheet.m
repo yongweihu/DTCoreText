@@ -153,8 +153,40 @@ static css_error resolve_url(void *pw,
     return CSS_OK;
 }
 
-static css_stylesheet *_createStyleSheetWithStyleBlock(NSString *css, BOOL inlineStyle);
-static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inlineStyle)
+@interface DTStylesheetCreator : NSObject
+
++ (instancetype)sharedInstance;
+- (css_stylesheet *)createStyleSheetWithStyleBlock:(NSString *)css inlineStyle:(BOOL)inlineStyle lockFirst:(BOOL)lockFirst;
+
+@property (nonatomic, strong) dispatch_semaphore_t syncLock;
+
+@end
+
+static DTStylesheetCreator *_shareSheetCreator;
+
+@implementation DTStylesheetCreator
+
++ (instancetype)sharedInstance
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _shareSheetCreator = [DTStylesheetCreator new];
+    });
+    
+    return _shareSheetCreator;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.syncLock = dispatch_semaphore_create(1);
+    }
+    
+    return self;
+}
+
+- (css_stylesheet *)createStyleSheetWithStyleBlock:(NSString *)css inlineStyle:(BOOL)inlineStyle lockFirst:(BOOL)lockFirst
 {
     if (css.length == 0) {
         return nil;
@@ -178,12 +210,25 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
     params.font = NULL;
     params.font_pw = NULL;
     
+    if (lockFirst) {
+        dispatch_semaphore_wait(self.syncLock, DISPATCH_TIME_FOREVER);
+    }
+    
     css_stylesheet *sheet;
     assert(css_stylesheet_create(&params, &sheet) == CSS_OK);
     
-    css_error error = css_stylesheet_append_data(sheet, (const uint8_t *)css.UTF8String, strlen(css.UTF8String));
+    size_t dataLength = strlen(css.UTF8String);
+    uint8_t *data = malloc(dataLength);
+    strncpy(data, (const uint8_t *)css.UTF8String, dataLength);
+    
+    css_error error = css_stylesheet_append_data(sheet, data, dataLength);
     assert(error == CSS_OK || error == CSS_NEEDDATA);
     assert(css_stylesheet_data_done(sheet) == CSS_OK);
+    
+    free(data);
+    if (lockFirst) {
+        dispatch_semaphore_signal(self.syncLock);
+    }
     
 #if DEBUG
     
@@ -206,6 +251,8 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
     return sheet;
 }
 
+@end
+
 @interface DTSheetContext : NSObject
 
 @property (nonatomic, assign, readonly) css_stylesheet *sheet;
@@ -220,7 +267,7 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
 {
     self = [super init];
     if (self) {
-        _sheet = createStyleSheetWithStyleBlock(cssString, NO);
+        _sheet = [[DTStylesheetCreator sharedInstance] createStyleSheetWithStyleBlock:cssString inlineStyle:NO lockFirst:YES];
         _origin = origin;
         _media = media;
     }
@@ -352,6 +399,8 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
 
 - (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
 {
+    dispatch_wait([DTStylesheetCreator sharedInstance].syncLock, DISPATCH_TIME_FOREVER);
+    
 	css_select_results *results;
     if (_select == NULL) {
         assert(css_select_ctx_create(&_select) == CSS_OK);
@@ -374,7 +423,7 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
         NSString *styleString = [element.attributes objectForKey:@"style"];
         
         if ([styleString length]) {
-            inlineSheet = createStyleSheetWithStyleBlock(styleString, YES);
+            inlineSheet = [[DTStylesheetCreator sharedInstance] createStyleSheetWithStyleBlock:styleString inlineStyle:YES lockFirst:NO];
         }
     }
     
@@ -387,6 +436,9 @@ static css_stylesheet *createStyleSheetWithStyleBlock(NSString *css, BOOL inline
     if (inlineSheet) {
         css_stylesheet_destroy(inlineSheet);
     }
+    
+    dispatch_semaphore_signal([DTStylesheetCreator sharedInstance].syncLock);
+    
 	
 	return stylesDict;
 }

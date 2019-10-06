@@ -9,7 +9,7 @@
 /**
  Methods for making HTML strings easier and quicker to handle. 
  */
-@interface NSString (HTML)
+@interface NSString (HTML2)
 
 /** 
  Extract the numbers from this string and return them as an NSUInteger. 
