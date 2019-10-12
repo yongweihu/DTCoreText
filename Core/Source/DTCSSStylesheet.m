@@ -399,7 +399,7 @@ static DTStylesheetCreator *_shareSheetCreator;
 
 - (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
 {
-    dispatch_wait([DTStylesheetCreator sharedInstance].syncLock, DISPATCH_TIME_FOREVER);
+    dispatch_semaphore_wait([DTStylesheetCreator sharedInstance].syncLock, DISPATCH_TIME_FOREVER);
     
 	css_select_results *results;
     if (_select == NULL) {
