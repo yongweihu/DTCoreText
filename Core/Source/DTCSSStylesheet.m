@@ -164,6 +164,8 @@ static css_error resolve_url(void *pw,
 
 static DTStylesheetCreator *_shareSheetCreator;
 
+#define MyStyleCreator ([DTStylesheetCreator sharedInstance])
+
 @implementation DTStylesheetCreator
 
 + (instancetype)sharedInstance
@@ -267,7 +269,7 @@ static DTStylesheetCreator *_shareSheetCreator;
 {
     self = [super init];
     if (self) {
-        _sheet = [[DTStylesheetCreator sharedInstance] createStyleSheetWithStyleBlock:cssString inlineStyle:NO lockFirst:YES];
+        _sheet = [MyStyleCreator createStyleSheetWithStyleBlock:cssString inlineStyle:NO lockFirst:YES];
         _origin = origin;
         _media = media;
     }
@@ -278,7 +280,10 @@ static DTStylesheetCreator *_shareSheetCreator;
 - (void)dealloc
 {
     if (self.sheet) {
+        dispatch_semaphore_wait(MyStyleCreator.syncLock, DISPATCH_TIME_FOREVER);
         css_stylesheet_destroy(self.sheet);
+        _sheet = nil;
+        dispatch_semaphore_signal(MyStyleCreator.syncLock);
     }
 }
 
@@ -399,7 +404,7 @@ static DTStylesheetCreator *_shareSheetCreator;
 
 - (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
 {
-    dispatch_semaphore_wait([DTStylesheetCreator sharedInstance].syncLock, DISPATCH_TIME_FOREVER);
+    dispatch_semaphore_wait(MyStyleCreator.syncLock, DISPATCH_TIME_FOREVER);
     
 	css_select_results *results;
     if (_select == NULL) {
@@ -423,7 +428,7 @@ static DTStylesheetCreator *_shareSheetCreator;
         NSString *styleString = [element.attributes objectForKey:@"style"];
         
         if ([styleString length]) {
-            inlineSheet = [[DTStylesheetCreator sharedInstance] createStyleSheetWithStyleBlock:styleString inlineStyle:YES lockFirst:NO];
+            inlineSheet = [MyStyleCreator createStyleSheetWithStyleBlock:styleString inlineStyle:YES lockFirst:NO];
         }
     }
     
@@ -437,7 +442,7 @@ static DTStylesheetCreator *_shareSheetCreator;
         css_stylesheet_destroy(inlineSheet);
     }
     
-    dispatch_semaphore_signal([DTStylesheetCreator sharedInstance].syncLock);
+    dispatch_semaphore_signal(MyStyleCreator.syncLock);
     
 	
 	return stylesDict;
