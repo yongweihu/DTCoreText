@@ -515,7 +515,7 @@ static css_error node_classes(void *pw, void *n,
 		
 		for (int i = 0; i < classNames.count; i++) {
 			NSString *className = [classNames objectAtIndex:i];
-			(*classes)[i] = lwc_string_for_nsstring(className);
+			(*classes)[i] = lwc_string_ref(lwc_string_for_nsstring(className));
 		}
 		
 		*n_classes = (uint32_t)classNames.count;
@@ -693,12 +693,19 @@ css_error node_has_attribute(void *pw, void *n,
 	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
 	
 	*match = false;
-	for (NSString *key in node.attributes) {
-		if (objc_string_is_equal_lwc_string(key, qname->name)) {
-			*match = true;
-			break;
-		}
-	}
+    NSString *matchedKey;
+    
+    NSArray *attributedNames = node.attributes.allKeys;
+    for (int i = 0; i < attributedNames.count; i++) {
+        assert(lwc_string_caseless_isequal(
+                lwc_string_for_nsstring(attributedNames[i]),
+                qname->name, match
+               ) == lwc_error_ok);
+        if (*match == true) {
+            matchedKey = attributedNames[i];
+            break;
+        }
+    }
 	
 	return CSS_OK;
 }
@@ -711,14 +718,27 @@ css_error node_has_attribute_equal(void *pw, void *n,
 	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
 	
 	*match = false;
-	for (NSString *key in node.attributes) {
-		if (objc_string_is_equal_lwc_string(key, qname->name)) {
-			*match = objc_string_is_equal_lwc_string(node.attributes[key], value);
-			break;
-		}
-	}
-	
-	return CSS_OK;
+    NSString *matchedKey;
+    
+    NSArray *attributedNames = node.attributes.allKeys;
+    for (int i = 0; i < attributedNames.count; i++) {
+        assert(lwc_string_caseless_isequal(
+                lwc_string_for_nsstring(attributedNames[i]),
+                qname->name, match
+               ) == lwc_error_ok);
+        if (*match == true) {
+            matchedKey = attributedNames[i];
+            break;
+        }
+    }
+
+    if (*match == true) {
+        assert(lwc_string_caseless_isequal(
+                lwc_string_for_nsstring(matchedKey), value, match) ==
+                lwc_error_ok);
+    }
+
+    return CSS_OK;
 }
 
 css_error node_has_attribute_includes(void *pw, void *n,
@@ -729,40 +749,48 @@ css_error node_has_attribute_includes(void *pw, void *n,
 	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
 	
 	size_t vlen = lwc_string_length(value);
-	*match = false;
-	for (NSString *key in node.attributes) {
-		if (objc_string_is_equal_lwc_string(key, qname->name)) {
-			NSString *valueStr = node.attributes[key];
-			
-			lwc_string *value_str = lwc_string_for_nsstring(valueStr);
-			
-			const char *p;
-			const char *start = lwc_string_data(value_str);
-			const char *end = start +
-			lwc_string_length(value_str);
-			
-			*match = false;
-			
-			for (p = start; p < end; p++) {
-				if (*p == ' ') {
-					if ((size_t) (p - start) == vlen &&
-						strncasecmp(start,
-									lwc_string_data(value),
-									vlen) == 0) {
-							*match = true;
-							break;
-						}
-					
-					start = p + 1;
-				}
-			}
-			
-			lwc_string_destroy(value_str);
-			break;
-		}
-	}
-	
-	return CSS_OK;
+
+    *match = false;
+    NSString *matchedKey;
+    
+    NSArray *attributedNames = node.attributes.allKeys;
+    for (int i = 0; i < attributedNames.count; i++) {
+        assert(lwc_string_caseless_isequal(
+                lwc_string_for_nsstring(attributedNames[i]),
+                qname->name, match
+               ) == lwc_error_ok);
+        if (*match == true) {
+            matchedKey = attributedNames[i];
+            break;
+        }
+    }
+
+    if (*match == true) {
+        lwc_string *attributeValue = lwc_string_for_nsstring(node.attributes[matchedKey]);
+        
+        const char *p;
+        const char *start = lwc_string_data(attributeValue);
+        const char *end = start +
+                lwc_string_length(attributeValue);
+
+        *match = false;
+
+        for (p = start; p < end; p++) {
+            if (*p == ' ') {
+                if ((size_t) (p - start) == vlen &&
+                        strncasecmp(start,
+                            lwc_string_data(value),
+                            vlen) == 0) {
+                    *match = true;
+                    break;
+                }
+
+                start = p + 1;
+            }
+        }
+    }
+
+    return CSS_OK;
 }
 
 css_error node_has_attribute_dashmatch(void *pw, void *n,
@@ -772,42 +800,48 @@ css_error node_has_attribute_dashmatch(void *pw, void *n,
 {
 	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
 	
-	size_t vlen = lwc_string_length(value);
+    size_t vlen = lwc_string_length(value);
+    
 	*match = false;
-	
-	for (NSString *key in node.attributes) {
-		if (objc_string_is_equal_lwc_string(key, qname->name)) {
-			NSString *valueStr = node.attributes[key];
-			
-			lwc_string *value_str = lwc_string_for_nsstring(valueStr);
-			
-			const char *p;
-			const char *start = lwc_string_data(value_str);
-			const char *end = start +
-			lwc_string_length(value_str);
-			
-			*match = false;
-			
-			for (p = start; p < end; p++) {
-				if (*p == '-') {
-					if ((size_t) (p - start) == vlen &&
-						strncasecmp(start,
-									lwc_string_data(value),
-									vlen) == 0) {
-							*match = true;
-							break;
-						}
-					
-					start = p + 1;
-				}
-			}
-			
-			lwc_string_destroy(value_str);
-			break;
-		}
-	}
-	
-	return CSS_OK;
+    NSString *matchedKey;
+    
+    NSArray *attributedNames = node.attributes.allKeys;
+    for (int i = 0; i < attributedNames.count; i++) {
+        assert(lwc_string_caseless_isequal(
+                lwc_string_for_nsstring(attributedNames[i]),
+                qname->name, match
+               ) == lwc_error_ok);
+        if (*match == true) {
+            matchedKey = attributedNames[i];
+            break;
+        }
+    }
+
+    if (*match == true && matchedKey.length) {
+        lwc_string *attributeValue = lwc_string_for_nsstring(node.attributes[matchedKey]);
+        
+        const char *p;
+        const char *start = lwc_string_data(attributeValue);
+        const char *end = start + lwc_string_length(attributeValue);
+
+        *match = false;
+
+        for (p = start; p < end; p++) {
+            if (*p == '-') {
+                if ((size_t) (p - start) == vlen &&
+                        strncasecmp(start,
+                            lwc_string_data(value),
+                            vlen) == 0) {
+                    *match = true;
+                    break;
+                }
+
+                start = p + 1;
+            }
+        }
+    }
+
+    return CSS_OK;
 }
 
 css_error node_has_attribute_prefix(void *pw, void *n,
@@ -818,29 +852,35 @@ css_error node_has_attribute_prefix(void *pw, void *n,
 	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
 	
 	*match = false;
-	for (NSString *key in node.attributes) {
-		if (objc_string_is_equal_lwc_string(key, qname->name)) {
-			NSString *valueStr = node.attributes[key];
-			
-			lwc_string *value_str = lwc_string_for_nsstring(valueStr);
-			
-			size_t len = lwc_string_length(value_str);
-			const char *data = lwc_string_data(value_str);
-			
-			size_t vlen = lwc_string_length(value);
-			const char *vdata = lwc_string_data(value);
-			
-			if (len < vlen)
-				*match = false;
-			else
-				*match = (strncasecmp(data, vdata, vlen) == 0);
-			
-			lwc_string_destroy(value_str);
-			break;
-		}
-	}
-	
-	return CSS_OK;
+    NSString *matchedKey;
+    
+    NSArray *attributedNames = node.attributes.allKeys;
+    for (int i = 0; i < attributedNames.count; i++) {
+        assert(lwc_string_caseless_isequal(
+                lwc_string_for_nsstring(attributedNames[i]),
+                qname->name, match
+               ) == lwc_error_ok);
+        if (*match == true) {
+            matchedKey = attributedNames[i];
+            break;
+        }
+    }
+
+    if (*match == true && matchedKey.length) {
+        lwc_string *attributeValue = lwc_string_for_nsstring(node.attributes[matchedKey]);
+        size_t len = lwc_string_length(attributeValue);
+        const char *data = lwc_string_data(attributeValue);
+
+        size_t vlen = lwc_string_length(value);
+        const char *vdata = lwc_string_data(value);
+
+        if (len < vlen)
+            *match = false;
+        else
+            *match = (strncasecmp(data, vdata, vlen) == 0);
+    }
+
+    return CSS_OK;
 }
 
 css_error node_has_attribute_suffix(void *pw, void *n,
@@ -851,33 +891,39 @@ css_error node_has_attribute_suffix(void *pw, void *n,
 	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
 
 	*match = false;
-	for (NSString *key in node.attributes) {
-		if (objc_string_is_equal_lwc_string(key, qname->name)) {
-			NSString *valueStr = node.attributes[key];
-			
-			lwc_string *value_str = lwc_string_for_nsstring(valueStr);
-			
-			size_t len = lwc_string_length(value_str);
-			const char *data = lwc_string_data(value_str);
-			
-			size_t vlen = lwc_string_length(value);
-			const char *vdata = lwc_string_data(value);
-			
-			size_t suffix_start = len - vlen;
-			
-			if (len < vlen)
-				*match = false;
-			else {
-				*match = (strncasecmp(data + suffix_start,
-									  vdata, vlen) == 0);
-			}
-			
-			lwc_string_destroy(value_str);
-			break;
-		}
-	}
+    NSString *matchedKey;
+    
+    NSArray *attributedNames = node.attributes.allKeys;
+    for (int i = 0; i < attributedNames.count; i++) {
+        assert(lwc_string_caseless_isequal(
+                lwc_string_for_nsstring(attributedNames[i]),
+                qname->name, match
+               ) == lwc_error_ok);
+        if (*match == true) {
+            matchedKey = attributedNames[i];
+            break;
+        }
+    }
 
-	return CSS_OK;
+    if (*match == true && matchedKey.length) {
+        lwc_string *attributeValue = lwc_string_for_nsstring(node.attributes[matchedKey]);
+        size_t len = lwc_string_length(attributeValue);
+        const char *data = lwc_string_data(attributeValue);
+
+        size_t vlen = lwc_string_length(value);
+        const char *vdata = lwc_string_data(value);
+
+        size_t suffix_start = len - vlen;
+
+        if (len < vlen)
+            *match = false;
+        else {
+            *match = (strncasecmp(data + suffix_start,
+                    vdata, vlen) == 0);
+        }
+    }
+
+    return CSS_OK;
 }
 
 css_error node_has_attribute_substring(void *pw, void *n,
@@ -888,42 +934,48 @@ css_error node_has_attribute_substring(void *pw, void *n,
 	DTHTMLParserNode *node = (__bridge DTHTMLParserNode*)n;
 	
 	*match = false;
-	for (NSString *key in node.attributes) {
-		if (objc_string_is_equal_lwc_string(key, qname->name)) {
-			NSString *valueStr = node.attributes[key];
-			
-			lwc_string *value_str = lwc_string_for_nsstring(valueStr);
-			
-			size_t len = lwc_string_length(value_str);
-			const char *data = lwc_string_data(value_str);
-			
-			size_t vlen = lwc_string_length(value);
-			const char *vdata = lwc_string_data(value);
-			
-			const char *last_start = data + len - vlen;
-			
-			if (len < vlen)
-				*match = false;
-			else {
-				while (data <= last_start) {
-					if (strncasecmp(data, vdata, vlen) == 0) {
-						*match = true;
-						break;
-					}
-					
-					data++;
-				}
-				
-				if (data > last_start)
-					*match = false;
-			}
-			
-			lwc_string_destroy(value_str);
-			break;
-		}
-	}
-	
-	return CSS_OK;
+    NSString *matchedKey;
+    
+    NSArray *attributedNames = node.attributes.allKeys;
+    for (int i = 0; i < attributedNames.count; i++) {
+        assert(lwc_string_caseless_isequal(
+                lwc_string_for_nsstring(attributedNames[i]),
+                qname->name, match
+               ) == lwc_error_ok);
+        if (*match == true) {
+            matchedKey = attributedNames[i];
+            break;
+        }
+    }
+
+    if (*match == true && matchedKey.length) {
+        lwc_string *value = lwc_string_for_nsstring(node.attributes[matchedKey]);
+        size_t len = lwc_string_length(value);
+        const char *data = lwc_string_data(value);
+
+        size_t vlen = lwc_string_length(value);
+        const char *vdata = lwc_string_data(value);
+
+        const char *last_start = data + len - vlen;
+
+        if (len < vlen)
+            *match = false;
+        else {
+            while (data <= last_start) {
+                if (strncasecmp(data, vdata, vlen) == 0) {
+                    *match = true;
+                    break;
+                }
+
+                data++;
+            }
+
+            if (data > last_start)
+                *match = false;
+        }
+    }
+
+    return CSS_OK;
 }
 
 css_error node_is_root(void *pw, void *n, bool *match)
@@ -947,7 +999,7 @@ css_error node_count_siblings(void *pw, void *n,
 		while (nextIndex < node.parentNode.childNodes.count) {
 			if (same_name) {
 				DTHTMLParserNode *nextNode = [node.parentNode.childNodes objectAtIndex:nextIndex];
-				if ([node.name isEqualToString:nextNode.name]) {
+				if ([node.name compare:nextNode.name options:NSCaseInsensitiveSearch] == NSOrderedSame) {
 					cnt++;
 				}
 			} else {
@@ -961,7 +1013,7 @@ css_error node_count_siblings(void *pw, void *n,
 		while (prevIndex >= 0) {
 			if (same_name) {
 				DTHTMLParserNode *prevNode = [node.parentNode.childNodes objectAtIndex:prevIndex];
-				if ([node.name isEqualToString:prevNode.name]) {
+                if ([node.name compare:prevNode.name options:NSCaseInsensitiveSearch] == NSOrderedSame) {
 					cnt++;
 				}
 			} else {
