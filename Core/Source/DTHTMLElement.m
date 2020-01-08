@@ -37,7 +37,7 @@
 #import "UIFont+DTCoreText.h"
 #endif
 
-static const kDefaultPageWidth = 414;
+static const NSInteger kDefaultPageWidth = 414;
 
 @interface DTHTMLElement ()
 
