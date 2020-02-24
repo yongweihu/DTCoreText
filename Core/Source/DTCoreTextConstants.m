@@ -63,6 +63,7 @@ NSString * const DTLineSpacingAdjustment = @"DTLineSpacingAdjustment";
 NSString * const DTParagraphSpacingAdjustment = @"DTParagraphSpacingAdjustment";
 NSString * const DTCustomImageLoader = @"DTCustomImageLoader";
 NSString * const DTLightenTextColor = @"DTLightenTextColor";
+NSString * const DTIdAttribute = @"DTIdAttribute";
 
 // field constants
 NSString * const DTListPrefixField = @"{listprefix}";
