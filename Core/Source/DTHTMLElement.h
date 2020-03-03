@@ -83,6 +83,7 @@
     BOOL _lightenTextColor;
     
     NSNumber *_defaultTextAlignmentNum;
+    NSString *_defaultFontFamily;
 }
 
 /**

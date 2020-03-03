@@ -117,6 +117,7 @@ NSDictionary *_classesForNames = nil;
 	{
         _lightenTextColor = [[options objectForKey:DTLightenTextColor] boolValue];
         _defaultTextAlignmentNum = [options objectForKey:DTDefaultTextAlignment];
+        _defaultFontFamily = [options objectForKey:DTDefaultFontFamily];
 	}
 	
 	return self;
@@ -943,13 +944,8 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	id fontFamilyStyle = [styles objectForKey:@"font-family"];
-    BOOL useDefaultFont = NO;
-    if ([self.name isEqualToString:@"body"] && self.fontDescriptor) { // 针对body tag我们强制使用用户设置的默认字体
-        useDefaultFont = YES;
-    }
-    
-	if (fontFamilyStyle && ![fontFamilyStyle isEqualToString:@"inherit"] && !useDefaultFont)
+    id fontFamilyStyle = [styles objectForKey:@"font-family"];
+	if (fontFamilyStyle && ![fontFamilyStyle isEqualToString:@"inherit"])
 	{
 		NSArray *fontFamilies;
 		
@@ -961,6 +957,10 @@ NSDictionary *_classesForNames = nil;
 		{
 			fontFamilies = fontFamilyStyle;
 		}
+        
+        if (_defaultFontFamily) {
+            fontFamilies = [@[_defaultFontFamily] arrayByAddingObjectsFromArray:fontFamilies];
+        }
 				
 		BOOL foundFontFamily = NO;
 		

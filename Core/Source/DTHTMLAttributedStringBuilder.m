@@ -88,6 +88,8 @@
 	BOOL _preserverDocumentTrailingSpaces; // don't remove spaces at end of document
 	
 	DTHTMLParser  *_parser;
+    
+    NSMutableArray<NSString *> *_idsToAttach;
 }
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary * __autoreleasing*)docAttributes
@@ -110,6 +112,7 @@
 		}
 		_parser = [[DTHTMLParser alloc] initWithData:_data encoding:encoding];
 		_parser.delegate = (id)self;
+        _idsToAttach = [NSMutableArray new];
 		
 		// GCD setup
 		_stringAssemblyQueue = dispatch_queue_create("DTHTMLAttributedStringBuilder", 0);
@@ -887,7 +890,16 @@
                                         }
                                     }
                                     
+                                    if (theTag.attributes[@"id"] && nodeString.length == 0) {
+                                        [strongSelf->_idsToAttach addObject:theTag.attributes[@"id"]];
+                                    }
+                                    
                                     [strongSelf->_tmpString appendAttributedString:nodeString];
+                                    if (nodeString.length && strongSelf->_idsToAttach.count > 0) {
+                                        [strongSelf->_tmpString addAttribute:DTIdAttribute value:[strongSelf->_idsToAttach componentsJoinedByString:@","] range:NSMakeRange(strongSelf->_tmpString.length - nodeString.length, 1)];
+                                        [strongSelf->_idsToAttach removeAllObjects];;
+                                    }
+                                    
                                     theTag.didOutput = YES;
                                     
                                     if (!strongSelf->_shouldKeepDocumentNodeTree)

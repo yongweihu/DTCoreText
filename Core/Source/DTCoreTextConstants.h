@@ -87,6 +87,7 @@ extern NSString * const DTLineSpacingAdjustment;
 extern NSString * const DTParagraphSpacingAdjustment;
 extern NSString * const DTCustomImageLoader;
 extern NSString * const DTLightenTextColor;
+extern NSString * const DTIdAttribute;
 
 // field constants
 
