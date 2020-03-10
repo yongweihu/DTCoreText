@@ -37,7 +37,7 @@
  
  @param css The CSS string for the style block
  */
-- (id)initWithStyleBlock:(NSString *)css;
+- (id)initWithStyleBlock:(NSString *)css baseURL:(NSURL *)baseURL;
 
 
 /**
@@ -51,6 +51,7 @@
  @param css The CSS string for the style block
 */ 
 - (void)parseStyleBlock:(NSString *)css;
+- (void)parseStyleBlock:(NSString *)css baseURL:(NSURL *)baseURL;
 
 
 /**
@@ -73,7 +74,7 @@
  @param ignoreInlineStyle If `YES` then the inline styles of the element will be ignored and only the receiver's styles used
  @returns The merged style dictionary containing only styles which selector matches the element
  */
-- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle;
+- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle baseURL:(NSURL *)baseURL;
 
 /**
  Returns a dictionary of the styles of the receiver

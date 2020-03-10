@@ -706,7 +706,7 @@
 				NSString *stylesheetContent = [NSString stringWithContentsOfURL:stylesheetURL encoding:NSUTF8StringEncoding error:nil];
 				if (stylesheetContent)
 				{
-					DTCSSStylesheet *localSheet = [[DTCSSStylesheet alloc] initWithStyleBlock:stylesheetContent];
+					DTCSSStylesheet *localSheet = [[DTCSSStylesheet alloc] initWithStyleBlock:stylesheetContent baseURL:self->_baseURL];
 					[self->_globalStyleSheet mergeStylesheet:localSheet];
 				}
 			}
@@ -774,7 +774,7 @@
 		
 		// apply style from merged style sheet
 		NSSet *matchedSelectors;
-		NSDictionary *mergedStyles = [strongSelf->_globalStyleSheet mergedStyleDictionaryForElement:newNode matchedSelectors:&matchedSelectors ignoreInlineStyle:strongSelf->_ignoreInlineStyles];
+		NSDictionary *mergedStyles = [strongSelf->_globalStyleSheet mergedStyleDictionaryForElement:newNode matchedSelectors:&matchedSelectors ignoreInlineStyle:strongSelf->_ignoreInlineStyles baseURL:_baseURL];
 		
 		if (mergedStyles)
 		{

@@ -148,7 +148,11 @@ static css_error resolve_url(void *pw,
                              const char *base, lwc_string *rel, lwc_string **abs)
 {
     /* About as useless as possible */
-    *abs = lwc_string_ref(rel);
+    const char *rel_data = lwc_string_data(rel);
+    NSString *relStr = [NSString stringWithUTF8String:rel_data];
+    NSString *baseStr = [NSString stringWithUTF8String:base];
+    NSString *path = [baseStr stringByAppendingPathComponent:relStr];
+    *abs = lwc_string_for_nsstring(path);
     
     return CSS_OK;
 }
@@ -156,7 +160,7 @@ static css_error resolve_url(void *pw,
 @interface DTStylesheetCreator : NSObject
 
 + (instancetype)sharedInstance;
-- (css_stylesheet *)createStyleSheetWithStyleBlock:(NSString *)css inlineStyle:(BOOL)inlineStyle lockFirst:(BOOL)lockFirst;
+- (css_stylesheet *)createStyleSheetWithStyleBlock:(NSString *)css inlineStyle:(BOOL)inlineStyle lockFirst:(BOOL)lockFirst baseURL:(NSURL *)baseURL;
 
 @property (nonatomic, strong) dispatch_semaphore_t syncLock;
 
@@ -188,21 +192,17 @@ static DTStylesheetCreator *_shareSheetCreator;
     return self;
 }
 
-- (css_stylesheet *)createStyleSheetWithStyleBlock:(NSString *)css inlineStyle:(BOOL)inlineStyle lockFirst:(BOOL)lockFirst
+- (css_stylesheet_params)createEmptyStylesheetParams
 {
-    if (css.length == 0) {
-        return nil;
-    }
-    
     css_stylesheet_params params;
     
     params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
-    params.level = CSS_LEVEL_3;
-    params.charset = "UTF-8";
+    params.level = CSS_LEVEL_DEFAULT;
+    params.charset = NULL;
     params.url = "";
     params.title = NULL;
     params.allow_quirks = false;
-    params.inline_style = inlineStyle;
+    params.inline_style = false;
     params.resolve = resolve_url;
     params.resolve_pw = NULL;
     params.import = NULL;
@@ -212,6 +212,19 @@ static DTStylesheetCreator *_shareSheetCreator;
     params.font = NULL;
     params.font_pw = NULL;
     
+    return params;
+}
+
+- (css_stylesheet *)createStyleSheetWithStyleBlock:(NSString *)css inlineStyle:(BOOL)inlineStyle lockFirst:(BOOL)lockFirst baseURL:(NSURL *)baseURL
+{
+    if (css.length == 0) {
+        return nil;
+    }
+    
+    css_stylesheet_params params = [self createEmptyStylesheetParams];
+    params.url = [baseURL.absoluteString UTF8String] ?: "";
+    params.inline_style = inlineStyle;
+    
     if (lockFirst) {
         dispatch_semaphore_wait(self.syncLock, DISPATCH_TIME_FOREVER);
     }
@@ -219,15 +232,13 @@ static DTStylesheetCreator *_shareSheetCreator;
     css_stylesheet *sheet;
     assert(css_stylesheet_create(&params, &sheet) == CSS_OK);
     
-    size_t dataLength = strlen(css.UTF8String);
-    uint8_t *data = malloc(dataLength);
-    strncpy(data, (const uint8_t *)css.UTF8String, dataLength);
-    
-    css_error error = css_stylesheet_append_data(sheet, data, dataLength);
+    css_error error = css_stylesheet_append_data(sheet, (const uint8_t *)css.UTF8String, css.length);
     assert(error == CSS_OK || error == CSS_NEEDDATA);
+    
+    [self loadChildCSS:sheet withBaseURL:baseURL];
+    
     assert(css_stylesheet_data_done(sheet) == CSS_OK);
     
-    free(data);
     if (lockFirst) {
         dispatch_semaphore_signal(self.syncLock);
     }
@@ -253,6 +264,41 @@ static DTStylesheetCreator *_shareSheetCreator;
     return sheet;
 }
 
+/**
+ * 如果css中包含@import语句，我们需要将import指定的css文件导入。
+ */
+- (void)loadChildCSS:(css_stylesheet *)parent withBaseURL:(NSURL *)baseURL
+{
+    do {
+        lwc_string *url;
+        uint64_t media;
+        css_error error = css_stylesheet_next_pending_import(parent, &url, &media);
+        if (error == CSS_INVALID) {
+            break;
+        }
+        
+        const char *url_data = lwc_string_data(url);
+        NSString *urlPath = [NSString stringWithUTF8String:url_data];
+        NSString *cssStr = [NSString stringWithContentsOfFile:urlPath encoding:NSUTF8StringEncoding error:nil];
+        
+        BOOL registeredChild = NO;
+        if (cssStr.length) {
+            css_stylesheet *childSheet = [self createStyleSheetWithStyleBlock:cssStr inlineStyle:NO lockFirst:NO baseURL:baseURL];
+            if (childSheet != NULL) {
+                css_stylesheet_register_import(parent, childSheet);
+                registeredChild = YES;
+            }
+        }
+        
+        if (!registeredChild) {
+            css_stylesheet *emptySheet;
+            css_stylesheet_params params = [self createEmptyStylesheetParams];
+            assert(css_stylesheet_create(&params, &emptySheet) == CSS_OK);
+            css_stylesheet_register_import(parent, emptySheet);
+        }
+    } while (YES);
+}
+
 @end
 
 @interface DTSheetContext : NSObject
@@ -265,11 +311,11 @@ static DTStylesheetCreator *_shareSheetCreator;
 
 @implementation DTSheetContext
 
-- (instancetype)initWithCSSString:(NSString *)cssString origin:(css_origin)origin media:(uint64_t)media
+- (instancetype)initWithCSSString:(NSString *)cssString origin:(css_origin)origin media:(uint64_t)media baseURL:(NSURL *)baseURL
 {
     self = [super init];
     if (self) {
-        _sheet = [MyStyleCreator createStyleSheetWithStyleBlock:cssString inlineStyle:NO lockFirst:YES];
+        _sheet = [MyStyleCreator createStyleSheetWithStyleBlock:cssString inlineStyle:NO lockFirst:YES baseURL:baseURL];
         _origin = origin;
         _media = media;
     }
@@ -298,6 +344,7 @@ static DTStylesheetCreator *_shareSheetCreator;
 	
 	css_origin _defaultOrigin;
 	uint64_t _defaultMedia;
+    NSURL *_baseURL;
 }
 
 #pragma mark Creating Stylesheets
@@ -318,18 +365,18 @@ static DTStylesheetCreator *_shareSheetCreator;
         }
         NSString *cssString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
         
-        defaultDTCSSStylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:cssString origin:CSS_ORIGIN_UA media:CSS_MEDIA_ALL];
+        defaultDTCSSStylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:cssString origin:CSS_ORIGIN_UA media:CSS_MEDIA_ALL baseURL:nil];
     });
     
 	return defaultDTCSSStylesheet;
 }
 
-- (id)initWithStyleBlock:(NSString *)css
+- (id)initWithStyleBlock:(NSString *)css baseURL:(NSURL *)baseURL
 {
-	return [self initWithStyleBlock:css origin:CSS_ORIGIN_AUTHOR media:CSS_MEDIA_ALL];
+	return [self initWithStyleBlock:css origin:CSS_ORIGIN_AUTHOR media:CSS_MEDIA_ALL baseURL:baseURL];
 }
 
-- (id)initWithStyleBlock:(NSString *)css origin:(css_origin)origin media:(uint64_t)media
+- (id)initWithStyleBlock:(NSString *)css origin:(css_origin)origin media:(uint64_t)media baseURL:(NSURL *)baseURL
 {
 	self = [super init];
 	
@@ -338,8 +385,9 @@ static DTStylesheetCreator *_shareSheetCreator;
 		_defaultOrigin = origin;
 		_defaultMedia = media;
 		_styles	= [[NSMutableDictionary alloc] init];
-		
-		[self parseStyleBlock:css];
+        _baseURL = baseURL;
+        
+		[self parseStyleBlock:css baseURL:baseURL];
 	}
 	
 	return self;
@@ -355,6 +403,7 @@ static DTStylesheetCreator *_shareSheetCreator;
 		_defaultMedia = CSS_MEDIA_ALL;
 		_styles	= [[NSMutableDictionary alloc] init];
         _defaultOptions = stylesheet.defaultOptions;
+        _baseURL = stylesheet->_baseURL;
         
 		[self mergeStylesheet:stylesheet];
 	}
@@ -373,9 +422,14 @@ static DTStylesheetCreator *_shareSheetCreator;
 
 #pragma mark Working with Style Blocks
 
-- (void)parseStyleBlock:(NSString*)css
+- (void)parseStyleBlock:(NSString *)css
 {
-	DTSheetContext *sheetCtx = [[DTSheetContext alloc] initWithCSSString:css origin:_defaultOrigin media:_defaultMedia];
+    [self parseStyleBlock:css baseURL:nil];
+}
+
+- (void)parseStyleBlock:(NSString*)css baseURL:(NSURL *)baseURL
+{
+	DTSheetContext *sheetCtx = [[DTSheetContext alloc] initWithCSSString:css origin:_defaultOrigin media:_defaultMedia baseURL:baseURL];
 	[self mergeCSSStylesheet:sheetCtx];
 }
 
@@ -402,7 +456,7 @@ static DTStylesheetCreator *_shareSheetCreator;
 
 #pragma mark Accessing Style Information
 
-- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
+- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle baseURL:(NSURL *)baseURL
 {
     dispatch_semaphore_wait(MyStyleCreator.syncLock, DISPATCH_TIME_FOREVER);
     
@@ -428,7 +482,7 @@ static DTStylesheetCreator *_shareSheetCreator;
         NSString *styleString = [element.attributes objectForKey:@"style"];
         
         if ([styleString length]) {
-            inlineSheet = [MyStyleCreator createStyleSheetWithStyleBlock:styleString inlineStyle:YES lockFirst:NO];
+            inlineSheet = [MyStyleCreator createStyleSheetWithStyleBlock:styleString inlineStyle:YES lockFirst:NO baseURL:baseURL];
         }
     }
     

@@ -14,6 +14,9 @@
  This is a specialized subclass of <DTHTMLElement> representing a style block.
  */
 @interface DTStylesheetHTMLElement : DTHTMLElement
+{
+    NSURL *_baseURL;
+}
 
 /**
  Parses the text children and assembles the resulting stylesheet.
