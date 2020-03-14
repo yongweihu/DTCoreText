@@ -11,6 +11,16 @@
 
 @implementation DTStylesheetHTMLElement
 
+- (id)initWithName:(NSString *)name attributes:(NSDictionary *)attributes
+{
+    self = [super initWithName:name attributes:attributes];
+    if (self) {
+        _baseURL = [attributes objectForKey:NSBaseURLDocumentOption];
+    }
+    
+    return self;
+}
+
 - (NSAttributedString *)attributedString
 {
 	return nil;
@@ -20,7 +30,7 @@
 {
 	NSString *text = [self text];
 	
-	return [[DTCSSStylesheet alloc] initWithStyleBlock:text];
+	return [[DTCSSStylesheet alloc] initWithStyleBlock:text baseURL:_baseURL];
 }
 
 @end
